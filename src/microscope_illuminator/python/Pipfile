@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+zaber-motion = "*"
+# Zaber Motion Library needs the following three lines to ensure Pipfile.lock work on all platforms.
+zaber-motion-bindings-darwin = {version = "*", markers = "platform_system == 'Darwin'"}
+zaber-motion-bindings-windows = {version = "*", markers = "platform_system == 'Windows'"}
+zaber-motion-bindings-linux = {version = "*", markers = "platform_system == 'Linux'"}
+
+[dev-packages]
+black = "*"
+colorama = {version = "*", markers = "platform_system == 'Windows'"}
+pylint = "*"
+mypy = "*"
+pydocstyle = "*"
+
+[requires]
+python_version = "3.11"

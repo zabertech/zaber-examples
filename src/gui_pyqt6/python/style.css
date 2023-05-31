@@ -1,0 +1,487 @@
+/* Stylesheet for Resulty GUI */
+
+/* Syntax     - https://doc.qt.io/Qt-6/stylesheet-syntax.html */
+/* Reference  - https://doc.qt.io/qt-6/stylesheet-reference.html */
+/* Examples   - https://doc.qt.io/qt-6/stylesheet-examples.html
+/* Scrollbars - https://stackoverflow.com/questions/60125949/qt-qscrollbar-change-background-color */
+/* CSS specificity - https://www.w3.org/TR/CSS2/cascade.html#specificity */
+/* Selector Child :: sub-control : !pseudo-state [attribute] #object_name {property:value;} */
+
+
+/* -------------- MAIN COLOURS --------------------------------- */
+* {
+	color: black;  /* text */
+}
+QMainWindow {
+	background-color: rgb(240, 240, 240);
+}
+QDialog {
+	background-color: rgb(240, 240, 240);
+}
+
+/* -------------- Inactive Window ------------------------------ */
+QTabWidget QTabBar::tab:!active {
+    color: rgb(60, 60, 60);
+}
+QMainWindow:!active {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+QStatusBar:!active {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: none;
+}
+
+/* -------------- FONTS  --------------------------------- */
+
+QTabWidget QTabBar {
+	font-size: 14px;
+}
+
+#table_title_label
+{
+	font-size: 22px;
+	font-weight: bold;
+}
+
+
+
+/* -------------- QTabWidget, QTabBar  --------------------------------- */
+
+QTabWidget::pane {
+    border: 1px solid rgb(210, 210, 210);
+    top: -1px; /* Hide top border behind tabs */
+}
+
+/* QTabBar::tab */
+QTabWidget QTabBar::tab {
+    border-image: url('icons/border_line.png') 1 stretch;
+    border-width: 1px;
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0.00 rgb(240, 240, 240),
+								stop: 0.90 rgb(240, 240, 240),
+								stop: 0.95 rgb(230, 230, 230),
+								stop: 1.00 rgb(210, 210, 210));
+	height: 22;
+    min-width: 50px;
+    padding-right: 10px;
+	padding-left: 10px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-top: 0px;
+}
+QTabWidget QTabBar::tab:selected {
+    border-image: url('icons/border_top.png') 1 stretch;
+    background: rgb(250, 250, 250);
+	margin-top: 0px;
+}
+QTabWidget QTabBar::tab:hover:!selected {
+    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                stop: 0.00 rgb(233, 233, 233),
+								stop: 0.90 rgb(233, 233, 233),
+								stop: 0.95 rgb(225, 225, 225),
+								stop: 1.00 rgb(210, 210, 210));
+}
+QTabWidget QTabBar::tab:next-selected {
+    border-image: url('icons/border_blank.png') 1 stretch;
+}
+QTabWidget QTabBar::tab:last:!selected {
+    border-image: url('icons/border_blank.png') 1 stretch;
+}
+
+
+/* -------------- QGraphicsView  --------------------------------- */
+QGraphicsView {
+    background-color: transparent;
+	border: none;
+}
+
+/* -------------- QPushButton, QToolButton ---------------------------- */
+
+QPushButton, QToolButton {
+	background: transparent;
+	padding: 4px 4px 4px 4px;
+	border-radius: 6px;
+	border: none;
+}
+QDialog QPushButton[text]:!hover {
+	background-color: rgb(253, 253, 253);
+}
+QDialog QPushButton[text]:hover {
+	background: transparent;
+}
+QToolButton[text], QToolButton[text]:disabled {
+    border: none;
+}
+QPushButton[text] {
+	border: 1px solid rgb(210, 210, 210);
+}
+QPushButton[text]:disabled {
+	border: 1px solid rgb(230, 230, 230);
+}
+QPushButton:checked, QToolButton:checked {
+	background: rgb(230, 230, 230);
+}
+QPushButton:focus, QToolButton:focus {
+	border: 1px solid rgb(65, 173, 255);
+}
+
+/* -------------- QToolBar  ---------------------------------------- */
+QToolBar::separator {
+	background-color: rgb(220, 220, 220);
+}
+
+QToolBar::separator:horizontal {
+	width: 1px;
+	margin-left: 4px;
+	margin-right: 4px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+
+/* -------------- QMenu ---------------------------------------*/
+
+QMenu {
+    background-color: white;
+    border: 1px solid rgb(150, 150, 150);
+}
+QMenu::item {
+    background-color: transparent;
+    color: black;
+}
+QMenu::item:selected {
+    background-color: rgb(211, 228, 252);
+    color: black;
+}
+
+
+/* -------------- QComboBox--------------------------------- */
+QComboBox {
+	background-color: rgb(253, 253, 253);
+	padding: 6px 20px 6px 6px;
+	border-radius: 6px;
+	border: 1px solid rgb(210, 210, 210);
+	min-width: 6em;
+
+}
+
+/* Button on right */
+QComboBox::drop-down {
+	background-color: transparent;
+}
+
+/* Popup-list.*/
+QComboBox QAbstractItemView {
+	background-color: rgb(253, 253, 253);
+}
+
+QComboBox::item:selected {
+	color: black;
+    border: none;
+    background-color: rgb(211, 228, 252);
+}
+
+/* Checkmark beside selected item */
+QComboBox::indicator{
+    background-color: transparent;
+    selection-background-color: transparent;
+    color: transparent;
+    selection-color: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url('icons/triangle_down_small.png');
+}
+
+/* -------------- QGroupBox  --------------------------------- */
+
+
+QGroupBox {
+    color: rgb(130, 130, 130);
+    font-weight: bold;
+    border: 1px solid rgba(0, 0, 0, 20);;
+    border-radius: 6px;
+    margin-top: 20px;
+    background-color: rgba(0, 0, 0, 0.013);
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+}
+
+
+/* -------------- QListView  --------------------------------- */
+
+.QListView {
+	background-color: white;
+	border: 1px solid rgb(210, 210, 210);
+    border-radius: 2px;
+}
+QListView {
+	selection-background-color: rgb(231, 240, 253); /* Pale Blue */
+	selection-color: black;
+}
+QListView:item:hover {
+	border: 1px solid rgb(26, 115, 232);
+	background: rgb(231, 240, 253); /* Pale Blue */
+}
+
+
+/* -------------- QPlainTextEdit  --------------------------------- */
+
+QPlainTextEdit {
+    border-radius: 2px;
+    border: 1px solid rgb(210, 210, 210);
+}
+
+
+/* -------------- QTableView  --------------------------------- */
+
+/* REMEMBER - Setting background or border style causes scrolling to slow down :'(  */
+
+QTableView:active {
+	selection-background-color: rgb(225, 235, 251); /* Pale Blue */
+	selection-color: black;
+}
+QTableView:!active {
+	selection-background-color: rgb(240, 240, 240); /* Light Gray */
+	selection-color: black;
+}
+
+
+/* -------------- QHeaderView  --------------------------------- */
+
+QHeaderView {
+    background-color: rgb(245, 245, 245);
+    border-bottom: 1px solid rgb(180, 180, 180);
+    border-right: none;
+    border-top: none;
+    border-left: none;
+}
+QTableView QTableCornerButton::section {
+    background-color: rgb(245, 245, 245);
+    border-bottom: 1px solid rgb(180, 180, 180);
+    border-right: 1px solid rgb(180, 180, 180);
+    border-top: none;
+    border-left: none;
+}
+QHeaderView::section  {
+    background-color: transparent;
+}
+QHeaderView::section::horizontal  {
+    border-left: 1px solid rgb(255, 255, 255);
+    border-top: 1px solid rgb(250, 250, 250);
+    border-right: 1px solid rgb(210, 210, 210);
+    border-bottom: none;
+}
+QHeaderView::section::vertical  {
+    border-top: 1px solid rgb(255, 255, 255) ;
+    border-bottom: 1px solid rgb(210, 210, 210);
+    border-right: none;
+    border-left: none;
+}
+QHeaderView::section::horizontal:first  {
+    border-left: 1px solid rgb(255, 255, 255);
+}
+QHeaderView::section::vertical  {
+    padding-left: 4px;
+}
+
+
+/* -------------- QDateEdit  --------------------------------- */
+
+QDateEdit {
+	background-color: white;
+	min-height: 24px;
+	border-radius: 4px;
+	border: 1px solid rgb(210, 210, 210);
+	padding-left: 4px;
+}
+QDateEdit:focus {
+	border: 1px solid rgb(65, 173, 255);
+}
+QDateEdit::drop-down {
+	background-color: white;
+    image: url('icons/calendar.png');
+    subcontrol-position: top right;
+    subcontrol-origin: margin;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin: 1px;
+    height: 24px;
+    width: 24px;
+}
+QDateEdit[StyleRed="true"] {
+	color: red;
+}
+QDateEdit[StyleBold="true"] {
+	font-weight: bold;
+}
+QDateEdit[StyleBold="false"] {
+	font-weight: normal;
+}
+
+
+/* -------------- QLineEdit -------------- */
+
+QLineEdit {
+	background-color: white;
+	border: 1px solid rgb(210, 210, 210);
+	border-radius: 4px;
+	padding-left: 3px;
+    height: 25px;
+}
+QLineEdit:focus {
+	border: 1px solid rgb(65, 173, 255);
+}
+
+/* --------------- QPlainTextEdit --------------*/
+
+QPlainTextEdit {
+	background-color: white;
+}
+QPlainTextEdit[plainText=""] {
+    color: rgb(130, 130, 130);
+}
+
+
+/*--------------------- QScrollArea ---------------------------*/
+QScrollArea {
+    border: none;
+}
+
+
+/*------------------ QScrollBar ------------------------------*/
+
+QScrollBar {
+    background-color: rgb(245, 245, 245);
+    margin: 0px 0px 0px 0px
+}
+QScrollBar:vertical {
+    width: 10px;
+}
+QScrollBar:horizontal {
+    height: 10px;
+}
+QScrollBar::handle {
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(215, 215, 215);
+}
+QScrollBar::handle:hover {
+    background-color: rgb(190, 190, 200);
+}
+QScrollBar::handle:pressed {
+    background-color: rgb(170, 170, 170);
+}
+QScrollBar::handle:vertical {
+    min-height: 30px;
+}
+QScrollBar::handle:horizontal {
+    min-width: 40px;
+}
+QScrollBar::add-line,
+QScrollBar::sub-line {
+    height: 0px;
+    width: 0px;
+}
+QScrollBar::add-page:vertical:hover,
+QScrollBar::sub-page:vertical:hover {
+    background-color: rgb(237, 237, 237);
+}
+
+
+/* --------------- QCheckBox --------------*/
+
+QCheckBox::indicator {
+	width: 14;
+	height: 14;
+}
+QCheckBox::indicator::checked {
+	image: url('icons/box_checked.png');
+}
+QCheckBox::indicator::unchecked {
+	image: url('icons/box_unchecked.png');
+}
+QCheckBox::indicator::checked:disabled {
+	image: url('icons/box_checked_dark.png');
+}
+QCheckBox::indicator::unchecked:disabled {
+	image: url('icons/box_unchecked_dark.png');
+}
+
+
+/* ------------------ QProgressBar ---------------------------*/
+
+QProgressBar {
+    background-color: rgb(100, 170, 210);
+    border-style: outset;
+    border: 1px solid rgb(30, 30, 30);
+    border-radius: 3px;
+}
+QProgressBar::chunk {
+    border-radius: 2px;
+    background-color: rgb(0, 115, 200);
+}
+
+
+/* -------------- QCalendarWidget  --------------------------------- */
+
+QCalendarWidget QWidget#qt_calendar_navigationbar {
+	border: 1px solid lightgray;
+	border-bottom: none;
+	background-color: white;
+}
+QCalendarWidget QToolButton, QCalendarWidget QToolButton[text] {
+	height: 35px;
+	icon-size: 16px, 16px;
+	border: none;
+	border-radius: none;
+    margin: 1px;
+	margin-bottom: 0px;
+}
+QCalendarWidget QToolButton#qt_calendar_prevmonth {
+	qproperty-icon: url('icons/arrow_back.png');  /* qproperty is only evaluated once */
+	border: none;
+}
+QCalendarWidget QToolButton#qt_calendar_nextmonth {
+	qproperty-icon: url('icons/arrow_forward.png');  /* qproperty is only evaluated once */
+	border: none;
+}
+QCalendarWidget QToolButton::menu-indicator {
+    image: none;
+}
+QCalendarWidget QMenu {
+	selection-background-color: rgb(204, 232, 250); 
+	selection-color: black;
+}
+QCalendarWidget QSpinBox {
+	width: 40px;
+	background-color: transparent;
+	selection-background-color: rgb(204, 232, 250);
+	selection-color: black;
+}
+QCalendarWidget QSpinBox::up-button {
+	subcontrol-origin: border; 
+	subcontrol-position: top right; 
+	width: 24px;
+}
+QCalendarWidget QSpinBox::down-button{
+	subcontrol-origin: border;
+	subcontrol-position: bottom right;
+	width: 24px;
+}
+QCalendarWidget QWidget {
+	alternate-background-color: rgb(245, 245, 245);
+}
+QCalendarWidget QAbstractItemView:enabled {
+	background-color: white;
+	selection-background-color: rgb(204, 232, 250);
+	selection-color: black;
+	border: 1px solid lightgray;
+}

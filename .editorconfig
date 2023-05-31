@@ -1,0 +1,19 @@
+# Use the EditorConfig plugin for your editor of choice to
+# capitalize on this feature. https://EditorConfig.org
+
+# Global defaults
+[*]
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Default to 4-space indentation for most languages.
+[*.{py,cs,java,go,c,cpp}]
+indent_style = space
+indent_size = 4
+
+# 2-space indentation for TS and JS.
+[*.{ts,js}]
+indent_style = space
+indent_size = 2
+

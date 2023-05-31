@@ -1,0 +1,26 @@
+# Files to be ignored by GIT
+
+# OS Specific
+## Windows
+
+## MacOS
+.DS_Store
+
+## Linux
+
+# IDEs and Editors
+.idea/
+.vs/
+.vscode/
+
+# Languages
+
+## C#
+obj/
+bin/
+
+## Python
+.venv/
+venv/
+*.pyc
+.mypy_cache/
