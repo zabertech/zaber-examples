@@ -17,7 +17,7 @@ Edit the following constants in the script to fit your setup before running the 
 For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
 - `FILTER_SETS`: dictionary of the loaded filter cubes and their pocket numbers
-https://github.com/zabertech/zaber-examples-dev/blob/76721267da26cfcb7d46e350f5d8438f1eca1e10/src/microscope_filter_cube/python/filtercube.py#L9-L10
+https://github.com/zabertech/zaber-examples/blob/d1f917a8a8c48ac673ed2c751363eee70dfe482a/src/microscope_filter_cube/python/filtercube.py#L9-L10
 
 ## Filter Cube Selection
 The script gives an example of selecting a specific filter cube:
