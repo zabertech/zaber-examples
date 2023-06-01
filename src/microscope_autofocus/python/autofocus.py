@@ -152,8 +152,8 @@ if __name__ == "__main__":
     SHOW_STEP_IMAGES = args.show_images
 
     if args.blur % 2 != 1:
-        print(
+        parser.error(
             f"Bad value for blur, {args.blur} is not an odd number (required for median blurring)"
         )
-    else:
-        find_best_focus(args.start, args.end, args.step, args.serial_port, args.blur)
+
+    find_best_focus(args.start, args.end, args.step, args.serial_port, args.blur)
