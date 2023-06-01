@@ -107,37 +107,37 @@ SHOW_STEP_IMAGES = False
 focus_scores: list[float] = []
 
 if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description="Find the position with the best focus.")
-    argparser.add_argument(
+    parser = argparse.ArgumentParser(description="Find the position with the best focus.")
+    parser.add_argument(
         "start",
         action="store",
         type=float,
         help="The position to begin the search at, in mm",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "end",
         action="store",
         type=float,
         help="The position to end the search at, in mm",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "step", action="store", type=float, help="The granularity of the search, in mm"
     )
-    argparser.add_argument(
+    parser.add_argument(
         "serial_port",
         action="store",
         type=str,
         help="The serial port to use to control the motor",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--verbose", action="store_true", help="Log debug information to standard out"
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--show-images",
         action="store_true",
         help="Show captured images for debugging. Should be used for at most ~10 steps.",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--blur",
         "-b",
         action="store",
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         default=9,
         help="Applies some blur to the image to remove random noise",
     )
-    args = argparser.parse_args()
+    args = parser.parse_args()
 
     SHOW_STEP_INFO = args.verbose
     SHOW_STEP_IMAGES = args.show_images
