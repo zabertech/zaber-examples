@@ -1,13 +1,14 @@
 """Microscope Autofocus with Python and OpenCV."""
 
-from typing import Any
 import argparse
 import math
+from typing import Any
+
+import cv2  # type: ignore
+from matplotlib import pyplot as plt
+from simple_pyspin import Camera  # type: ignore
 from zaber_motion.ascii import Connection
 from zaber_motion.units import Units
-import cv2  # type: ignore
-from simple_pyspin import Camera  # type: ignore
-from matplotlib import pyplot as plt
 
 
 def get_image(cam: Camera) -> Any:
