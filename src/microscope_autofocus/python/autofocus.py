@@ -19,11 +19,15 @@ def get_image(cam: Camera) -> Any:
     return image
 
 
-def format_name(position: float) -> str:
-    """Return a string from position in mm and fraction that can be used in a filename."""
+def figure_file_name(position: float) -> str:
+    """
+    Return a filename for a plot of data at a specific position.
+
+    :param position: The position in mm.
+    """
     position_mm = int(position // 1)
     position_frac = round((position - position_mm) * 1000)
-    return f"{position_mm}_{position_frac}"
+    return f"at_{position_mm}_{position_frac}.png"
 
 
 def calculate_focus_score(image: Any, blur: int, position: float) -> float:
@@ -55,7 +59,7 @@ def calculate_focus_score(image: Any, blur: int, position: float) -> float:
         ax3.set_xticks([])
         ax3.set_yticks([])
 
-        plt.savefig(f"./at_{format_name(position)}.png")
+        plt.savefig(figure_file_name(position))
         plt.close()
 
     return focus_score
