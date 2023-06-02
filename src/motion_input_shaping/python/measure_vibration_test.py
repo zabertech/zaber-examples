@@ -232,6 +232,6 @@ if __name__ == "__main__":
 
         print("Capture Complete.")
 
-        # Show the plot
-        plot(data)
-        print("Complete.")
+    # Show the plot
+    plot(data)
+    print("Complete.")
