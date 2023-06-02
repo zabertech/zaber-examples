@@ -32,7 +32,7 @@ DAMPING_RATIO = 0.1  # Input shaping damping ratio.
 
 def plot(data_unshaped: StepResponseData, data_shaped: StepResponseData) -> None:
     """
-    Plot the shaped and unshaped step response:
+    Plot the shaped and unshaped step response.
 
     :param data_unshaped: The unshaped step response data
     :param data_shaped: The shaped step response data
@@ -112,11 +112,11 @@ if __name__ == "__main__":
 
         # Get the first dataset with no shaping
         print("Performing unshaped move.")
-        data_unshaped = StepResponseData(
+        step_response_data_unshaped = StepResponseData(
             SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES
         )
 
-        data_unshaped.capture_data(
+        step_response_data_unshaped.capture_data(
             shaped_axis,
             lambda: shaped_axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False),
             True,
@@ -126,11 +126,11 @@ if __name__ == "__main__":
 
         # Get the second dataset with shaping
         print("Performing shaped move.")
-        data_shaped = StepResponseData(
+        step_response_data_shaped = StepResponseData(
             SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES
         )
 
-        data_shaped.capture_data(
+        step_response_data_shaped.capture_data(
             shaped_axis,
             lambda: shaped_axis.move_relative_shaped(
                 MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False
@@ -140,6 +140,6 @@ if __name__ == "__main__":
 
         shaped_axis.reset_deceleration()
 
-    plot(data_unshaped, data_shaped)
+    plot(step_response_data_unshaped, step_response_data_shaped)
 
     print("Complete.")

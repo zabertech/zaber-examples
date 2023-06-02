@@ -102,7 +102,7 @@ def plot(data: StepResponseData) -> None:
 
     :param data: The step response data
     """
-    fig, ax = plt.subplots()
+    fig, axes = plt.subplots()
     plt.subplots_adjust(bottom=0.25)
 
     plt.title("Device Response")
@@ -111,14 +111,14 @@ def plot(data: StepResponseData) -> None:
     plt.grid(True)
 
     # Plot all the data sets
-    ax.plot(
+    axes.plot(
         data.get_time_stamps(),
         data.get_target_positions(True),
         label="Target Position",
         color="black",
         linestyle="--",
     )
-    ax.plot(
+    axes.plot(
         data.get_time_stamps(),
         data.get_measured_positions(True),
         label="Measured Position",
@@ -126,7 +126,7 @@ def plot(data: StepResponseData) -> None:
     )
 
     # Leave this empty, we'll update values later
-    (theor_plot,) = ax.plot([0], [1], label="Theoretical Vibration", color="red")
+    (theor_plot,) = axes.plot([0], [1], label="Theoretical Vibration", color="red")
 
     # Create the theoretical vibration curve with arbitrary starting values
     vibration_theoretical = DampedVibration(100.0, 0.1, 50, 0)
@@ -140,16 +140,16 @@ def plot(data: StepResponseData) -> None:
     )
 
     # Create the regions for the input text boxes on the plot and initialize them
-    BOX_HEIGHT = 0.05
-    BOX_WIDTH = 0.2
+    box_height = 0.05
+    box_width = 0.2
 
-    axbox1 = fig.add_axes([0.2, 0.01, BOX_WIDTH, BOX_HEIGHT])  # Left, Bottom, Width, Height
+    axbox1 = fig.add_axes([0.2, 0.01, box_width, box_height])  # Left, Bottom, Width, Height
     axbox2 = fig.add_axes(
-        [0.2, 0.02 + BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT]
+        [0.2, 0.02 + box_height, box_width, box_height]
     )  # Left, Bottom, Width, Height
-    axbox3 = fig.add_axes([0.7, 0.01, BOX_WIDTH, BOX_HEIGHT])  # Left, Bottom, Width, Height
+    axbox3 = fig.add_axes([0.7, 0.01, box_width, box_height])  # Left, Bottom, Width, Height
     axbox4 = fig.add_axes(
-        [0.7, 0.02 + BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT]
+        [0.7, 0.02 + box_height, box_width, box_height]
     )  # Left, Bottom, Width, Height
 
     text_box_start = TextBox(
@@ -192,7 +192,7 @@ def plot(data: StepResponseData) -> None:
     )
 
     print("Displaying plot...")
-    ax.legend(loc="lower right")
+    axes.legend(loc="lower right")
     plt.show()
 
 
@@ -225,13 +225,15 @@ if __name__ == "__main__":
         # Capture the data
         print("Performing move.")
 
-        data = StepResponseData(SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES)
-        data.capture_data(
+        step_response_data = StepResponseData(
+            SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES
+        )
+        step_response_data.capture_data(
             axis, lambda: axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False), True
         )
 
         print("Capture Complete.")
 
     # Show the plot
-    plot(data)
+    plot(step_response_data)
     print("Complete.")
