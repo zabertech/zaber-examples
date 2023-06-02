@@ -30,6 +30,60 @@ DAMPING_RATIO = 0.1  # Input shaping damping ratio.
 # ------------------- Script Settings ----------------------
 
 
+def plot(data_unshaped: StepResponseData, data_shaped: StepResponseData) -> None:
+    """
+    Plot the shaped and unshaped step response:
+
+    :param data_unshaped: The unshaped step response data
+    :param data_shaped: The shaped step response data
+    """
+    # Setup the plot
+    plt.figure(1)
+    plt.title("Device Response")
+    plt.xlabel("Time [ms]")
+    plt.ylabel("Position [um]")
+    plt.grid(True)
+
+    # Setup the y axes so only the final approach is shown
+    ylimits_unshaped = data_unshaped.get_trajectory_settling_limits(True)
+    ylimits_shaped = data_shaped.get_trajectory_settling_limits(True)
+    plt.ylim(
+        min(ylimits_shaped[0], ylimits_unshaped[0]), max(ylimits_shaped[1], ylimits_unshaped[1])
+    )
+
+    # Plot both data sets
+    plt.plot(
+        data_unshaped.get_time_stamps(),
+        data_unshaped.get_target_positions(True),
+        label="Target Position (unshaped)",
+        color="black",
+        linestyle="--",
+    )
+    plt.plot(
+        data_unshaped.get_time_stamps(),
+        data_unshaped.get_measured_positions(True),
+        label="Measured Position (unshaped)",
+        color="black",
+    )
+
+    plt.plot(
+        data_shaped.get_time_stamps(),
+        data_shaped.get_target_positions(True),
+        label="Target Position (shaped)",
+        color="red",
+        linestyle="--",
+    )
+    plt.plot(
+        data_shaped.get_time_stamps(),
+        data_shaped.get_measured_positions(True),
+        label="Measured Position (shaped)",
+        color="red",
+    )
+
+    plt.legend(loc="lower right")
+    plt.show()
+
+
 if __name__ == "__main__":
     # Open the connection and get the device + axis
     with Connection.open_serial_port(COM_PORT) as connection:
@@ -86,50 +140,6 @@ if __name__ == "__main__":
 
         shaped_axis.reset_deceleration()
 
-        # Setup the plot
-        plt.figure(1)
-        plt.title("Device Response")
-        plt.xlabel("Time [ms]")
-        plt.ylabel("Position [um]")
-        plt.grid(True)
-
-        # Setup the y axes so only the final approach is shown
-        ylimits_unshaped = data_unshaped.get_trajectory_settling_limits(True)
-        ylimits_shaped = data_shaped.get_trajectory_settling_limits(True)
-        plt.ylim(
-            min(ylimits_shaped[0], ylimits_unshaped[0]), max(ylimits_shaped[1], ylimits_unshaped[1])
-        )
-
-        # Plot both data sets
-        plt.plot(
-            data_unshaped.get_time_stamps(),
-            data_unshaped.get_target_positions(True),
-            label="Target Position (unshaped)",
-            color="black",
-            linestyle="--",
-        )
-        plt.plot(
-            data_unshaped.get_time_stamps(),
-            data_unshaped.get_measured_positions(True),
-            label="Measured Position (unshaped)",
-            color="black",
-        )
-
-        plt.plot(
-            data_shaped.get_time_stamps(),
-            data_shaped.get_target_positions(True),
-            label="Target Position (shaped)",
-            color="red",
-            linestyle="--",
-        )
-        plt.plot(
-            data_shaped.get_time_stamps(),
-            data_shaped.get_measured_positions(True),
-            label="Measured Position (shaped)",
-            color="red",
-        )
-
-        plt.legend(loc="lower right")
-        plt.show()
+        plot(data_unshaped, data_shaped)
 
         print("Complete.")
