@@ -96,6 +96,106 @@ def update_vibration_parameter(
     update_vibration_plot(plot_series, damped_vibration)
 
 
+def plot(data: StepResponseData) -> None:
+    """
+    Plot the step response.
+
+    :param data: The step response data
+    """
+    fig, ax = plt.subplots()
+    plt.subplots_adjust(bottom=0.25)
+
+    plt.title("Device Response")
+    plt.xlabel("Time [ms]")
+    plt.ylabel("Position [um]")
+    plt.grid(True)
+
+    # Plot all the data sets
+    ax.plot(
+        data.get_time_stamps(),
+        data.get_target_positions(True),
+        label="Target Position",
+        color="black",
+        linestyle="--",
+    )
+    ax.plot(
+        data.get_time_stamps(),
+        data.get_measured_positions(True),
+        label="Measured Position",
+        color="black",
+    )
+
+    # Leave this empty, we'll update values later
+    (theor_plot,) = ax.plot([0], [1], label="Theoretical Vibration", color="red")
+
+    # Create the theoretical vibration curve with arbitrary starting values
+    vibration_theoretical = DampedVibration(100.0, 0.1, 50, 0)
+
+    # Refresh the plot so it gets updated with a reasonable guess for the start time
+    update_vibration_parameter(
+        str(data.get_trajectory_end_time()),
+        "start_time",
+        theor_plot,
+        vibration_theoretical,
+    )
+
+    # Create the regions for the input text boxes on the plot and initialize them
+    BOX_HEIGHT = 0.05
+    BOX_WIDTH = 0.2
+
+    axbox1 = fig.add_axes([0.2, 0.01, BOX_WIDTH, BOX_HEIGHT])  # Left, Bottom, Width, Height
+    axbox2 = fig.add_axes(
+        [0.2, 0.02 + BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT]
+    )  # Left, Bottom, Width, Height
+    axbox3 = fig.add_axes([0.7, 0.01, BOX_WIDTH, BOX_HEIGHT])  # Left, Bottom, Width, Height
+    axbox4 = fig.add_axes(
+        [0.7, 0.02 + BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT]
+    )  # Left, Bottom, Width, Height
+
+    text_box_start = TextBox(
+        axbox1,
+        "Start Time [ms]",
+        textalignment="center",
+        initial=str(vibration_theoretical.start_time * 1000.0),
+    )
+    text_box_amplitude = TextBox(
+        axbox2,
+        "Amplitude [um]",
+        textalignment="center",
+        initial=str(vibration_theoretical.amplitude),
+    )
+    text_box_period = TextBox(
+        axbox3,
+        "Period [ms]",
+        textalignment="center",
+        initial=str(vibration_theoretical.period * 1000.0),
+    )
+    text_box_damping_ratio = TextBox(
+        axbox4,
+        "Damping Ratio [-]",
+        textalignment="center",
+        initial=str(vibration_theoretical.damping_ratio),
+    )
+
+    # Setup the textbox callbacks for when the values get updated so the curve gets redrawn.
+    text_box_start.on_submit(
+        lambda v: update_vibration_parameter(v, "start_time", theor_plot, vibration_theoretical)
+    )
+    text_box_amplitude.on_submit(
+        lambda v: update_vibration_parameter(v, "amplitude", theor_plot, vibration_theoretical)
+    )
+    text_box_period.on_submit(
+        lambda v: update_vibration_parameter(v, "period", theor_plot, vibration_theoretical)
+    )
+    text_box_damping_ratio.on_submit(
+        lambda v: update_vibration_parameter(v, "DAMPING_RATIO", theor_plot, vibration_theoretical)
+    )
+
+    print("Displaying plot...")
+    ax.legend(loc="lower right")
+    plt.show()
+
+
 if __name__ == "__main__":
     # Open the connection and get the device + axis
     with Connection.open_serial_port(COM_PORT) as connection:
@@ -132,100 +232,6 @@ if __name__ == "__main__":
 
         print("Capture Complete.")
 
-        # Setup the plot
-        fig, ax = plt.subplots()
-        plt.subplots_adjust(bottom=0.25)
-
-        plt.title("Device Response")
-        plt.xlabel("Time [ms]")
-        plt.ylabel("Position [um]")
-        plt.grid(True)
-
-        # Plot all the data sets
-        ax.plot(
-            data.get_time_stamps(),
-            data.get_target_positions(True),
-            label="Target Position",
-            color="black",
-            linestyle="--",
-        )
-        ax.plot(
-            data.get_time_stamps(),
-            data.get_measured_positions(True),
-            label="Measured Position",
-            color="black",
-        )
-
-        # Leave this empty, we'll update values later
-        (theor_plot,) = ax.plot([0], [1], label="Theoretical Vibration", color="red")
-
-        # Create the theoretical vibration curve with arbitrary starting values
-        vibration_theoretical = DampedVibration(100.0, 0.1, 50, 0)
-
-        # Refresh the plot so it gets updated with a reasonable guess for the start time
-        update_vibration_parameter(
-            str(data.get_trajectory_end_time()),
-            "start_time",
-            theor_plot,
-            vibration_theoretical,
-        )
-
-        # Create the regions for the input text boxes on the plot and initialize them
-        BOX_HEIGHT = 0.05
-        BOX_WIDTH = 0.2
-
-        axbox1 = fig.add_axes([0.2, 0.01, BOX_WIDTH, BOX_HEIGHT])  # Left, Bottom, Width, Height
-        axbox2 = fig.add_axes(
-            [0.2, 0.02 + BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT]
-        )  # Left, Bottom, Width, Height
-        axbox3 = fig.add_axes([0.7, 0.01, BOX_WIDTH, BOX_HEIGHT])  # Left, Bottom, Width, Height
-        axbox4 = fig.add_axes(
-            [0.7, 0.02 + BOX_HEIGHT, BOX_WIDTH, BOX_HEIGHT]
-        )  # Left, Bottom, Width, Height
-
-        text_box_start = TextBox(
-            axbox1,
-            "Start Time [ms]",
-            textalignment="center",
-            initial=str(vibration_theoretical.start_time * 1000.0),
-        )
-        text_box_amplitude = TextBox(
-            axbox2,
-            "Amplitude [um]",
-            textalignment="center",
-            initial=str(vibration_theoretical.amplitude),
-        )
-        text_box_period = TextBox(
-            axbox3,
-            "Period [ms]",
-            textalignment="center",
-            initial=str(vibration_theoretical.period * 1000.0),
-        )
-        text_box_damping_ratio = TextBox(
-            axbox4,
-            "Damping Ratio [-]",
-            textalignment="center",
-            initial=str(vibration_theoretical.damping_ratio),
-        )
-
-        # Setup the textbox callbacks for when the values get updated so the curve gets redrawn.
-        text_box_start.on_submit(
-            lambda v: update_vibration_parameter(v, "start_time", theor_plot, vibration_theoretical)
-        )
-        text_box_amplitude.on_submit(
-            lambda v: update_vibration_parameter(v, "amplitude", theor_plot, vibration_theoretical)
-        )
-        text_box_period.on_submit(
-            lambda v: update_vibration_parameter(v, "period", theor_plot, vibration_theoretical)
-        )
-        text_box_damping_ratio.on_submit(
-            lambda v: update_vibration_parameter(
-                v, "DAMPING_RATIO", theor_plot, vibration_theoretical
-            )
-        )
-
-        print("Displaying plot...")
-        ax.legend(loc="lower right")
-        plt.show()
-
+        # Show the plot
+        plot(data)
         print("Complete.")
