@@ -12,7 +12,11 @@ from zaber_motion.units import Units
 
 
 def get_image(cam: Camera) -> Any:
-    """Capture an image."""
+    """
+    Capture an image and return it.
+
+    :param cam: The camera to use
+    """
     cam.start()
     image = cam.get_array()
     cam.stop()
@@ -31,7 +35,13 @@ def figure_file_name(position: float) -> str:
 
 
 def calculate_focus_score(image: Any, blur: int, position: float) -> float:
-    """Calculate a score representing how well the image is focussed."""
+    """
+    Calculate a score representing how well the image is focussed.
+
+    :param image: The image to evaluate.
+    :param blur: The blur to apply.
+    :param position: The position in mm the image was captured at.
+    """
     image_filtered = cv2.medianBlur(image, blur)
     laplacian = cv2.Laplacian(image_filtered, cv2.CV_64F)
     focus_score: float = laplacian.var()
@@ -68,7 +78,15 @@ def calculate_focus_score(image: Any, blur: int, position: float) -> float:
 def find_best_focus(
     start_mm: float, end_mm: float, step_size_mm: float, microscope_serial_port: str, blur: int
 ) -> None:
-    """Find best focus by changing the focal distance and taking images with the camera."""
+    """
+    Find best focus by changing the focal distance and taking images with the camera.
+
+    :param start_mm: The position, in mm, to start at.
+    :param end_mm: The position, in mm, to end at.
+    :param step_size_mm: The distance, in mm, to move between taking images with the camera.
+    :param microscope_serial_port: The name of the serial port connected to the microscope.
+    :param blur: The blur to apply to images during processing.
+    """
     with Connection.open_serial_port(microscope_serial_port) as connection, Camera() as cam:
         # Initialize control of the the vertical axis of the microscope
         z_axis_device = connection.get_device(3)
