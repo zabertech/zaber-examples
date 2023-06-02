@@ -140,6 +140,6 @@ if __name__ == "__main__":
 
         shaped_axis.reset_deceleration()
 
-        plot(data_unshaped, data_shaped)
+    plot(data_unshaped, data_shaped)
 
-        print("Complete.")
+    print("Complete.")
