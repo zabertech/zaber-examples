@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ZML</title>
+    <meta name="description" content="Control your device">
+    <style>
+      html {
+        font-size: 24px;
+        height: 100%;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        margin: 0;
+      }
+
+      button {
+        background-color: #CC2455;
+        border-radius: 0.5rem;
+        border: none;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        text-decoration: none;
+        font-size: 1.5rem;
+        font-weight: bold;
+        flex: 1;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .controls {
+        margin: 1rem;
+        display: flex;
+        gap: 1rem;
+      }
+
+      .positions {
+        margin: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    </style>
+    <script>
+      function action(actionType, data = null) {
+        $.ajax({
+          type: 'POST',
+          url: `/${actionType}`,
+          data,
+          dataType: 'json',
+        });
+      }
+
+      function getPosition() {
+        $.ajax({
+          type: 'GET',
+          url: `/position`,
+          success: ({ position }) => {
+            for (let i = 0; i < position.length; i++) {
+              document.querySelector(`.position-${i + 1}`).textContent = position[i].toFixed(2)
+            }
+          },
+        });
+      }
+
+      setInterval(getPosition, 250);
+
+      (function disableContextMenu() {
+        document.addEventListener("contextmenu", function(e) {
+          if (e.target.nodeName === "BUTTON") {
+              e.preventDefault();
+          }
+        }, false);
+      })();
+    </script>
+    <script src="/static/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g="></script>
+  </head>
+  <body>
+    <div class="positions">
+      <div>Axis 1: <span class="position-1">N/A</span> mm</div>
+      <div>Axis 2: <span class="position-2">N/A</span> mm</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="controls">
+      <button onpointerdown="action('home')">&#8962;</button>
+      <button onpointerdown="action('left')" onpointerup="action('stop')">&larr;</button>
+      <button onpointerdown="action('right')" onpointerup="action('stop')">&rarr;</button>
+      <button onpointerdown="action('down')" onpointerup="action('stop')">&uarr;</button>
+      <button onpointerdown="action('up')" onpointerup="action('stop')">&darr;</button>
+    </div>
+  </body>
+</html>
