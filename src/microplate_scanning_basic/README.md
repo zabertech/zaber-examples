@@ -35,7 +35,7 @@ Use the string `"96"`, `"384"` or `"1536"`.
 ## Running the example script
 To run the script:
 
-    cd src/microplate-scanning-basic/python
+    cd src/microplate_scanning_basic
     pipenv install
     pipenv run python scanning.py
 

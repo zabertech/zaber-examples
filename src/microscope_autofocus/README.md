@@ -46,8 +46,7 @@ There are also a number of optional parameters:
 
 First, it will initialize the motor and camera:
 
-https://github.com/zabertech/zaber-examples/blob/d1f917a8a8c48ac673ed2c751363eee70dfe482a/src/microscope_autofocus/python/autofocus.py#L67-L71
-
+https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_autofocus/autofocus.py#L90-L94
 In the example code, I'll be using the following pyspin and ZML functions:
 
 - `cam.get_array`: returns an image from the camera in a format that OpenCV can use
@@ -57,7 +56,7 @@ In the example code, I'll be using the following pyspin and ZML functions:
 
 This is the primary control loop of the program:
 
-https://github.com/zabertech/zaber-examples/blob/d1f917a8a8c48ac673ed2c751363eee70dfe482a/src/microscope_autofocus/python/autofocus.py#L78-L89
+https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_autofocus/autofocus.py#L101-L112
 
 It begins by setting the best focus score to 0, and then stepping the axis forward `step_size_mm` at a time. At each step it takes an image, calculates its focus score (discussed in the next section) and then, if this is better than the previous best, saves this focus score and position. After this loop is complete, the best focus score found will be stored in `best_focus_score`, and the position it was found at in `best_focus_position`.
 
@@ -65,7 +64,7 @@ It begins by setting the best focus score to 0, and then stepping the axis forwa
 
 One of the simpler ways to quantify the focus of an image is to take the variance of the Laplacian. The code for doing so with OpenCV is shown here:
 
-https://github.com/zabertech/zaber-examples/blob/d1f917a8a8c48ac673ed2c751363eee70dfe482a/src/microscope_autofocus/python/autofocus.py#L28-L32
+https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_autofocus/autofocus.py#L37-L47
 
 Going line by line, this function:
 
@@ -94,7 +93,7 @@ All of these are standard functions in OpenCV, allowing this focus score functio
 
 This method is inspired by the article [Blur detection with OpenCV](https://pyimagesearch.com/2015/09/07/blur-detection-with-opencv/).
 
-See the complete Python example script [here](python/autofocus.py).
+See the complete Python example script [here](autofocus.py).
 
 ## Troubleshooting Tips
 

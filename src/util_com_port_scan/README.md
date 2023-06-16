@@ -16,13 +16,13 @@ To setup `venv`, run `setup_venv.bat` in the `python` folder.
 
 To run the script:
 
-	cd src\util_com_port_scan\python
+	cd src\util_com_port_scan
 	.venv\Scripts\python com_port_scan.py
 
 ### Linux / MacOS
 To setup `venv`:
 
-    cd src/util_com_port_scan/python
+    cd src/util_com_port_scan
     python3 -m venv .venv
     .venv/bin/pip install -r requirements.txt
 
