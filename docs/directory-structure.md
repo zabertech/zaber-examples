@@ -129,10 +129,12 @@ both people and machine.
 ### img/
 Subdirectory for where all the images and figures refereneced in `README.md` live.
 
-### Language Subdirectories
-Each example subdirectory could contain examples in multiple languages.
-Each language lives in a separate subdirectory.  If there is only one language, or if the example
-uses multiple languages, there is no need to create language subdirectories.
+### Language Subdirectories (Optional)
+Each example subdirectory may contain examples in multiple languages.
+
+Some examples are translated into several programming languages.
+If this is the case, the code for each translation should be in a subdirectory of the main project
+named for the implementation language.
 
 For consistency, please use the following language subdirectories names.
 If you want to contribute to a language not listed here please add it to the list:
