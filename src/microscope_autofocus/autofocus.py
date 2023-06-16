@@ -1,32 +1,47 @@
 """Microscope Autofocus with Python and OpenCV."""
 
-from typing import Any
 import argparse
 import math
+from typing import Any
+
+import cv2  # type: ignore
+from matplotlib import pyplot as plt
+from simple_pyspin import Camera  # type: ignore
 from zaber_motion.ascii import Connection
 from zaber_motion.units import Units
-import cv2  # type: ignore
-from simple_pyspin import Camera  # type: ignore
-from matplotlib import pyplot as plt
 
 
 def get_image(cam: Camera) -> Any:
-    """Capture an image."""
+    """
+    Capture an image and return it.
+
+    :param cam: The camera to use
+    """
     cam.start()
     image = cam.get_array()
     cam.stop()
     return image
 
 
-def format_name(position: float) -> str:
-    """Return a string from position in mm and fraction that can be used in a filename."""
+def figure_file_name(position: float) -> str:
+    """
+    Return a filename for a plot of data at a specific position.
+
+    :param position: The position in mm.
+    """
     position_mm = int(position // 1)
     position_frac = round((position - position_mm) * 1000)
-    return f"{position_mm}_{position_frac}"
+    return f"at_{position_mm}_{position_frac}.png"
 
 
 def calculate_focus_score(image: Any, blur: int, position: float) -> float:
-    """Calculate a score representing how well the image is focussed."""
+    """
+    Calculate a score representing how well the image is focussed.
+
+    :param image: The image to evaluate.
+    :param blur: The blur to apply.
+    :param position: The position in mm the image was captured at.
+    """
     image_filtered = cv2.medianBlur(image, blur)
     laplacian = cv2.Laplacian(image_filtered, cv2.CV_64F)
     focus_score: float = laplacian.var()
@@ -54,7 +69,7 @@ def calculate_focus_score(image: Any, blur: int, position: float) -> float:
         ax3.set_xticks([])
         ax3.set_yticks([])
 
-        plt.savefig(f"./at_{format_name(position)}.png")
+        plt.savefig(figure_file_name(position))
         plt.close()
 
     return focus_score
@@ -63,7 +78,15 @@ def calculate_focus_score(image: Any, blur: int, position: float) -> float:
 def find_best_focus(
     start_mm: float, end_mm: float, step_size_mm: float, microscope_serial_port: str, blur: int
 ) -> None:
-    """Find best focus by changing the focal distance and taking images with the camera."""
+    """
+    Find best focus by changing the focal distance and taking images with the camera.
+
+    :param start_mm: The position, in mm, to start at.
+    :param end_mm: The position, in mm, to end at.
+    :param step_size_mm: The distance, in mm, to move between taking images with the camera.
+    :param microscope_serial_port: The name of the serial port connected to the microscope.
+    :param blur: The blur to apply to images during processing.
+    """
     with Connection.open_serial_port(microscope_serial_port) as connection, Camera() as cam:
         # Initialize control of the the vertical axis of the microscope
         z_axis_device = connection.get_device(3)
@@ -106,37 +129,37 @@ SHOW_STEP_IMAGES = False
 focus_scores: list[float] = []
 
 if __name__ == "__main__":
-    argparser = argparse.ArgumentParser(description="Find the position with the best focus.")
-    argparser.add_argument(
+    parser = argparse.ArgumentParser(description="Find the position with the best focus.")
+    parser.add_argument(
         "start",
         action="store",
         type=float,
         help="The position to begin the search at, in mm",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "end",
         action="store",
         type=float,
         help="The position to end the search at, in mm",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "step", action="store", type=float, help="The granularity of the search, in mm"
     )
-    argparser.add_argument(
+    parser.add_argument(
         "serial_port",
         action="store",
         type=str,
         help="The serial port to use to control the motor",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--verbose", action="store_true", help="Log debug information to standard out"
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--show-images",
         action="store_true",
         help="Show captured images for debugging. Should be used for at most ~10 steps.",
     )
-    argparser.add_argument(
+    parser.add_argument(
         "--blur",
         "-b",
         action="store",
@@ -145,14 +168,14 @@ if __name__ == "__main__":
         default=9,
         help="Applies some blur to the image to remove random noise",
     )
-    args = argparser.parse_args()
+    args = parser.parse_args()
 
     SHOW_STEP_INFO = args.verbose
     SHOW_STEP_IMAGES = args.show_images
 
     if args.blur % 2 != 1:
-        print(
+        parser.error(
             f"Bad value for blur, {args.blur} is not an odd number (required for median blurring)"
         )
-    else:
-        find_best_focus(args.start, args.end, args.step, args.serial_port, args.blur)
+
+    find_best_focus(args.start, args.end, args.step, args.serial_port, args.blur)
