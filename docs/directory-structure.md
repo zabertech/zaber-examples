@@ -131,8 +131,8 @@ Subdirectory for where all the images and figures refereneced in `README.md` liv
 
 ### Language Subdirectories
 Each example subdirectory could contain examples in multiple languages.
-Each language lives in a separate subdirectory.  Even if there is only one language, it should
-still be in its own subdirectory.
+Each language lives in a separate subdirectory.  If there is only one language, or if the example
+uses multiple languages, there is no need to create language subdirectories.
 
 For consistency, please use the following language subdirectories names.
 If you want to contribute to a language not listed here please add it to the list:

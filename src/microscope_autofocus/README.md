@@ -94,7 +94,7 @@ All of these are standard functions in OpenCV, allowing this focus score functio
 
 This method is inspired by the article [Blur detection with OpenCV](https://pyimagesearch.com/2015/09/07/blur-detection-with-opencv/).
 
-See the complete Python example script [here](python/autofocus.py).
+See the complete Python example script [here](autofocus.py).
 
 ## Troubleshooting Tips
 

@@ -24,13 +24,13 @@ To setup `venv`, run `setup_venv.bat` in the `python` folder.
 
 To run the script:
 
-	cd src\gui_pyqt6\python
+	cd src\gui_pyqt6
 	.venv\Scripts\python stage_pos_gui.py
 
 ### Linux / MacOS
 To setup `venv`:
 
-    cd src/gui_pyqt6/python
+    cd src/gui_pyqt6
     python3 -m venv .venv
     .venv/bin/pip install -r requirements.txt
 

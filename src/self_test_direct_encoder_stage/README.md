@@ -18,24 +18,22 @@ Edit the following constants in the script to fit your setup before running the 
 For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
 - `AXIS`: the axis number to test.
-For more information on how to identify the serial port,
-see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
 
 ## Running the Scripts
 
 ### Windows
-To setup `venv`, run `setup_venv.bat` in the `python` folder.
+To setup `venv`, run `setup_venv.bat`.
 
 To run the scripts:
 
-    cd src\self_test_direct_encoder_stage\python
+    cd src\self_test_direct_encoder_stage
     .venv\Scripts\python accuracy.py
     .venv\Scripts\python settling_time.py
 
 ### Linux / MacOS
 To setup `venv`:
 
-    cd src/self_test_direct_encoder_stage/python
+    cd src/self_test_direct_encoder_stage
     python3 -m venv .venv
     .venv/bin/pip install -r requirements.txt
 

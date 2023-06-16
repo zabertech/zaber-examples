@@ -11,7 +11,7 @@ The example code is written for a [Zaber ADR](https://www.zaber.com/products/sca
 
 This example uses a Teledyne FLIR BFS-200S6C-M camera. The Spinview application is used to setup the camera settings and perform image acquisition. This example can be adapted to any camera that provides IO for sending and recieving triggers.
 
-The script dependancies are defined in the ['Pipfile'](./python/Pipfile):
+The script dependancies are defined in the ['Pipfile'](./Pipfile):
 - [Zaber Motion Library](https://software.zaber.com/motion-library/docs)
 - [Plotly](https://plotly.com/python/)
 - [Numpy](https://numpy.org/)

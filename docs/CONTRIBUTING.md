@@ -37,7 +37,8 @@ the central concept.
     - i.e. `/src/microplate_scanning_basic`
     - See [Example Subdirectory Naming Convention](example-subdirectory-naming.md)
 5. Create a `README.md` file in the example directory following this [README guidelines](readme-guidelines.md)
-6. Make a subdirectory under that with the language you want to implement
+6. If the example is intended to be implementation in multiple languages,
+make a subdirectory with the language you want to implement:
     - i.e. `/src/microplate_scanning_basic/python`
     - See [list of valid language subdirectory names](directory-structure.md#language-subdirectories).
 7. Implement the example in the language(s) of your choice.

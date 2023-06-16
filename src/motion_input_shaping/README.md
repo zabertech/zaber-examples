@@ -10,7 +10,7 @@ This code is designed to run on devices with [Zaber](https://www.zaber.com/) con
 
 Notes:
 - This code requires Zaber devices with firmware version 7.25 or higher.
-- [measure_vibration_test.py](python/measure_vibration_test.py) requires a stage with a direct reading encoder to measure the resultant system vibrations.
+- [measure_vibration_test.py](measure_vibration_test.py) requires a stage with a direct reading encoder to measure the resultant system vibrations.
 
 ## Dependencies
 
@@ -20,7 +20,7 @@ The script uses `pipenv` to manage virtual environment and dependencies:
 
     python3 -m pip install -U pipenv
 
-The dependencies are listed in the [Pipfile](python/Pipfile).
+The dependencies are listed in the [Pipfile](Pipfile).
 
 Alternatively, Python can be installed manually. This code is designed to run with Python version 3.10 or higher.
 
@@ -44,20 +44,20 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 
 To run the example code:
 
-    cd src/motion_input_shaping/python
+    cd src/motion_input_shaping
     pipenv install
     pipenv run python measure_vibration_test.py
     pipenv run python shaping_comparison_test.py
 
 A brief overview of the primary files:
-- [shaped_axis.py](python/shaped_axis.py) - Contains the ShapedAxis class, which allows the ZeroVibrationShaper class to be easily used with Zaber devices. It is recommended for most users to import this class into their code.
-- [shaping_comparison_test.py](python/shaping_comparison_test.py) - Contains code for testing the ShapedAxis class. The script performs moves with and without input shaping and plots the resulting performance comparison.
-- [measure_vibration_test.py](python/measure_vibration_test.py) - Contains code for determining a system's vibration parameters. A movement is performed, plotted, and then overlaid with a theoretical damped vibration curve.
+- [shaped_axis.py](shaped_axis.py) - Contains the ShapedAxis class, which allows the ZeroVibrationShaper class to be easily used with Zaber devices. It is recommended for most users to import this class into their code.
+- [shaping_comparison_test.py](shaping_comparison_test.py) - Contains code for testing the ShapedAxis class. The script performs moves with and without input shaping and plots the resulting performance comparison.
+- [measure_vibration_test.py](measure_vibration_test.py) - Contains code for determining a system's vibration parameters. A movement is performed, plotted, and then overlaid with a theoretical damped vibration curve.
 
 Helper files:
-- [zero_vibration_shaper.py](python/zero_vibration_shaper.py) - Contains the ZeroVibrationShaper class, which is a basic mathematical implementation of a zero vibration input shaping algorithm. Most users won't need this unless input shaping is being implemented on a non-Zaber controller.
-- [damped_vibration.py](python/damped_vibration.py) - Contains the DampedVibration class, which is a basic mathematical implementation of a theoretical damped vibration response curve. Most users won't need this.
-- [step_response_data.py](python/step_response_data.py) - Contains the StepResponseData class, which is a helper class used for perfoming a move with a Zaber axis while capturing position data via the onboard scope. It is used in the other testing scripts. Most users won't need this.
+- [zero_vibration_shaper.py](zero_vibration_shaper.py) - Contains the ZeroVibrationShaper class, which is a basic mathematical implementation of a zero vibration input shaping algorithm. Most users won't need this unless input shaping is being implemented on a non-Zaber controller.
+- [damped_vibration.py](damped_vibration.py) - Contains the DampedVibration class, which is a basic mathematical implementation of a theoretical damped vibration response curve. Most users won't need this.
+- [step_response_data.py](step_response_data.py) - Contains the StepResponseData class, which is a helper class used for perfoming a move with a Zaber axis while capturing position data via the onboard scope. It is used in the other testing scripts. Most users won't need this.
 
 ### The ShapedAxis Class
 
