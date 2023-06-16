@@ -32,19 +32,19 @@ For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
 
 Enter your scan protocol in `config.py`:
-https://github.com/zabertech/zaber-examples/blob/d1f917a8a8c48ac673ed2c751363eee70dfe482a/src/microscope_high_throughput_scanning/python/config.py#L37-L44
+https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_high_throughput_scanning/config.py#L37-L44
 These settings define the dimension and position of your sample as well as the magnification. There are three modes:
 - `TDI`: Triggering is done using onboard triggers and the TDI calculator as described in our [TDI imaging article](https://www.zaber.com/articles/tdi-imaging). This generates a snaking motion profile which will scan the sample based on the exposure required limited to the maximum stage speed.
 - `area`: For conventional stop-and-shoot imaging as fast as possible. Generates a stream which will move the stage to each position and trigger the camera. Once the exposure is done, a focus adjustment is trigged
 - `continuous`: For use with area cameras operating with short exposures. This method will move the stage continously, scanning the sample at the Nyquist speed and triggering the camera every time the sample has moved by the height of the sensor. Note: Consider your maximum camera FPS when setting up this mode.
 
 Enter the details of your camera in `CAMERAS` as shown below:
-https://github.com/zabertech/zaber-examples/blob/d1f917a8a8c48ac673ed2c751363eee70dfe482a/src/microscope_high_throughput_scanning/python/config.py#L69-L73
+https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_high_throughput_scanning/config.py#L69-L73
 
 ## Usage
 1. Using the joystick, record the stage origin such that the edge of the camera FOV meets the edge of the scan area (blue square). Enter this as `origin`
 2. Select the COM port to use to connect to your Zaber devices and choose your scan protocol and camera.
-https://github.com/zabertech/zaber-examples/blob/d1f917a8a8c48ac673ed2c751363eee70dfe482a/src/microscope_high_throughput_scanning/python/microscope_hts.py#L18-L21
+https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_high_throughput_scanning/microscope_hts.py#L18-L21
 3. Call `generate_snake(PROTOCOL, scanning_speed)` to determine the fastest scan direction for your sample and store the motion instructions onto the stage
 4. Call `execute_scan()` to move to the origin and start scanning your sample! On subsequent runs you can repeatedly call this without re-doing the setup steps above.
 
