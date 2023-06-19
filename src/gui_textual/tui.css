@@ -1,0 +1,36 @@
+ConnectionWidget {
+    layout: horizontal;
+    border: round grey;
+    height: 5;
+}
+
+ConnectionWidget Label {
+    padding: 1;
+}
+
+ConnectionWidget Input {
+    width: 40;
+}
+
+ConnectionWidget Input:focus {
+    border: solid orange;
+}
+
+BasicMovement {
+    layout: horizontal;
+    border: round grey;
+    height: 1fr;
+}
+
+BasicMovement Label {
+    padding: 1;
+}
+
+BasicMovement Button {
+    margin: 0 1;
+}
+
+TextLog {
+    padding: 1;
+    height: 1fr;
+}
