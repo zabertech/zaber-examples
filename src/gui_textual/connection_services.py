@@ -25,7 +25,7 @@ class ConnectionServices:
         self._device_list = self._connection.detect_devices()
         self._device = self._device_list[0]
         self._axis = self._device.get_axis(1)
-        return f"Connected to {str(self._connection)}"
+        return f"Connected to {self._connection}"
 
     @property
     def is_connected(self) -> bool:
