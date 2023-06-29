@@ -5,6 +5,8 @@
 This example demonstrates using the Python package [Textual](https://textual.textualize.io/)
 to create a simple Text Based Interface to control Zaber devices.
 
+![screenshot.png](img/screenshot.png)
+
 ## Hardware Requirements
 Any Zaber linear motion device connected to a serial port.
 
