@@ -5,6 +5,8 @@
 This example script demonstrates how to switch between different LED channels and change the illuminator intensity,
 using the X-LCA4 lighting controller and MLR3 illuminaor for multi-channel imaging of flourescent targets using multiple fluorophores.
 
+![X-LCA4.jpg](img/X-LCA4.jpg)
+
 ## Hardware
 This script is intended for use with the following hardware:
 - [X-LCA4](https://www.zaber.com/products/microscopes/X-LCA4) microscope lighting controller

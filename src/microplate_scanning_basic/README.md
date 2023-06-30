@@ -5,6 +5,8 @@
 This example script demonstrates how to set up a Zaber motorized microscope stage
 to scan ANSI standard microplates with 96, 384, and 1536 wells.
 
+![wellplate.png](img/wellplate.png)
+
 ## Hardware
 This script is designed primarily for the
 [ADR](https://www.zaber.com/products/scanning-microscope-stages/X-ADR-AE) (linear motor) and

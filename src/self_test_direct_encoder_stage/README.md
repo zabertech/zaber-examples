@@ -4,6 +4,8 @@
 
 These are scripts that can be run to allow a Zaber stage with a Direct Encoder (DE) to analyze its own performance.
 
+![accuracy_plot.png](img/accuracy_plot.png)
+
 ## Hardware Requirements
 A linear or rotary DE stage.
 
