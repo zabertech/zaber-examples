@@ -4,6 +4,8 @@
 
 This basic GUI allows the user to control and monitor stage position
 
+![screenshot.png](img/screenshot.png)
+
 ## Dependencies
 - Python 3.10 or newer
 - The script uses `venv` to manage virtual environment and dependencies.
