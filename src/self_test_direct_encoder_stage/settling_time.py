@@ -21,14 +21,14 @@ SERIAL_PORT = "COMx"
 TestSettings = namedtuple(
     "TestSettings",
     "settle_tolerance_values_ustep start_positions_mm step_sizes_mm "
-    "repetitions stability_tolerance remove_backlash settings_to_test",
+    "repetitions stability_tolerance_counts remove_backlash settings_to_test",
 )
 SETTINGS = TestSettings(
     settle_tolerance_values_ustep=[50, 100, 200, 500],
     start_positions_mm=[0],
     step_sizes_mm=[0.0001, 0.01, 1],
     repetitions=1,
-    stability_tolerance=1,
+    stability_tolerance_counts=10,
     remove_backlash=False,
     # These will only be used for direct drive stages
     settings_to_test=[
@@ -192,10 +192,10 @@ def wait_for_stability(stage: Axis) -> None:
     """Verify that the stage has stable position before performing a move."""
     stable_check = [
         0,
-        SETTINGS.stability_tolerance * 2,
+        SETTINGS.stability_tolerance_counts * 2,
     ]  # Init value just to make the while loop run the first time
     unstable_count = 0
-    while max(stable_check) - min(stable_check) > SETTINGS.stability_tolerance:
+    while max(stable_check) - min(stable_check) > SETTINGS.stability_tolerance_counts:
         unstable_count += 1
         stable_check = []
         for _ in range(50):
