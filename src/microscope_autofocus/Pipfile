@@ -17,8 +17,8 @@ matplotlib = "*"
 black = "*"
 colorama = {version = "*", markers = "platform_system == 'Windows'"}
 pylint = "*"
+pydocstyle = "*"
 mypy = "*"
-pycodestyle = "*"
 
 [requires]
 python_version = "3.10"
