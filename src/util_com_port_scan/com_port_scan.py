@@ -12,6 +12,8 @@ from zaber_motion import NoDeviceFoundException, Tools, SerialPortBusyException
 class Scanner:
     """Class to scan available com ports and Zaber devices."""
 
+    # pylint: disable=too-few-public-methods
+
     def __init__(self) -> None:
         """Initialize."""
         self.coms: dict[str, str] = {}
@@ -26,6 +28,7 @@ class Scanner:
 
     def _scan_device_list(self, com: str) -> None:
         """Scan each available com port for devices and append list."""
+        # pylint: disable=broad-exception-caught
         try:
             with Connection.open_serial_port(com) as connection:
                 self.coms[com] = ", ".join(device.name for device in connection.detect_devices())

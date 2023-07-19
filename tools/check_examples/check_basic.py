@@ -8,7 +8,7 @@ def check_basic(directory: Path, indent: int) -> int:
     """Check basic requirements of any example repository."""
     return_code = 0
 
-    essential_files = ["README.md"]
+    essential_files = ["README.md", "article.yml"]
 
     for file in essential_files:
         if not file_exists(directory, file):

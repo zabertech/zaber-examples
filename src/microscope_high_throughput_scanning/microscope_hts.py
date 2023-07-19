@@ -24,7 +24,7 @@ MM = Units.LENGTH_MILLIMETRES
 UM = Units.LENGTH_MICROMETRES
 
 
-def main() -> None:
+def main() -> None:  # pylint: disable=too-many-statements
     """Connect to a Zaber microscope and running a high-throughput scanning protocol."""
     with Connection.open_serial_port(SERIAL_PORT) as connection:
         device_list = connection.detect_devices()
@@ -93,6 +93,7 @@ def main() -> None:
             -Set up a focus map stream for the LDA
             -Can be adapted to non-buffered motion by replacing streams with move_relative()
             """
+            # pylint: disable=too-many-locals
             # Prepare stage stream buffers
             stream = stage.get_stream(1)
             buf = stage.get_stream_buffer(1)

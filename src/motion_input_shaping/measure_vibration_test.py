@@ -13,8 +13,8 @@ capture position data.
 
 import time
 import sys
-from matplotlib import pyplot as plt
-from matplotlib.pyplot import Axes
+from matplotlib import pyplot as plt  # type: ignore
+from matplotlib.pyplot import Axes  # type: ignore
 from matplotlib.widgets import TextBox  # type: ignore
 from zaber_motion import Units
 from zaber_motion.ascii import Connection

@@ -4,8 +4,6 @@ on: [workflow_dispatch, pull_request]
 jobs:
   check-example-directories:
     runs-on: ubuntu-latest
-    outputs:
-      folders: ${{ steps.list-folders.outputs.folders }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python 3.10

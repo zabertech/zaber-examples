@@ -3,9 +3,9 @@
 # Comments are preceded by "#"
 
 # Example directories to ignore
-src/microscope_zstack
-src/sandbox
+src/_template
 
 # Files to ignore
-src/gui_pyqt6/python/ui.py
-src/gui_pyqt6/python/stage_pos_gui.py
+src/gui_pyqt6/ui.py
+src/gui_pyqt6/stage_pos_gui.py
+src/gui_raspberrypi_touch/tasks.py

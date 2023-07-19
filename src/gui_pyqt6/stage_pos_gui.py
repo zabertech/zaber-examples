@@ -5,9 +5,9 @@ from pathlib import Path
 import subprocess
 import time
 
-from PyQt6.QtGui import *  # Note: imported PyQt objects start with "Q" (avoids namespace conflicts)
-from PyQt6.QtCore import *
-from PyQt6.QtWidgets import *
+from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import QThread, QEvent, Qt, pyqtSignal
+from PyQt6.QtWidgets import QApplication, QMainWindow, QSplashScreen
 
 # Pre-launch tasks
 if __name__ == "__main__":

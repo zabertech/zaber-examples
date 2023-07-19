@@ -6,7 +6,7 @@ Created 2022, Contributors: Nathan P
 from collections import namedtuple
 import time
 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # type: ignore
 from zaber_motion import Units
 from zaber_motion.ascii import AxisType, Axis, Connection
 
@@ -91,6 +91,7 @@ def run_test(
     settings: AccTestSettings | RepTestSettings,
 ) -> list[dict[str, float]]:
     """Run through the location 'test_points_mm_deg' and logs the position."""
+    # pylint: disable=too-many-locals
     point_counter = 1
     data_list = []
     for rep in range(settings.repetitions):
@@ -196,6 +197,7 @@ def stable_encoder_measurement(
 
     if variation > settings.allowable_encoder_variation:
         if count == 100:
+            # pylint: disable=broad-exception-raised
             raise Exception(f"Did not get stable encoder measurement in {count} attempts")
         return stable_encoder_measurement(stage, settings, count + 1)
 
