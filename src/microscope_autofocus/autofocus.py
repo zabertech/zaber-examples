@@ -4,8 +4,8 @@ import argparse
 import math
 from typing import Any
 
-import cv2  # type: ignore
-from matplotlib import pyplot as plt
+import cv2
+from matplotlib import pyplot as plt  # type: ignore
 from simple_pyspin import Camera  # type: ignore
 from zaber_motion.ascii import Connection
 from zaber_motion.units import Units
@@ -43,7 +43,7 @@ def calculate_focus_score(image: Any, blur: int, position: float) -> float:
     :param position: The position in mm the image was captured at.
     """
     image_filtered = cv2.medianBlur(image, blur)
-    laplacian = cv2.Laplacian(image_filtered, cv2.CV_64F)
+    laplacian = cv2.Laplacian(image_filtered, cv2.CV_64F)  # type: ignore
     focus_score: float = laplacian.var()
 
     if SHOW_STEP_IMAGES:
@@ -87,6 +87,7 @@ def find_best_focus(
     :param microscope_serial_port: The name of the serial port connected to the microscope.
     :param blur: The blur to apply to images during processing.
     """
+    # pylint: disable=too-many-locals
     with Connection.open_serial_port(microscope_serial_port) as connection, Camera() as cam:
         # Initialize control of the the vertical axis of the microscope
         z_axis_device = connection.get_device(3)

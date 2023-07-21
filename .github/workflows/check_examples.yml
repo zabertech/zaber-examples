@@ -1,0 +1,28 @@
+name: Check Examples
+run-name: ${{ github.actor }} running GitHub Actions on check-examples.yml
+on: [workflow_dispatch, pull_request]
+jobs:
+  check-example-directories:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+      - id: inspect-examples
+        name: Inspect Examples
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --user --upgrade pipenv
+          cd tools/check_examples
+          pipenv install -d
+          pipenv run python check.py all

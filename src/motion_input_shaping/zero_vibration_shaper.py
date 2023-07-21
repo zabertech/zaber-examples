@@ -136,9 +136,9 @@ class ZeroVibrationShaper:
 
     def calculate_n(self, distance: float, acceleration: float, max_speed_limit: float = -1) -> int:
         """
-        Calculate the value of n needed to satisfy the input trajectory parameters for the target
-        frequency and damping ratio.
+        Calculate the value of n needed to satisfy the input trajectory parameters.
 
+        Based on target frequency and damping ratio.
         All distance units must be the same.
 
         :param distance: The trajectory distance.
@@ -163,9 +163,9 @@ class ZeroVibrationShaper:
         self, distance: float, acceleration: float, max_speed_limit: float = -1
     ) -> list[float]:
         """
-        Calculate trajectory max speed and deceleration needed to perform input shaping for the
-        target resonant frequency and damping ratio.
+        Calculate trajectory max speed and deceleration needed for input shaping.
 
+        Based on target resonant frequency and damping ratio.
         All distance units must be the same.
 
         :param distance: The trajectory distance.

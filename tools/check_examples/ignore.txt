@@ -1,0 +1,11 @@
+# Specify which file or directory to ignore relative to git root directory.
+# One file or directory per line
+# Comments are preceded by "#"
+
+# Example directories to ignore
+src/_template
+
+# Files to ignore
+src/gui_pyqt6/ui.py
+src/gui_pyqt6/stage_pos_gui.py
+src/gui_raspberrypi_touch/tasks.py

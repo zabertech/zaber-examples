@@ -165,8 +165,7 @@ class StepResponseData:
         self, normalize: bool = False, buffer: float = 0.05
     ) -> list[float]:
         """
-        Calculate Y axis limits for a plot such that the plot is centered on
-        the axes' final position after the trajectory finishes execution.
+        Calculate Y axis limits to center the plot on the axes' final position after moving.
 
         :param normalize: If true, the data will be normalized so the final position is always zero.
         :param buffer: A fractional buffer value by which to expand the limits.
@@ -183,7 +182,7 @@ class StepResponseData:
 
     def get_trajectory_end_time(self) -> float:
         """
-        Calculate the time when the trajectory in the dataset reaches it's final position.
+        Calculate the time when the trajectory in the dataset reaches its final position.
 
         :return: The trajectory end time in the input time units
         """

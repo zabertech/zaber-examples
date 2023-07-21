@@ -23,8 +23,10 @@ class ShapedAxis(Axis):
 
     def __init__(self, zaber_axis: Axis, resonant_frequency: float, damping_ratio: float) -> None:
         """
-        Initialize the class for the specified axis and sets a max speed limit to the current
-        maxspeed setting so the input shaping algorithm won't exceed that value.
+        Initialize the class for the specified axis.
+
+        Set a max speed limit to the current maxspeed setting
+        so the input shaping algorithm won't exceed that value.
 
         :param zaber_axis: The Zaber Motion Axis object
         :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
@@ -83,9 +85,7 @@ class ShapedAxis(Axis):
         self._max_speed_limit = super().settings.convert_to_native_units("maxspeed", value, unit)
 
     def reset_max_speed_limit(self) -> None:
-        """
-        Reset the velocity limit for shaped moves to the device's existing maxspeed setting.
-        """
+        """Reset the velocity limit for shaped moves to the device's existing maxspeed setting."""
         self.set_max_speed_limit(super().settings.get("maxspeed"))
 
     def reset_deceleration(self) -> None:
@@ -101,8 +101,7 @@ class ShapedAxis(Axis):
         acceleration_unit: Units = Units.NATIVE,
     ) -> None:
         """
-        Execute a relative movement with input shaping applies for the target resonant frequency
-        and damping ratio.
+        Input-shaped relative move for the target resonant frequency and damping ratio.
 
         :param position: The amount to move.
         :param unit: The units for the position value.
@@ -110,7 +109,6 @@ class ShapedAxis(Axis):
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-
         # Convert all to values to the same units
         position_native = super().settings.convert_to_native_units("pos", position, unit)
         accel_native = super().settings.convert_to_native_units(
@@ -162,8 +160,7 @@ class ShapedAxis(Axis):
         acceleration_unit: Units = Units.NATIVE,
     ) -> None:
         """
-        Execute an absolute movement with input shaping applies for the target resonant frequency
-        and damping ratio.
+        Input-shaped absolute move for the target resonant frequency and damping ratio.
 
         :param position: The position to move to.
         :param unit: The units for the position value.
@@ -171,7 +168,6 @@ class ShapedAxis(Axis):
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-
         current_position = super().get_position(unit)
         self.move_relative_shaped(
             position - current_position, unit, wait_until_idle, acceleration, acceleration_unit
@@ -184,14 +180,12 @@ class ShapedAxis(Axis):
         acceleration_unit: Units = Units.NATIVE,
     ) -> None:
         """
-        Move to the max limit with input shaping applies for the target resonant frequency and
-        damping ratio.
+        Input-shaped move to the max limit for the target resonant frequency and damping ratio.
 
         :param wait_until_idle: If true the command will hang until the device reaches idle state.
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-
         current_position = super().get_position(Units.NATIVE)
         end_position = super().settings.get("limit.max", Units.NATIVE)
         self.move_relative_shaped(
@@ -209,14 +203,12 @@ class ShapedAxis(Axis):
         acceleration_unit: Units = Units.NATIVE,
     ) -> None:
         """
-        Move to the min limit with input shaping applies for the target resonant frequency and
-        damping ratio.
+        Input-shaped move to the min limit for the target resonant frequency and damping ratio.
 
         :param wait_until_idle: If true the command will hang until the device reaches idle state.
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-
         current_position = super().get_position(Units.NATIVE)
         end_position = super().settings.get("limit.min", Units.NATIVE)
         self.move_relative_shaped(

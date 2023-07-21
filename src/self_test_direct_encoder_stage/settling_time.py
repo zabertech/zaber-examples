@@ -11,7 +11,7 @@ Created 2022, Contributors: Nathan P
 from collections import namedtuple
 import time
 
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # type: ignore
 from zaber_motion import Units, MovementFailedException
 from zaber_motion.ascii import Axis, Connection, AxisType
 
@@ -90,7 +90,7 @@ def main() -> None:
                 / min(SETTINGS.settle_tolerance_values_ustep)
                 > 100
             ):
-                plt.xscale("log")  # type: ignore[attr-defined]
+                plt.xscale("log")
             plt.show()
 
         stage.settings.set("cloop.settle.tolerance", original_settle_tolerance)
@@ -119,26 +119,23 @@ def run_test(stage: Axis) -> list[dict[str, float]]:
             for step_size in SETTINGS.step_sizes_mm:
                 run_number += 1
                 for repetition in range(SETTINGS.repetitions):
-                    try:
-                        data_row = test_point(
-                            stage,
-                            start_position,
-                            step_size,
-                            repetition,
-                            settle_tol_value,
-                            run_number,
-                            point,
-                            points,
-                        )
-                        data_list.append(data_row)
-                    except Exception as err:
-                        print(f"Error in point {point}: {err}")
+                    data_row = test_point(
+                        stage,
+                        start_position,
+                        step_size,
+                        repetition,
+                        settle_tol_value,
+                        run_number,
+                        point,
+                        points,
+                    )
+                    data_list.append(data_row)
                     point += 1
 
     return data_list
 
 
-def test_point(
+def test_point(  # pylint: disable=too-many-arguments
     stage: Axis,
     start_position: float,
     step_size: float,
