@@ -4,15 +4,14 @@ Check example directories.
 This script may also be called by .github/workflows/check_examples.yml
 
 Usage:
-    check all [-i]
-    check changed [-i]
-    check list [-i]
-    check search <examples>... [-i]
+    check all
+    check changed
+    check list
+    check search <examples>...
     check -h | --help
 
 Options:
     -h --help           Show help screen.
-    -i --ignore         Ignore directories and files listed in ignore.txt
 
 For more information see README.md
 """
@@ -56,12 +55,11 @@ def main() -> None:
     sys.exit(exit_code)
 
 
-def cmd_check_all(args: Args) -> int:
+def cmd_check_all(_: Args) -> int:
     """Check all examples."""
     return_code = 0
     print("=== Check all examples ===")
-    if args["--ignore"]:
-        load_ignore()
+    load_ignore()
     example_directories = list_example_directories()
     for example in example_directories:
         iprint_pass(f"Found '{example}'", 0)
@@ -72,20 +70,18 @@ def cmd_check_all(args: Args) -> int:
     return return_code
 
 
-def cmd_check_changed(args: Args) -> int:
+def cmd_check_changed(_: Args) -> int:
     """Check changed examples."""
     print("=== Check all changed examples ===")
-    if args["--ignore"]:
-        load_ignore()
+    load_ignore()
     iprint_fail("This function has not been implemented yet.")
     return 1
 
 
-def cmd_check_list(args: Args) -> int:
+def cmd_check_list(_: Args) -> int:
     """List examples."""
     print("=== List examples ===")
-    if args["--ignore"]:
-        load_ignore()
+    load_ignore()
     list_examples = list_example_directories()
     print(f"Found {len(list_examples)} example subdirectories in 'src':")
     for example in list_examples:
@@ -98,8 +94,7 @@ def cmd_check_examples(args: Args) -> int:
     print("=== Check specific example(s) ===")
     return_code = 0
     search_examples = args["<examples>"]
-    if args["--ignore"]:
-        load_ignore()
+    load_ignore()
     list_examples = list_example_directories()
     example_names = [str(x.relative_to(x.parent)) for x in list_examples]
     match_examples = []

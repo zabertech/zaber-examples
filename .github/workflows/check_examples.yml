@@ -25,4 +25,4 @@ jobs:
           python3 -m pip install --user --upgrade pipenv
           cd tools/check_examples
           pipenv install -d
-          pipenv run python check.py all --ignore
+          pipenv run python check.py all

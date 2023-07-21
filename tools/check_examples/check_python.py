@@ -55,6 +55,8 @@ def check_python_pip(directory: Path, indent: int) -> int:
         directory,
         indent,
     )
+    if return_code:
+        return return_code
     return_code |= execute(
         [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "-r", "requirements.txt"],
         directory,
