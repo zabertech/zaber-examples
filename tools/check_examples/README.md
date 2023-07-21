@@ -1,6 +1,6 @@
 # Check Examples
-This script checks all the example directories for having all the required files,
-and performs linting as required on various languages.
+This script checks that all the example directories have the required files,
+and performs linting as required for various languages.
 
 This script is also used by GitHub Actions,
 and called from `.github/workflows/check_examples.yml`
