@@ -155,9 +155,8 @@ def list_example_directories() -> list[Path]:
 
 
 def list_changed_files() -> list[Path]:
-    """Return a list of changed files."""
-    # add all changed files
-    result = subprocess.run(["git", "status", "-s"], capture_output=True, text=True, check=False)
+    """Return a list of changed or untracked files."""
+    result = subprocess.run(["git", "status", "-su"], capture_output=True, text=True, check=False)
     filenames_changed = result.stdout.rstrip().split("\n")
     filenames_changed = [x[3:] for x in filenames_changed]
     filepaths_changed = [(Path.cwd() / filename).resolve() for filename in filenames_changed]
