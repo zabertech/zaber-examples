@@ -18,12 +18,14 @@ For more information see README.md
 
 from typing import Any
 import sys
+import subprocess
 from pathlib import Path
 from docopt import docopt
 from common import (
     iprint,
     iprint_pass,
     iprint_fail,
+    iprint_info,
     filter_ignore,
     load_ignore,
     get_git_root_directory,
@@ -64,8 +66,8 @@ def main() -> None:
 
 def cmd_check_all(_: Args) -> int:
     """Check all examples."""
-    return_code = 0
     print("=== Check all examples ===")
+    return_code = 0
     load_ignore()
     example_directories = list_example_directories()
     for example in example_directories:
@@ -73,16 +75,29 @@ def cmd_check_all(_: Args) -> int:
     print(f"Found {len(example_directories)} example subdirectories in 'src':")
     for example in example_directories:
         return_code |= check_example(example, indent=1)
-
     return return_code
 
 
 def cmd_check_changed(_: Args) -> int:
     """Check changed examples."""
     print("=== Check all changed examples ===")
+    return_code = 0
     load_ignore()
-    iprint_fail("This function has not been implemented yet.")
-    return 1
+    list_examples = list_example_directories()
+    list_changed = list_changed_files()
+    for item in list_changed:
+        iprint_info(f"Found changed file '{item}'")
+    changed_examples: list[Path] = []
+    for example in list_examples:
+        for changed_file in list_changed:
+            if changed_file.is_relative_to(example) and example not in changed_examples:
+                changed_examples.append(example)
+    for example in changed_examples:
+        iprint_pass(f"Found changed example '{example}'", 0)
+    print(f"Found {len(changed_examples)} changed example subdirectories in 'src':")
+    for example in changed_examples:
+        return_code |= check_example(example, indent=1)
+    return return_code
 
 
 def cmd_check_list(_: Args) -> int:
@@ -137,6 +152,16 @@ def list_example_directories() -> list[Path]:
         sys.exit(1)
     list_directories = list(filter(filter_ignore, list_directories))
     return sorted(list_directories)
+
+
+def list_changed_files() -> list[Path]:
+    """Return a list of changed files."""
+    # add all changed files
+    result = subprocess.run(["git", "status", "-s"], capture_output=True, text=True, check=False)
+    filenames_changed = result.stdout.strip().split("\n")
+    filenames_changed = [x[3:] for x in filenames_changed]
+    filepaths_changed = [(Path.cwd() / filename).resolve() for filename in filenames_changed]
+    return filepaths_changed
 
 
 def check_example(directory: Path, indent: int) -> int:
