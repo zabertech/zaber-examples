@@ -20,7 +20,14 @@ from typing import Any
 import sys
 from pathlib import Path
 from docopt import docopt
-from common import iprint, iprint_pass, iprint_fail, ignore, load_ignore, get_git_root_directory
+from common import (
+    iprint,
+    iprint_pass,
+    iprint_fail,
+    filter_ignore,
+    load_ignore,
+    get_git_root_directory,
+)
 from check_python import check_python
 from check_basic import check_basic
 
@@ -128,7 +135,7 @@ def list_example_directories() -> list[Path]:
     if not list_directories:
         iprint_fail("Unable to list example directories.", 0)
         sys.exit(1)
-    list_directories = list(filter(ignore, list_directories))
+    list_directories = list(filter(filter_ignore, list_directories))
     return sorted(list_directories)
 
 

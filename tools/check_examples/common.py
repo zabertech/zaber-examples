@@ -108,7 +108,7 @@ def load_ignore() -> None:
                     )
 
 
-def ignore(filepath: Path) -> bool:
+def filter_ignore(filepath: Path) -> bool:
     """Check if a file or directory is in ignore.txt."""
     if filepath in ignore_list:
         return False

@@ -1,22 +1,32 @@
 """Check and lint Python files."""
 
-import subprocess
+from typing import Generator
 from pathlib import Path
-from common import execute, iprint_pass, iprint_fail, file_exists, subdirectory_exists, ignore
+from common import (
+    execute,
+    iprint_pass,
+    iprint_fail,
+    file_exists,
+    subdirectory_exists,
+    filter_ignore,
+)
 
 
 def list_python_files(directory: Path) -> list[Path]:
     """Return a list of python files in a directory."""
-    result = subprocess.run(
-        ["git", "ls-files", "*.py"],
-        cwd=str(directory),
-        capture_output=True,
-        text=True,
-        check=True,
-    )
-    python_filenames = result.stdout.strip().split()
-    list_filepaths = [directory.joinpath(x) for x in python_filenames]
-    list_filepaths = list(filter(ignore, list_filepaths))
+
+    def get_python_files(currdir: Path) -> Generator[Path, None, None]:
+        """Yield all .py files recursively, excluding directories that start with a period."""
+        for item in currdir.iterdir():
+            if item.name[0] == ".":  # ignore files starting with a "."
+                continue
+            if item.suffix == ".py":
+                yield item
+            if item.is_dir() and filter_ignore(item):
+                yield from get_python_files(item)
+
+    list_filepaths = list(get_python_files(directory))
+    list_filepaths = list(filter(filter_ignore, list_filepaths))
     return sorted(list_filepaths)
 
 
