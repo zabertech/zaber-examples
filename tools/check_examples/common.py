@@ -7,6 +7,7 @@ from pathlib import Path
 PASS = "✅"
 FAIL = "❌"
 WARN = "⚠️ "
+INFO = "ℹ️ "
 INDENT = 4
 IGNORE_FILE = "ignore.txt"
 
@@ -35,6 +36,11 @@ def iprint_fail(message: str, indent: int = 0) -> None:
 def iprint_warn(message: str, indent: int = 0) -> None:
     """Print with PASS icon."""
     print(" " * INDENT * indent + WARN + " " + message)
+
+
+def iprint_info(message: str, indent: int = 0) -> None:
+    """Print with PASS icon."""
+    print(" " * INDENT * indent + INFO + " " + message)
 
 
 def execute(command: list[str], cwd: Path, indent: int) -> int:
@@ -108,7 +114,7 @@ def load_ignore() -> None:
                     )
 
 
-def ignore(filepath: Path) -> bool:
+def filter_not_ignored(filepath: Path) -> bool:
     """Check if a file or directory is in ignore.txt."""
     if filepath in ignore_list:
         return False

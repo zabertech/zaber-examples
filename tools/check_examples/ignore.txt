@@ -5,6 +5,8 @@
 # Example directories to ignore
 src/_template
 
+# Example subdirectories to ignore
+
 # Files to ignore
 src/gui_pyqt6/ui.py
 src/gui_pyqt6/stage_pos_gui.py
