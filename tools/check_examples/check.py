@@ -26,7 +26,7 @@ from common import (
     iprint_pass,
     iprint_fail,
     iprint_info,
-    filter_ignore,
+    filter_not_ignored,
     load_ignore,
     get_git_root_directory,
 )
@@ -150,7 +150,7 @@ def list_example_directories() -> list[Path]:
     if not list_directories:
         iprint_fail("Unable to list example directories.", 0)
         sys.exit(1)
-    list_directories = list(filter(filter_ignore, list_directories))
+    list_directories = list(filter(filter_not_ignored, list_directories))
     return sorted(list_directories)
 
 

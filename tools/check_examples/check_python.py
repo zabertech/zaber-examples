@@ -8,7 +8,7 @@ from common import (
     iprint_fail,
     file_exists,
     subdirectory_exists,
-    filter_ignore,
+    filter_not_ignored,
 )
 
 
@@ -22,11 +22,11 @@ def list_python_files(directory: Path) -> list[Path]:
                 continue
             if item.suffix == ".py":
                 yield item
-            if item.is_dir() and filter_ignore(item):
+            if item.is_dir() and filter_not_ignored(item):
                 yield from get_python_files(item)
 
     list_filepaths = list(get_python_files(directory))
-    list_filepaths = list(filter(filter_ignore, list_filepaths))
+    list_filepaths = list(filter(filter_not_ignored, list_filepaths))
     return sorted(list_filepaths)
 
 
