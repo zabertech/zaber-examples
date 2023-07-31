@@ -4,15 +4,15 @@
 
 A focus map gives estimated focus heights for any location on a microscope slide.
 
-See accompanying technical article (insert title and link here).
-
 This is a Python example showing how to take a set of known good focus points
 from the microscope and interpolate those into a focus map.  The script demonstrates:
 - [Bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation)
 - Biquadratic interpolation
 - [Bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation)
 
-(insert images of points interpolated with the three methods here)
+|             Bilinear              |             Biquadratic             |           Bicubic           |
+|:---------------------------------:|:-----------------------------------:|:---------------------------:|
+| ![bilinear.png](img/bilinear.png) | ![biquadratic](img/biquadratic.png) | ![bicubic](img/bicubic.png) |
 
 The algorithm and code illustrated in this example is based on this article for finding the
 [Best Fitting Plane giving a Set of Points](https://math.stackexchange.com/questions/99299/best-fitting-plane-given-a-set-of-points)
