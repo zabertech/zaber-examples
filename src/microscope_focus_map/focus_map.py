@@ -18,10 +18,11 @@ For more information see README.md
 # https://math.stackexchange.com/questions/99299/best-fitting-plane-given-a-set-of-points
 
 import sys
+from typing import Callable
 from collections import namedtuple
-import matplotlib.pyplot as plt
-import numpy as np
 from docopt import docopt
+import numpy as np
+import matplotlib.pyplot as plt  # type: ignore
 
 # Parameters affecting random point generation
 TARGET_X_SLOPE = 2
@@ -35,36 +36,56 @@ Point = namedtuple("Point", ["x", "y", "z"])
 
 def generate_random_points(num_points: int) -> list[Point]:
     """Generate a number of points randomly."""
+    rng = np.random.default_rng()
     points: list[Point] = []
     for _ in range(num_points):
-        temp_x = np.random.uniform(2 * EXTENTS) - EXTENTS
-        temp_y = np.random.uniform(2 * EXTENTS) - EXTENTS
+        temp_x = rng.uniform(-EXTENTS, EXTENTS)
+        temp_y = rng.uniform(-EXTENTS, EXTENTS)
         temp_z = (
             temp_x * TARGET_X_SLOPE
             + temp_y * TARGET_Y_SLOPE
             + TARGET_OFFSET
-            + np.random.normal(scale=NOISE)  # type: ignore
+            + rng.normal(scale=NOISE)
         )
         points.append(Point(temp_x, temp_y, temp_z))
     return points
 
 
-# pylint: disable=too-many-locals
+def plot_points_and_best_fit(
+    points: list[Point], best_fit: Callable[[float, float], float]
+) -> None:
+    """Plot both the randomly generated points, generate best-fit function with a function."""
+    plt.figure()
+    axes = plt.subplot(111, projection="3d")
+    x_rand = [point.x for point in points]
+    y_rand = [point.y for point in points]
+    z_rand = [point.z for point in points]
+    axes.scatter(x_rand, y_rand, z_rand, color="b")
+
+    # Plot fitted focus map
+    xlim = axes.get_xlim()
+    ylim = axes.get_ylim()
+    x_grid, y_grid = np.meshgrid(np.arange(xlim[0], xlim[1]), np.arange(ylim[0], ylim[1]))
+    z_grid = np.zeros(x_grid.shape)
+    for row in range(x_grid.shape[0]):
+        for col in range(x_grid.shape[1]):
+            z_grid[row, col] = best_fit(x_grid[row, col], y_grid[row, col])
+    axes.plot_wireframe(x_grid, y_grid, z_grid, color="k")
+
+    axes.set_xlabel("x")
+    axes.set_ylabel("y")
+    axes.set_zlabel("z")
+    plt.show()
+
+
 def polynomial_interpolation(order: int, num_points: int | None = None) -> None:
     """Interpolate generic polynomial of any order."""
     if not num_points:
         num_points = (order + 1) ** 2
     print(f"Order {order} interpolation using {num_points} points")
 
-    # Generate and plot the random points
+    # Generate random points
     points = generate_random_points(num_points)
-
-    plt.figure()
-    axes = plt.subplot(111, projection="3d")  # type: ignore
-    x_rand = [point.x for point in points]
-    y_rand = [point.y for point in points]
-    z_rand = [point.z for point in points]
-    axes.scatter(x_rand, y_rand, z_rand, color="b")
 
     # Helper function for generating matrices for calculating best fit
     def make_xy_row(x_i: float, y_i: float) -> list[float]:
@@ -84,38 +105,25 @@ def polynomial_interpolation(order: int, num_points: int | None = None) -> None:
     xy_matrix = np.matrix(temp_xy)
     z_matrix = np.matrix(temp_z).T
 
-    # Calculate best fit, errors and residual
-    coeff_matrix = (xy_matrix.T * xy_matrix).I * xy_matrix.T * z_matrix  # pylint: disable=no-member
+    # Calculate best fit coefficients, errors and residual
+    coeff_matrix = np.linalg.inv(xy_matrix.T * xy_matrix) * xy_matrix.T * z_matrix
     errors = z_matrix - xy_matrix * coeff_matrix
-    residual = np.linalg.norm(errors)  # type: ignore
+    residual = np.linalg.norm(errors)
     print("errors: \n", errors)
     print("residual:", residual)
 
-    # Generate grid based on best fit coefficients and plot
-    def calculate_z(coeff, x_loc: float, y_loc: float) -> float:  # type: ignore
-        """Calculate z based on x. y, and coefficient."""
+    # Define function to calculate z value based on best fit coefficients
+    def calculate_z(x_loc: float, y_loc: float) -> float:
+        """Calculate z based on x, y, and coefficients."""
         z_sum = 0.0
         index = 0
         for n_x in range(order + 1):
             for n_y in range(order + 1):
-                z_sum += coeff[index] * x_loc**n_x * y_loc**n_y
+                z_sum += coeff_matrix[index] * x_loc**n_x * y_loc**n_y
                 index += 1
         return z_sum
 
-    # Plot fitted focus map
-    xlim = axes.get_xlim()
-    ylim = axes.get_ylim()
-    x_grid, y_grid = np.meshgrid(np.arange(xlim[0], xlim[1]), np.arange(ylim[0], ylim[1]))
-    z_grid = np.zeros(x_grid.shape)
-    for row in range(x_grid.shape[0]):
-        for col in range(x_grid.shape[1]):
-            z_grid[row, col] = calculate_z(coeff_matrix, x_grid[row, col], y_grid[row, col])
-    axes.plot_wireframe(x_grid, y_grid, z_grid, color="k")
-
-    axes.set_xlabel("x")
-    axes.set_ylabel("y")
-    axes.set_zlabel("z")
-    plt.show()
+    plot_points_and_best_fit(points, calculate_z)
 
 
 def main() -> None:
