@@ -46,11 +46,15 @@ You can specify the type of interpolation to plot with the script:
 |   `bilinear`   |  1st  |        2 x 2 = 4         |
 | `biquadratic`  |  2nd  |        3 x 3 = 9         |
 |   `bicubic`    |  3rd  |        4 x 4 = 16        |
-| higher order   |  nth  |         (n + 1)^2        |
+| higher order   |  nth  |   (n + 1)<sup>2</sup>    |
 
 The higher order the interpolation, the more initial data points (or known good focus points)
 are necessary to deterministically generate the focus map.
 By default, the script randomly generates the minimum number of points required
 to fit the interpolation chosen.  The number of randomly generated points can be overridden
-with the optional parameter `[<points>]` on the command line.  When more points than the minimum
-is used, the algorithm automatically use least-square method to do a best-fit interpolation.
+with the optional parameter `[<points>]` on the command line.
+
+When the minimum (order + 1)<sup>2</sup> number of points is used, the interpolated surface passes
+through all the points.  When more than the minimum number of points is supplied, the interpolated
+surface is computed based on least-square best fit.  When less than the minimum number of points is
+supplied, the algorithm does not have enough information to reliably generate a deterministic surface.
