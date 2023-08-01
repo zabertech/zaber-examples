@@ -15,7 +15,7 @@ from the microscope and interpolate those into a focus map.  The script demonstr
 | ![bilinear.png](img/bilinear.png) | ![biquadratic](img/biquadratic.png) | ![bicubic](img/bicubic.png) |
 
 The algorithm and code illustrated in this example is based on this article for finding the
-[Best Fitting Plane giving a Set of Points](https://math.stackexchange.com/questions/99299/best-fitting-plane-given-a-set-of-points)
+[Best Fitting Plane giving a Set of Points](https://math.stackexchange.com/questions/99299/best-fitting-plane-given-a-set-of-points#answer-2306029)
 using a simple least squares solution.
 
 ## Hardware Requirements
