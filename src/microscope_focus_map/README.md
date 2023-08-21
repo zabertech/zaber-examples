@@ -58,3 +58,5 @@ When the minimum (order + 1)<sup>2</sup> number of points is used, the interpola
 through all the points.  When more than the minimum number of points is supplied, the interpolated
 surface is computed based on least-square best fit.  When less than the minimum number of points is
 supplied, the algorithm does not have enough information to reliably generate a deterministic surface.
+
+For a more detailed explanation of the math behind the algorithm, please see [least_square_interpolation.md](least_square_interpolation.md).
