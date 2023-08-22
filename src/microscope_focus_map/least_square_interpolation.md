@@ -18,22 +18,22 @@ $$
 We can rewrite the above in matrix form:
 
 $$
-\begin{bmatrix}
-    x_0 & y_0 & 1\\
-    x_1 & y_1 & 1\\
-    x_2 & y_2 & 1
-\end{bmatrix}
-\begin{bmatrix}
-    a\\
-    b\\
-    c
-\end{bmatrix}
-=
-\begin{bmatrix}
-    z_0\\
-    z_1\\
-    z_2\\
-\end{bmatrix}
+    \begin{bmatrix}
+        x_0 & y_0 & 1\\
+        x_1 & y_1 & 1\\
+        x_2 & y_2 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        a\\
+        b\\
+        c
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        z_0\\
+        z_1\\
+        z_2\\
+    \end{bmatrix}
 $$
 
 In other words, we have:
@@ -80,24 +80,24 @@ $$
 The above example works well if we have exactly 3 points to fit a plane, which has 3 degrees of freedom.  If we have more than 3 points, then we would want to find a best-fit plane using a least-square fit.  Extending the above example to have n-points:
 
 $$
-\begin{bmatrix}
-    x_0 & y_0 & 1\\
-    x_1 & y_1 & 1\\
-    \vdots & \vdots & \vdots\\
-    x_n & y_n & 1
-\end{bmatrix}
-\begin{bmatrix}
-    a\\
-    b\\
-    c
-\end{bmatrix}
-=
-\begin{bmatrix}
-    z_0\\
-    z_1\\
-    \vdots\\
-    z_n
-\end{bmatrix}
+    \begin{bmatrix}
+        x_0 & y_0 & 1\\
+        x_1 & y_1 & 1\\
+        \vdots & \vdots & \vdots\\
+        x_n & y_n & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        a\\
+        b\\
+        c
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        z_0\\
+        z_1\\
+        \vdots\\
+        z_n
+    \end{bmatrix}
 $$
 
 Now the system is over-determined, the formula to calculate the coefficients for a least-square best-fit is to use the left [pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse) $A^+ = (A^TA)^{-1}A^T$:
@@ -114,7 +114,6 @@ $$
     A^+
     B
 $$
-
 
 $$
     \begin{bmatrix}
@@ -136,10 +135,13 @@ Reference: [Bilinear Interpolation on Wikipedia](https://en.wikipedia.org/wiki/B
 If we were to rewrite the formula of the Plane and formula of Bilinear Interpolation side-by-side, they would look very similar except Bilinear Interpolation has an extra term.
 
 Plane:
+
 $$
     f(x,y) = a_{00} + a_{10}x + a_{01}y = z
 $$
+
 Bilinear:
+
 $$
     f(x,y) = a_{00} + a_{10}x + a_{01}y + a_{11}xy = z
 $$
@@ -149,36 +151,36 @@ Note that we renamed the constants as $a_{mn}$, where $m$ is the order of $x$ an
 There are 4 coefficients needed to describe a Bilinear interpolation.  In a similar way to the Plane, we can express the Bilinear interpolation in matrix form:
 
 $$
-\begin{bmatrix}
-    1 & x_0 & y_0 & x_0y_0\\
-    1 & x_1 & y_1 & x_1y_1\\
-    \vdots & \vdots & \vdots & \vdots \\
-    1 & x_n & y_n & x_ny_n
-\end{bmatrix}
-\begin{bmatrix}
-    a_{00}\\
-    a_{10}\\
-    a_{01}\\
-    a_{11}
-\end{bmatrix}
-=
-\begin{bmatrix}
-    z_0\\
-    z_1\\
-    \vdots\\
-    z_n
-\end{bmatrix}
+    \begin{bmatrix}
+        1 & x_0 & y_0 & x_0y_0\\
+        1 & x_1 & y_1 & x_1y_1\\
+        \vdots & \vdots & \vdots & \vdots \\
+        1 & x_n & y_n & x_ny_n
+    \end{bmatrix}
+    \begin{bmatrix}
+        a_{00}\\
+        a_{10}\\
+        a_{01}\\
+        a_{11}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        z_0\\
+        z_1\\
+        \vdots\\
+        z_n
+    \end{bmatrix}
 $$
 
 To solve for the coefficients, apply the same least-square technique:
 
 $$
-\begin{bmatrix}
-    a_{00}\\
-    a_{10}\\
-    a_{01}\\
-    a_{11}
-\end{bmatrix}
+    \begin{bmatrix}
+        a_{00}\\
+        a_{10}\\
+        a_{01}\\
+        a_{11}
+    \end{bmatrix}
     = (A^TA)^{-1}A^TB
 $$
 
@@ -230,30 +232,30 @@ $$
 This equation has 9 unknown coefficients, requiring a minimum of 9 points to fully determine the surface.  Expanding the formula needed to solve for the 9 coefficients:
 
 $$
-\begin{bmatrix}
-    1 & x_0 & x_0^2 & y_0 & x_0y_0 & x_0^2y_0 & y_0^2 & x_0y_0^2 & x_0^2y_0^2\\
-    1 & x_1 & x_1^2 & y_1 & x_1y_1 & x_1^2y_1 & y_1^2 & x_1y_1^2 & x_1^2y_1^2\\
-    \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-    1 & x_n & x_n^2 & y_n & x_ny_n & x_n^2y_n & y_n^2 & x_ny_n^2 & x_n^2y_n^2\\
-\end{bmatrix}
-\begin{bmatrix}
-    a_{00}\\
-    a_{10}\\
-    a_{20}\\
-    a_{01}\\
-    a_{11}\\
-    a_{21}\\
-    a_{02}\\
-    a_{12}\\
-    a_{22}
-\end{bmatrix}
-=
-\begin{bmatrix}
-    z_0\\
-    z_1\\
-    \vdots\\
-    z_n
-\end{bmatrix}
+    \begin{bmatrix}
+        1 & x_0 & x_0^2 & y_0 & x_0y_0 & x_0^2y_0 & y_0^2 & x_0y_0^2 & x_0^2y_0^2\\
+        1 & x_1 & x_1^2 & y_1 & x_1y_1 & x_1^2y_1 & y_1^2 & x_1y_1^2 & x_1^2y_1^2\\
+        \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
+        1 & x_n & x_n^2 & y_n & x_ny_n & x_n^2y_n & y_n^2 & x_ny_n^2 & x_n^2y_n^2\\
+    \end{bmatrix}
+    \begin{bmatrix}
+        a_{00}\\
+        a_{10}\\
+        a_{20}\\
+        a_{01}\\
+        a_{11}\\
+        a_{21}\\
+        a_{02}\\
+        a_{12}\\
+        a_{22}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        z_0\\
+        z_1\\
+        \vdots\\
+        z_n
+    \end{bmatrix}
 $$
 
 In other words, we have:
@@ -272,11 +274,11 @@ $$
 To solve for the coefficients, apply the same least-square technique:
 
 $$
-\begin{bmatrix}
-    a_{00}\\
-    \vdots\\
-    a_{22}
-\end{bmatrix}
+    \begin{bmatrix}
+        a_{00}\\
+        \vdots\\
+        a_{22}
+    \end{bmatrix}
     = (A^TA)^{-1}A^TB
 $$
 
