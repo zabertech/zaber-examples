@@ -3,11 +3,11 @@ This article explains the math behind the example code for focus map.  We will s
 
 ## Fitting a Plane with 3 points
 
-Assuming we have a number of points $(x, y, z)$ where $x$ and $y$ are the Cartesian coordinates of the position on the microscope slide, and $z$ is the focus height.  The simplest way to think about it is to fit a plane to the points.
+Assume we have a number of points on the plane with coordinates $(x, y, z)$, where $x$ and $y$ are the Cartesian coordinates of the position of the microscope slide and $z$ is the focus height. The goal is to find the equation of a plane given the position of these points.
 
 The equation of the plane is $ax + by + c = z$.
 
-Since there are three unknown coefficients ($a$, $b$, and $c$), we would need three equations to solve for the unknowns.  This is the same as saying if we have three points $(x_n, y_n, z_n)$, we can deterministically define the plane (assuming the three points form a triangle instead of a line).
+Since there are three unknown coefficients ($a$, $b$, and $c$), we would need three equations to solve for the unknowns.  This is the same as saying if we have three points $(x_p, y_p, z_p)$, with $p=0,1,2$, we can deterministically define the plane (assuming the three points form a triangle instead of a line).
 
 $$
     ax_0 + by_0 + c = z_0
@@ -138,7 +138,7 @@ The example above to fit a plane can be easily extended to the case of Bilinear 
 
 Reference: [Bilinear Interpolation on Wikipedia](https://en.wikipedia.org/wiki/Bilinear_interpolation)
 
-If we were to rewrite the formula of the Plane and formula of Bilinear Interpolation side-by-side, they would look very similar except Bilinear Interpolation has an extra term.
+If we were to rewrite the formula of the Plane and formula of Bilinear Interpolation side-by-side, they would look very similar, except Bilinear Interpolation has an extra term.
 
 Plane:
 
@@ -152,7 +152,7 @@ $$
     f(x,y) = a_{00} + a_{10}x + a_{01}y + a_{11}xy = z
 $$
 
-Note that we renamed the constants as $a_{mn}$, where $m$ is the order of $x$ and $n$ is the order of $y$. This is a more useful nomenclature than $a, b, c$ when we extend the algorithm to higher order interpolation later in the article.
+Note that we renamed the constants as $a_{ij}$, where $i$ is the order of $x$ and $j$ is the order of $y$. This is a more useful nomenclature than $a, b, c$ when we extend the algorithm to higher order interpolation later in the article.
 
 There are 4 coefficients needed to describe a Bilinear interpolation.  In a similar way to the Plane, we can express the Bilinear interpolation in matrix form:
 
