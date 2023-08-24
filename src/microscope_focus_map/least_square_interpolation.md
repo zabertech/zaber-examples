@@ -10,8 +10,14 @@ The equation of the plane is $ax + by + c = z$.
 Since there are three unknown coefficients ($a$, $b$, and $c$), we would need three equations to solve for the unknowns.  This is the same as saying if we have three points $(x_n, y_n, z_n)$, we can deterministically define the plane (assuming the three points form a triangle instead of a line).
 
 $$
-    ax_0 + by_0 + c = z_0 \\
-    ax_1 + by_1 + c = z_1 \\
+    ax_0 + by_0 + c = z_0
+$$
+
+$$
+    ax_1 + by_1 + c = z_1
+$$
+
+$$
     ax_2 + by_2 + c = z_2
 $$
 
@@ -205,7 +211,7 @@ $$
 For n=2, this becomes the formula for Biquadratic Interpolation:
 
 $$
-    f(x,y) = a_{00} + a_{10}x + a_{20}x^2 
+    f(x,y) = a_{00} + a_{10}x + a_{20}x^2
     + a_{01}y + a_{11}xy + a_{21}x^2y
     + a_{02}y^2 + a_{12}xy^2 + a_{22}x^2y^2
 $$
