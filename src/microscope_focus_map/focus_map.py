@@ -119,7 +119,7 @@ def polynomial_interpolation(order: int, num_points: int | None = None) -> None:
         index = 0
         for n_x in range(order + 1):
             for n_y in range(order + 1):
-                z_sum += coeff_matrix[index] * x_loc**n_x * y_loc**n_y
+                z_sum += coeff_matrix[index].item() * x_loc**n_x * y_loc**n_y
                 index += 1
         return z_sum
 
