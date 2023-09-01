@@ -1,2 +1,5 @@
 # Calibration Mapping Algorithm
-This article explains the math behind the example code for Gantry Calibration.
+This article explores the math behind the example code for Gantry Calibration.
+
+Work in Progress
+

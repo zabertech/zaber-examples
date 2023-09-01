@@ -2,6 +2,7 @@
 Gantry Calibration Algorithm Demo.
 
 Usage:
+    calibrate.py basic
     calibrate.py bilinear [<points>]
     calibrate.py biquadratic [<points>]
     calibrate.py bicubic [<points>]
@@ -37,6 +38,8 @@ def main() -> None:
     arguments = sys.argv[1:]
     args = docopt(__doc__, argv=arguments)
 
+    if args["basic"]:
+        basic_calibration()
     if args["bilinear"]:
         if args["<points>"]:
             points = int(args["<points>"])
@@ -62,6 +65,15 @@ def main() -> None:
             int(args["<x_points>"]),
             int(args["<y_points>"]),
         )
+
+
+def basic_calibration() -> None:
+    """Demonstrate basic bilinear calibration with annotation."""
+    x_travel = Travel(TRAVEL_MIN, TRAVEL_MAX)
+    y_travel = Travel(TRAVEL_MIN, TRAVEL_MAX)
+    points = generate_points(x_travel, y_travel, 2, 2)
+    calibration = Calibration(1, 1, points)
+    plot(points, calibration.map, 5, annotation=True)
 
 
 def polynomial_interpolation(x_order: int, y_order: int, x_points: int, y_points: int) -> None:
@@ -114,25 +126,52 @@ def generate_points(
     return temp_array
 
 
-def plot(points: list[list[PointPair]], calibrate: Callable[[Point], Point], subscale: int) -> None:
+def plot(
+    points: list[list[PointPair]],
+    calibrate: Callable[[Point], Point],
+    subscale: int,
+    annotation: bool = False,
+) -> None:
     """
     Visualize results of calibration.
 
     :param points: 2D array of expected and actual points that determines the calibration
     :param calibrate: Function that maps a raw (or expected) point to a calibrated (or actual) point
     :param subscale: Subdivisions to use between points when drawing the mapping to show curves
+    :param annotation: Optional annotation for generating graphics for documentation.
     """
     # pylint: disable=too-many-locals
     point_array = np.array(points)
     x_count = point_array.shape[0]
     y_count = point_array.shape[1]
 
+    def annotate_point(point_pair: PointPair, subscript: int) -> None:
+        """Optionally annotate points."""
+        plt.annotate(
+            f"(x{subscript}, y{subscript})",
+            (point_pair.expected.x, point_pair.expected.y),
+            xytext=(10, 10),
+            textcoords="offset pixels",
+            color="b",
+        )
+        plt.annotate(
+            f"(x{subscript}', y{subscript}')",
+            (point_pair.actual.x, point_pair.actual.y),
+            xytext=(10, 10),
+            textcoords="offset pixels",
+            color="r",
+        )
+
     # Plot points
+    sub = 0
     for x_index in range(x_count):
         for y_index in range(y_count):
             pair = points[x_index][y_index]
             plt.plot(pair.expected.x, pair.expected.y, "bo")
             plt.plot(pair.actual.x, pair.actual.y, "ro")
+            if annotation:
+                annotate_point(pair, sub)
+            sub += 1
 
     def plot_segment(point0: Point, point1: Point, style: str) -> None:
         """Plot a line segment between two points."""
@@ -169,8 +208,21 @@ def plot(points: list[list[PointPair]], calibrate: Callable[[Point], Point], sub
                 cal1 = calibrate(raw1)
                 plot_segment(cal0, cal1, "r--")
 
-    plt.xlim(TRAVEL_MIN - 0.2 * TRAVEL_RANGE, TRAVEL_MAX + 0.2 * TRAVEL_RANGE)
-    plt.ylim(TRAVEL_MIN - 0.2 * TRAVEL_RANGE, TRAVEL_MAX + 0.2 * TRAVEL_RANGE)
+    def set_plot_limits() -> None:
+        """Set x and y limits for the plot."""
+        travel_x = [point_pair.expected.x for row in points for point_pair in row]
+        travel_y = [point_pair.expected.y for row in points for point_pair in row]
+        travel_min_x = min(travel_x)
+        travel_max_x = max(travel_x)
+        travel_min_y = min(travel_y)
+        travel_max_y = max(travel_y)
+        margin_factor = 0.2
+        margin_x = (travel_max_x - travel_min_x) * margin_factor
+        margin_y = (travel_max_y - travel_min_y) * margin_factor
+        plt.xlim(travel_min_x - margin_x, travel_max_x + margin_x)
+        plt.ylim(travel_min_y - margin_y, travel_max_y + margin_y)
+
+    set_plot_limits()
     plt.show()
 
 

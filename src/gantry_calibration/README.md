@@ -5,8 +5,8 @@
 A Cartesian gantry or XY system serving a large area often requires calibration to achieve the
 accuracy required.
 
-This is a Python example showing how to take the expected and actual coordinates of a few points on
-the gantry, and generate a mapping from desired coordinates to calibrated coordinates.
+This is a Python example showing how to take the expected and actual coordinates of a few grid
+points on the gantry, and generate a mapping from desired coordinates to calibrated coordinates.
 
 ## Hardware Requirements
 There is no hardware requirement for this example script, as it only demonstrates the algorithm
@@ -50,10 +50,10 @@ the minimum number of points required to fit the interpolation chosen.
 The number of randomly generated points can be overridden with
 the optional parameter `[<points>]` on the command line.
 
-When the minimum (order + 1)<sup>2</sup> number of points is used, the interpolated surface passes
+When the minimum (order + 1)<sup>2</sup> number of points is used, the interpolated grid passes
 through all the points.  When more than the minimum number of points is supplied, the interpolated
-surface is computed based on least-square best fit.  When less than the minimum number of points is
-supplied, the algorithm does not have enough information to reliably generate a deterministic surface.
+grid is computed based on least-square best fit.  When less than the minimum number of points is
+supplied, the algorithm does not have enough information to generate a deterministic solution.
 
 The `poly` interpolation can be specified with any order of polynomial and any number of points,
 independently for the x-axis and y-axis.
