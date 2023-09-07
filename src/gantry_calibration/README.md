@@ -8,6 +8,14 @@ accuracy required.
 This is a Python example showing how to take the expected and actual coordinates of a few grid
 points on the gantry, and generate a mapping from desired coordinates to calibrated coordinates.
 
+|         Basic Bilinear           |            Biquadratic              |             Real Example              |
+|:--------------------------------:|:-----------------------------------:|:-------------------------------------:|
+| ![basic bilinear](img/basic.png) | ![biquadratic](img/biquadratic.png) | ![real example](img/real_example.png) |
+
+- On the left, the basic premise is that the user commands the stage to move to the blue *expected* locations $(x_n, y_n)$, but finds that the red *actual* locations are at machine coordinates $(x_n', y_n')$. By recording the coordinates of both the blue and red dots, we can come up with a mapping function that takes the expected or raw machine coordinates (blue), and return the actual or calibrated coordinates (red) for anywhere in the area.
+- The calibration code is flexible enough that it can take an arbitrary number of points and do a least-square fit to an arbitrary order of polynomial in either axis.  In the middle example, we generated points with a random offset, and fitted a 2nd order (quadratic) curve to both axis.  A quadratic curve requires a minimum of 3 points to define the function, and two-dimensional biquadratic fit requires a minimum of 3 x 3 = 9 points.  In the middle picture we supplied 5 x 5 = 25 points, so the calibration code does a least-square fit to minimize the error.
+- On the right is data from a real-life example of actual measured error in a gantry system, and using the calibration code to do a linear fit (bilinear) in both axis.
+
 ## Hardware Requirements
 There is no hardware requirement for this example script, as it only demonstrates the algorithm
 and visualizes the results in a plot.  However, the algorithm can be adapted to be used with any
@@ -27,6 +35,7 @@ To run the script:
     cd src/gantry_calibration
     pipenv install
     pipenv run python calibrate.py
+    pipenv run python calibrate.py basic
 
 # How it works
 The script consists of the following files,
@@ -38,6 +47,7 @@ When running `calibrate.py`, you can specify the type of interpolation to plot w
 
 | Interpolation | Order | Minimum Number of Points |
 |:-------------:|:-----:|:------------------------:|
+|    `basic`    |  1st  |        2 x 2 = 4         |
 |  `bilinear`   |  1st  |        2 x 2 = 4         |
 | `biquadratic` |  2nd  |        3 x 3 = 9         |
 |   `bicubic`   |  3rd  |        4 x 4 = 16        |
@@ -45,6 +55,7 @@ When running `calibrate.py`, you can specify the type of interpolation to plot w
 
 The higher order the interpolation, the more initial data points
 are necessary to deterministically generate the calibration map.
+`basic` demonstrates a simple bilinear interpolation with no optional parameters.
 By default, `bilinear`, `biquadratic`, and `bicubic` interpolation randomly generates
 the minimum number of points required to fit the interpolation chosen.
 The number of randomly generated points can be overridden with

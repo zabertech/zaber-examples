@@ -140,10 +140,6 @@ def plot(
     :param subscale: Subdivisions to use between points when drawing the mapping to show curves
     :param annotation: Optional annotation for generating graphics for documentation.
     """
-    # pylint: disable=too-many-locals
-    point_array = np.array(points)
-    x_count = point_array.shape[0]
-    y_count = point_array.shape[1]
 
     def annotate_point(point_pair: PointPair, subscript: int) -> None:
         """Optionally annotate points."""
@@ -162,51 +158,51 @@ def plot(
             color="r",
         )
 
-    # Plot points
-    sub = 0
-    for x_index in range(x_count):
-        for y_index in range(y_count):
-            pair = points[x_index][y_index]
-            plt.plot(pair.expected.x, pair.expected.y, "bo")
-            plt.plot(pair.actual.x, pair.actual.y, "ro")
-            if annotation:
-                annotate_point(pair, sub)
-            sub += 1
-
-    def plot_segment(point0: Point, point1: Point, style: str) -> None:
+    def plot_line(point0: Point, point1: Point, style: str) -> None:
         """Plot a line segment between two points."""
         plt.plot([point0.x, point1.x], [point0.y, point1.y], style)
 
-    # Plot major lines joining points
-    for x_index in range(0, x_count - 1):
-        for y_index in range(0, y_count):
-            pair0 = points[x_index][y_index]
-            pair1 = points[x_index + 1][y_index]
-            plot_segment(pair0.expected, pair1.expected, "b-")
+    def plot_calibrated(point0: Point, point1: Point, segments: int, style: str) -> None:
+        """Plot a calibrated line or curve between two points with specified number of segments."""
+        x_seg_range = np.linspace(point0.x, point1.x, segments + 1)
+        y_seg_range = np.linspace(point0.y, point1.y, segments + 1)
+        for seg_index in range(0, segments):
+            raw0 = Point(x_seg_range[seg_index], y_seg_range[seg_index])
+            raw1 = Point(x_seg_range[seg_index + 1], y_seg_range[seg_index + 1])
+            cal0 = calibrate(raw0)
+            cal1 = calibrate(raw1)
+            plot_line(cal0, cal1, style)
 
-            x_seg_range = np.linspace(pair0.expected.x, pair1.expected.x, subscale + 1)
-            y_seg_range = np.linspace(pair0.expected.y, pair1.expected.y, subscale + 1)
-            for seg_index in range(0, subscale):
-                raw0 = Point(x_seg_range[seg_index], y_seg_range[seg_index])
-                raw1 = Point(x_seg_range[seg_index + 1], y_seg_range[seg_index])
-                cal0 = calibrate(raw0)
-                cal1 = calibrate(raw1)
-                plot_segment(cal0, cal1, "r--")
+    def plot_points_and_lines() -> None:
+        point_array = np.array(points)
+        x_count = point_array.shape[0]
+        y_count = point_array.shape[1]
 
-    for x_index in range(0, x_count):
-        for y_index in range(0, y_count - 1):
-            pair0 = points[x_index][y_index]
-            pair1 = points[x_index][y_index + 1]
-            plot_segment(pair0.expected, pair1.expected, "b-")
+        # Plot points
+        sub = 0
+        for x_index in range(x_count):
+            for y_index in range(y_count):
+                pair = points[x_index][y_index]
+                plt.plot(pair.expected.x, pair.expected.y, "bo")
+                plt.plot(pair.actual.x, pair.actual.y, "ro")
+                if annotation:
+                    annotate_point(pair, sub)
+                sub += 1
 
-            x_seg_range = np.linspace(pair0.expected.x, pair1.expected.x, subscale + 1)
-            y_seg_range = np.linspace(pair0.expected.y, pair1.expected.y, subscale + 1)
-            for seg_index in range(0, subscale):
-                raw0 = Point(x_seg_range[seg_index], y_seg_range[seg_index])
-                raw1 = Point(x_seg_range[seg_index], y_seg_range[seg_index + 1])
-                cal0 = calibrate(raw0)
-                cal1 = calibrate(raw1)
-                plot_segment(cal0, cal1, "r--")
+        # Plot horizontal lines
+        for x_index in range(0, x_count - 1):
+            for y_index in range(0, y_count):
+                pair0 = points[x_index][y_index]
+                pair1 = points[x_index + 1][y_index]
+                plot_line(pair0.expected, pair1.expected, "b-")
+                plot_calibrated(pair0.expected, pair1.expected, subscale, "r--")
+        # Plot vertical lines
+        for x_index in range(0, x_count):
+            for y_index in range(0, y_count - 1):
+                pair0 = points[x_index][y_index]
+                pair1 = points[x_index][y_index + 1]
+                plot_line(pair0.expected, pair1.expected, "b-")
+                plot_calibrated(pair0.expected, pair1.expected, subscale, "r--")
 
     def set_plot_limits() -> None:
         """Set x and y limits for the plot."""
@@ -223,6 +219,7 @@ def plot(
         plt.ylim(travel_min_y - margin_y, travel_max_y + margin_y)
 
     set_plot_limits()
+    plot_points_and_lines()
     plt.show()
 
 

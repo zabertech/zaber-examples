@@ -10,9 +10,9 @@ from the microscope and interpolate those into a focus map.  The script demonstr
 - Biquadratic interpolation
 - [Bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation)
 
-|             Bilinear              |             Biquadratic             |           Bicubic           |
-|:---------------------------------:|:-----------------------------------:|:---------------------------:|
-| ![bilinear.png](img/bilinear.png) | ![biquadratic](img/biquadratic.png) | ![bicubic](img/bicubic.png) |
+|           Bilinear            |             Biquadratic             |           Bicubic           |
+|:-----------------------------:|:-----------------------------------:|:---------------------------:|
+| ![bilinear](img/bilinear.png) | ![biquadratic](img/biquadratic.png) | ![bicubic](img/bicubic.png) |
 
 The algorithm and code illustrated in this example is based on this article for finding the
 [Best Fitting Plane giving a Set of Points](https://math.stackexchange.com/questions/99299/best-fitting-plane-given-a-set-of-points#answer-2306029)
