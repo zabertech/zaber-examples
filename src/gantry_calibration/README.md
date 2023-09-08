@@ -59,7 +59,11 @@ are necessary to deterministically generate the calibration map.
 By default, `bilinear`, `biquadratic`, and `bicubic` interpolation randomly generates
 the minimum number of points required to fit the interpolation chosen.
 The number of randomly generated points can be overridden with
-the optional parameter `[<points>]` on the command line.
+the optional parameter `[<points>]` on the command line.  For example:
+
+    pipenv run python calibrate.py bilinear 5
+
+This generates a 5 x 5 = 25 points grid and does a bilinear least-square fit.
 
 When the minimum (order + 1)<sup>2</sup> number of points is used, the interpolated grid passes
 through all the points.  When more than the minimum number of points is supplied, the interpolated

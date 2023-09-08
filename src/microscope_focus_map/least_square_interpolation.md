@@ -83,14 +83,14 @@ $$
 
 ## Fitting a Plane with more than 3 points
 
-The above example works well if we have exactly 3 points to fit a plane, which has 3 degrees of freedom.  If we have more than 3 points, then we would want to find a best-fit plane using a least-square fit.  Extending the above example to have n-points:
+The above example works well if we have exactly 3 points to fit a plane, which has 3 degrees of freedom.  If we have more than 3 points, then we would want to find a best-fit plane using a least-square fit.  Extending the above example to have p-points:
 
 $$
     \begin{bmatrix}
         x_0 & y_0 & 1\\
         x_1 & y_1 & 1\\
         \vdots & \vdots & \vdots\\
-        x_n & y_n & 1
+        x_p & y_p & 1
     \end{bmatrix}
     \begin{bmatrix}
         a\\
@@ -102,7 +102,7 @@ $$
         z_0\\
         z_1\\
         \vdots\\
-        z_n
+        z_p
     \end{bmatrix}
 $$
 
@@ -161,7 +161,7 @@ $$
         1 & x_0 & y_0 & x_0y_0\\
         1 & x_1 & y_1 & x_1y_1\\
         \vdots & \vdots & \vdots & \vdots \\
-        1 & x_n & y_n & x_ny_n
+        1 & x_p & y_p & x_py_p
     \end{bmatrix}
     \begin{bmatrix}
         a_{00}\\
@@ -174,7 +174,7 @@ $$
         z_0\\
         z_1\\
         \vdots\\
-        z_n
+        z_p
     \end{bmatrix}
 $$
 
@@ -242,7 +242,7 @@ $$
         1 & x_0 & x_0^2 & y_0 & x_0y_0 & x_0^2y_0 & y_0^2 & x_0y_0^2 & x_0^2y_0^2\\
         1 & x_1 & x_1^2 & y_1 & x_1y_1 & x_1^2y_1 & y_1^2 & x_1y_1^2 & x_1^2y_1^2\\
         \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-        1 & x_n & x_n^2 & y_n & x_ny_n & x_n^2y_n & y_n^2 & x_ny_n^2 & x_n^2y_n^2\\
+        1 & x_p & x_p^2 & y_p & x_py_p & x_p^2y_p & y_p^2 & x_py_p^2 & x_p^2y_p^2\\
     \end{bmatrix}
     \begin{bmatrix}
         a_{00}\\
@@ -260,7 +260,7 @@ $$
         z_0\\
         z_1\\
         \vdots\\
-        z_n
+        z_p
     \end{bmatrix}
 $$
 
