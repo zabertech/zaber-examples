@@ -57,7 +57,7 @@ $$
 $$
 
 $$
-    \bm{x = M a}
+    \mathbf{x = M a}
 $$
 
 $$
@@ -83,19 +83,25 @@ $$
 $$
 
 $$
-    \bm{y = M b}
+    \mathbf{y = M b}
 $$
 
 We can solve for the coefficients by multiplying the inverse on both sides:
 
 $$
-    \bm{M^{-1}x = M^{-1}Ma}\\
-    \bm{a = M^{-1}x}
+    \mathbf{M^{-1}x = M^{-1}Ma}
 $$
 
 $$
-    \bm{M^{-1}x = M^{-1}Mb}\\
-    \bm{b = M^{-1}x}
+    \mathbf{a = M^{-1}x}
+$$
+
+$$
+    \mathbf{M^{-1}x = M^{-1}Mb}
+$$
+
+$$
+    \mathbf{b = M^{-1}x}
 $$
 
 Then we can plug the newly computed coefficients $a_{ij}$ and $b_{ij}$ back in the original formula to compute $(x',y')$ from any $(x,y)$:
@@ -139,7 +145,7 @@ $$
 $$
 
 $$
-    \bm{x = Ma}
+    \mathbf{x = Ma}
 $$
 
 $$
@@ -165,24 +171,41 @@ $$
 $$
 
 $$
-    \bm{y = Mb}
+    \mathbf{y = Mb}
 $$
 
-Now the system is over-determined, the formula to calculate the coefficients for a least-square best-fit is to use the left [pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse)
-$\bm{M^+ = (M^TM)^{-1}M^T}$:
+Now the system is over-determined, the formula to calculate the coefficients for a least-square best-fit is to use the left [pseudoinverse](https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse):
 
 $$
-    \bm{M^+x = M^+Ma}\\
-    \bm{a = M^+x}\\
-    \bm{b = M^+y}
+    \mathbf{M^+ = (M^T M)^{-1}M^T}
+$$
 
+Applying it to the equations above:
+
+$$
+    \mathbf{M^+ x = M^+ M a}
+$$
+
+$$
+    \mathbf{a = M^+ x}
+$$
+
+$$
+    \mathbf{M^+ x = M^+ M b}
+$$
+
+$$
+    \mathbf{b = M^+ y}
 $$
 
 Therefore to solve for the two sets of coefficients:
 
 $$
-    \bm{a = (M^TM)^{-1}M^Tx}\\
-    \bm{b = (M^TM)^{-1}M^Ty}\\
+    \mathbf{a = (M^T M)^{-1}M^T x}
+$$
+
+$$
+    \mathbf{b = (M^T M)^{-1}M^T y}
 $$
 
 This general formula for finding least-square works well even for the original case where we have exactly the minimum number of points to fully determine the system; therefore we only use this formula in the example code rather than the simpler inverse of the matrix.
@@ -258,15 +281,21 @@ $$
 In other words, we have:
 
 $$
-    \bm{x = Ma}\\
-    \bm{y = Mb}
+    \mathbf{x = Ma}
+$$
+
+$$
+    \mathbf{y = Mb}
 $$
 
 To solve for the coefficients, apply the same least-square technique:
 
 $$
-    \bm{a = (M^TM)^{-1}M^Tx}\\
-    \bm{b = (M^TM)^{-1}M^Ty}\\
+    \mathbf{a = (M^T M)^{-1}M^T x}
+$$
+
+$$
+    \mathbf{b = (M^T M)^{-1}M^T y}
 $$
 
 The above technique can be applied to any higher order polynomial interpolation.  The algorithm in [calibration.py](calibration.py) is written to handle any order of interpolation from bilinear (n=1) and up.
