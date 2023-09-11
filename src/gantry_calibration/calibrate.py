@@ -25,10 +25,10 @@ from calibration import Point, PointPair, Calibration
 
 Travel = namedtuple("Travel", ["min", "max"])  # Range of travel of each axis
 
-TRAVEL_MIN = 0.0
-TRAVEL_MAX = 1.0
-TRAVEL_RANGE = TRAVEL_MAX - TRAVEL_MIN
-ERROR_FRACTION = 0.05
+# Constants for generating random data points for demo purposes.
+TRAVEL_MIN = 0.0  # Minimum limit for travel range
+TRAVEL_MAX = 1.0  # Maximum limit for travel range
+ERROR_FRACTION = 0.05  # Fraction of travel range as random error or deviation.
 
 
 def main() -> None:
@@ -39,7 +39,7 @@ def main() -> None:
     args = docopt(__doc__, argv=arguments)
 
     if args["basic"]:
-        basic_calibration()
+        polynomial_interpolation(1, 1, 2, 2, annotation=True)
     if args["bilinear"]:
         if args["<points>"]:
             points = int(args["<points>"])
@@ -67,16 +67,9 @@ def main() -> None:
         )
 
 
-def basic_calibration() -> None:
-    """Demonstrate basic bilinear calibration with annotation."""
-    x_travel = Travel(TRAVEL_MIN, TRAVEL_MAX)
-    y_travel = Travel(TRAVEL_MIN, TRAVEL_MAX)
-    points = generate_points(x_travel, y_travel, 2, 2)
-    calibration = Calibration(1, 1, points)
-    plot(points, calibration.map, 5, annotation=True)
-
-
-def polynomial_interpolation(x_order: int, y_order: int, x_points: int, y_points: int) -> None:
+def polynomial_interpolation(
+    x_order: int, y_order: int, x_points: int, y_points: int, annotation: bool = False
+) -> None:
     """
     Interpolate with any order of polynomial.
 
@@ -89,13 +82,13 @@ def polynomial_interpolation(x_order: int, y_order: int, x_points: int, y_points
     print(f"Order {x_order} x {y_order} interpolation using {x_points} x {y_points} points")
     x_travel = Travel(TRAVEL_MIN, TRAVEL_MAX)
     y_travel = Travel(TRAVEL_MIN, TRAVEL_MAX)
-    points = generate_points(x_travel, y_travel, x_points, y_points)
+    points = generate_points(x_travel, y_travel, x_points, y_points, ERROR_FRACTION)
     calibration = Calibration(x_order, y_order, points)
-    plot(points, calibration.map, 5)
+    plot(points, calibration.map, 5, annotation)
 
 
 def generate_points(
-    x_travel: Travel, y_travel: Travel, x_count: int, y_count: int
+    x_travel: Travel, y_travel: Travel, x_count: int, y_count: int, error_fraction: float
 ) -> list[list[PointPair]]:
     """
     Generate random points for calibration algorithm.
@@ -104,12 +97,15 @@ def generate_points(
     :param y_travel: Travel range of points on the y-axis
     :param x_count: Number of points to generate on the x-axis
     :param y_count: Number of points to generate on the y-axis
+    :param error_fraction: Fraction of travel range as random error or deviation.
     """
 
-    def rand() -> float:
-        """Generate random numbers within range defined by ERROR_FRACTION of TRAVEL_RANGE."""
+    def rand(travel: Travel) -> float:
+        """Generate random numbers within range defined by error fraction of travel range."""
         rng = np.random.default_rng()
-        return rng.uniform(-ERROR_FRACTION * TRAVEL_RANGE, ERROR_FRACTION * TRAVEL_RANGE)
+        travel_range = float(travel.max - travel.min)
+        error_range = error_fraction * travel_range
+        return rng.uniform(-error_range, error_range)
 
     x_range = np.linspace(x_travel.min, x_travel.max, x_count)
     y_range = np.linspace(y_travel.min, y_travel.max, y_count)
@@ -119,7 +115,7 @@ def generate_points(
         row = []
         for y_position in y_range:
             expected = Point(x_position, y_position)
-            actual = Point(x_position + rand(), y_position + rand())
+            actual = Point(x_position + rand(x_travel), y_position + rand(y_travel))
             row.append(PointPair(expected, actual))
         temp_array.append(row)
 
