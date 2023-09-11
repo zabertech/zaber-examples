@@ -3,7 +3,7 @@ This article explores the math behind the example code for Gantry Calibration.
 
 ## Introduction
 
-When programming a Cartesian gantry or or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis.  The end goal is to be able to commanding the stage to go to a particular coordinate, and have the stage be on target.
+When programming a Cartesian gantry or or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis.  The end goal is to be able to command the stage to go to a particular coordinate, and have the stage be on target.
 
 In the following diagram, the x and y axes are the hardware controller's coordinate system.  The blue dots represent the locations that one may send commands for the machine to move to. These are the **expected** location, because one may move to those locations in a perfect system and expect to find a target fiducial mark or sample there.
 
