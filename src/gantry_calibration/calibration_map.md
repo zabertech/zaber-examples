@@ -1,21 +1,14 @@
 # Calibration Mapping Algorithm
-This article explores the math behind the example code for Gantry Calibration.
 
-## Introduction
-
-When programming a Cartesian gantry or or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis.  The end goal is to be able to command the stage to go to a particular coordinate, and have the stage be on target.
-
-In the following diagram, the x and y axes are the hardware controller's coordinate system.  The blue dots represent the locations that one may send commands for the machine to move to. These are the **expected** location, because one may move to those locations in a perfect system and expect to find a target fiducial mark or sample there.
-
-![Basic Calibration Mapping](img/basic.png)
-
-However, real-life systems are imperfect and has all kinds of errors and distortions.  When the machine controller stops at the an expected location, for example $(x_2, y_2)$, the **actual** location of the fiducial mark or sample (red dot) may actually be offset a bit to the left and slightly above, for example, at hardware controller location $(x_2', y_2')$.
-
-Calibration techniques are used to find a mapping from the desired or coordinates (blue) to the calibrated coordinates (red).  This calibration algorithm requires as input both the coordinates of the **expected** positions (blue dots), and the coordinates of the **actual** positions (red dots). The actual positions can be acquired by moving the gantry until the end effector is directly on the fiducial mark or sample, and then reading off the positions from software such as [Zaber Launcher](https://software.zaber.com/zaber-launcher/download).  The calibration algorithm uses these point pairs to generate the coefficients for a mapping function that the user can call to transform desired coordinates to calibrated coordinates from any location.
+This article explores the math behind the example code for 2D Calibration.
 
 ## Basic Bilinear Interpolation
 
-The most basic calibration assumes that we can measure the error at the four corners of the working area, and that the deviation from ideal varies linearly from one corner to the next (refer to the diagram above in Introduction)  This is a [Bilinear Interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation), applied twice - once to compute the calibrated $x'$, and once to compute the calibrated $y'$:
+In the following diagram, the x and y axes are the hardware controller's coordinate system.
+
+![Basic Calibration Mapping](img/basic.png)
+
+The most basic calibration assumes that we can measure the error at the four corners of the working area, and that the deviation from ideal varies linearly from one corner to the next. This is a [Bilinear Interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation), applied twice - once to compute the calibrated $x'$, and once to compute the calibrated $y'$:
 
 $$
     x' = a_{00} + a_{10}x + a_{01}y + a_{11}xy

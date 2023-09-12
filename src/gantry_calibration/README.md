@@ -1,19 +1,22 @@
-# Gantry Calibration
+# 2D Calibration
 
 *By Andrew Lau*
 
-A Cartesian gantry or XY system serving a large area often requires calibration to achieve the
-accuracy required.
+When programming a 2D Cartesian gantry or or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis to achieve the accuracy required. The end goal is to be able to commanding the stage to go to a particular coordinate, and have the stage be on target.
 
 This is a Python example showing how to take the expected and actual coordinates of a few grid
-points on the gantry, and generate a mapping from desired coordinates to calibrated coordinates.
+points, and generate a mapping from desired coordinates to calibrated coordinates.
 
 |         Basic Bilinear           |            Biquadratic              |             Real Example              |
 |:--------------------------------:|:-----------------------------------:|:-------------------------------------:|
 | ![basic bilinear](img/basic.png) | ![biquadratic](img/biquadratic.png) | ![real example](img/real_example.png) |
 
-- On the left, the basic premise is that the user wants to command the stage to move to the blue *expected* locations $(x_p, y_p)$, but finds that they actually need to command the stage to move to the red coordinates $(x_p', y_p')$ in order to achieve the desired position. By recording the coordinates of both the blue and red dots, we can come up with a mapping function that takes the expected or raw machine coordinates (blue), and return the actual or calibrated coordinates (red) that we need to command for anywhere in the area.
+This calibration algorithm requires as input both the coordinates of the **expected** positions (blue dots), and the coordinates of the **actual** positions (red dots). The actual positions can be acquired by moving the gantry until the end effector is directly on the fiducial mark or sample, and then reading off the positions from software such as [Zaber Launcher](https://software.zaber.com/zaber-launcher/download).  
+
+- On the left is the most basic bilinear interpolation, requiring four corner point pairs - expected coordinates $(x_p, y_p)$ and actual coordinates $(x_p', y_p')$. The calibration algorithm uses these point pairs to generate the coefficients for a mapping function that the user can call to transform desired coordinates to calibrated coordinates from any location.
+
 - The calibration code is flexible enough that it can take an arbitrary number of points and do a least-square fit to an arbitrary order of polynomial in either axis.  In the middle example, we generated points with a random offset, and fitted a 2nd order (quadratic) curve to both axis.  A quadratic curve requires a minimum of 3 points to define the function, and two-dimensional biquadratic fit requires a minimum of 3 x 3 = 9 points.  In the middle picture we supplied 5 x 5 = 25 points, so the calibration code does a least-square fit to minimize the error.
+
 - On the right is data from a real-life example of actual measured error in a gantry system, and using the calibration code to do a linear fit (bilinear) in both axis.
 
 ## Hardware Requirements
