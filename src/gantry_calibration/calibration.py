@@ -1,9 +1,7 @@
 """The core math and functionality behind the calibration algorithm."""
 
-import sys
 from collections import namedtuple
 import numpy as np
-
 
 Point = namedtuple("Point", ["x", "y"])
 PointPair = namedtuple("PointPair", ["expected", "actual"])
@@ -12,22 +10,61 @@ PointPair = namedtuple("PointPair", ["expected", "actual"])
 class Calibration:
     """Contains the calibration matrix and coefficients."""
 
-    # pylint: disable=too-few-public-methods
-
     def __init__(self, x_order: int, y_order: int, points: list[list[PointPair]]) -> None:
         """Instantiate the object with expected and actual points."""
-        self.x_order = x_order
-        self.y_order = y_order
-        self.points = points
-        point_array = np.array(points)
-        self.x_count = point_array.shape[0]
-        self.y_count = point_array.shape[1]
-        if self.x_order >= self.x_count:
-            print(f"Error: x-axis order ({self.x_order}) must be less than count ({self.x_count})")
-            sys.exit()
-        if self.y_order >= self.y_count:
-            print(f"Error: y-axis order ({self.y_order}) must be less than count ({self.y_count})")
-            sys.exit()
+        # Set the internal values of these properties before fitting coefficients.
+        self._x_order = x_order
+        self._y_order = y_order
+        self._points = points
+
+        # Default values, to be overwritten by _fit_coefficients() function.
+        self._x_coeff = np.zeros((self.x_order + 1) * (self.y_order + 1))
+        self._y_coeff = np.zeros((self.x_order + 1) * (self.y_order + 1))
+
+        # Validate the polynomial orders and fit the coefficients
+        self._fit_coefficients()
+
+    @property
+    def x_count(self) -> int:
+        """Get the number of points for the x-axis."""
+        return np.array(self.points).shape[0]
+
+    @property
+    def y_count(self) -> int:
+        """Get the number of points for the y-axis."""
+        return np.array(self.points).shape[1]
+
+    @property
+    def x_order(self) -> int:
+        """Get the x-axis fit polynomial order."""
+        return self._x_order
+
+    @x_order.setter
+    def x_order(self, value: int) -> None:
+        """Set x-axis fit polynomial order and re-calculate the fit."""
+        self._x_order = value
+        self._fit_coefficients()
+
+    @property
+    def y_order(self) -> int:
+        """Get the y-axis fit polynomial order."""
+        return self._y_order
+
+    @y_order.setter
+    def y_order(self, value: int) -> None:
+        """Set y-axis fit polynomial order and re-calculate the fit."""
+        self._y_order = value
+        self._fit_coefficients()
+
+    @property
+    def points(self) -> list[list[PointPair]]:
+        """Get the data points."""
+        return self._points
+
+    @points.setter
+    def points(self, value: list[list[PointPair]]) -> None:
+        """Set the data points and re-calculate the fit."""
+        self._points = value
         self._fit_coefficients()
 
     def map(self, point: Point) -> Point:
@@ -37,13 +74,15 @@ class Calibration:
         index = 0
         for n_x in range(self.x_order + 1):
             for n_y in range(self.y_order + 1):
-                x_calibrated += self.x_coeff[index].item() * point.x**n_x * point.y**n_y
-                y_calibrated += self.y_coeff[index].item() * point.x**n_x * point.y**n_y
+                x_calibrated += self._x_coeff[index].item() * point.x**n_x * point.y**n_y
+                y_calibrated += self._y_coeff[index].item() * point.x**n_x * point.y**n_y
                 index += 1
         return Point(float(x_calibrated), float(y_calibrated))
 
     def _fit_coefficients(self) -> None:
         """Fit the actual points to calculate the coefficients for equations for x and y."""
+        self._check_orders()
+
         temp_xy_matrix = []
         temp_x_actual = []
         temp_y_actual = []
@@ -59,8 +98,8 @@ class Calibration:
         x_actual = np.matrix(temp_x_actual).T
         y_actual = np.matrix(temp_y_actual).T
 
-        self.x_coeff = np.linalg.inv(xy_matrix.T * xy_matrix) * xy_matrix.T * x_actual
-        self.y_coeff = np.linalg.inv(xy_matrix.T * xy_matrix) * xy_matrix.T * y_actual
+        self._x_coeff = np.linalg.inv(xy_matrix.T * xy_matrix) * xy_matrix.T * x_actual
+        self._y_coeff = np.linalg.inv(xy_matrix.T * xy_matrix) * xy_matrix.T * y_actual
 
     def _make_xy_row(self, x_i: float, y_i: float) -> list[float]:
         """Make one row of the xy matrix."""
@@ -69,3 +108,17 @@ class Calibration:
             for n_y in range(self.y_order + 1):
                 row.append(x_i**n_x * y_i**n_y)
         return row
+
+    def _check_orders(self) -> None:
+        """Check the polynomial orders to make sure we have enough points for the computation."""
+        if self.x_order >= self.x_count:
+            raise ValueError(
+                f"X-axis polynomial order ({self.x_order}) "
+                f"must be less than the number of points ({self.x_count})."
+            )
+
+        if self.y_order >= self.y_count:
+            raise ValueError(
+                f"Y-axis polynomial order ({self.y_order}) "
+                f"must be less than the number of points ({self.y_count})."
+            )
