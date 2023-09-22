@@ -45,7 +45,7 @@ class ShapedLockstep(Lockstep):
         # Get axis numbers that are used so that settings can be changed
         self.axes = list()
         for axis_number in self.get_axis_numbers():
-            self.axes.append(device.get_axis(axis_number))
+            self.axes.append(zaber_lockstep.device.get_axis(axis_number))
 
         # Grab the current deceleration so we can reset it back to this value later if we want.
         self._original_deceleration = self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE)
