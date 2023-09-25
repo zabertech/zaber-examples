@@ -20,6 +20,7 @@ from typing import Callable
 from collections import namedtuple
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
+from matplotlib.pyplot import figure
 from docopt import docopt
 from calibration import Point, PointPair, Calibration
 
@@ -77,7 +78,7 @@ def polynomial_interpolation(
     :param y_order: The order of polynomial to fit the y-axis
     :param x_points: The number of points along the x-axis used for fitting
     :param y_points: The number of points along the y-axis used for fitting
-
+    :param annotation: Display annotation of points
     """
     print(f"Order {x_order} x {y_order} interpolation using {x_points} x {y_points} points")
     x_travel = Travel(TRAVEL_MIN, TRAVEL_MAX)
@@ -136,17 +137,19 @@ def plot(
     :param subscale: Subdivisions to use between points when drawing the mapping to show curves
     :param annotation: Optional annotation for generating graphics for documentation.
     """
+    fig: figure.Figure = plt.figure()
+    axes: figure.Axes = fig.add_subplot(1, 1, 1)
 
     def annotate_point(point_pair: PointPair, subscript: int) -> None:
         """Optionally annotate points."""
-        plt.annotate(
+        axes.annotate(
             f"(x{subscript}, y{subscript})",
             (point_pair.expected.x, point_pair.expected.y),
             xytext=(10, 10),
             textcoords="offset pixels",
             color="b",
         )
-        plt.annotate(
+        axes.annotate(
             f"(x{subscript}', y{subscript}')",
             (point_pair.actual.x, point_pair.actual.y),
             xytext=(10, 10),
@@ -156,7 +159,7 @@ def plot(
 
     def plot_line(point0: Point, point1: Point, style: str) -> None:
         """Plot a line segment between two points."""
-        plt.plot([point0.x, point1.x], [point0.y, point1.y], style)
+        axes.plot([point0.x, point1.x], [point0.y, point1.y], style)
 
     def plot_calibrated(point0: Point, point1: Point, segments: int, style: str) -> None:
         """Plot a calibrated line or curve between two points with specified number of segments."""
@@ -179,8 +182,8 @@ def plot(
         for x_index in range(x_count):
             for y_index in range(y_count):
                 pair = points[x_index][y_index]
-                plt.plot(pair.expected.x, pair.expected.y, "bo")
-                plt.plot(pair.actual.x, pair.actual.y, "ro")
+                axes.plot(pair.expected.x, pair.expected.y, "bo")
+                axes.plot(pair.actual.x, pair.actual.y, "ro")
                 if annotation:
                     annotate_point(pair, sub)
                 sub += 1
@@ -211,8 +214,8 @@ def plot(
         margin_factor = 0.2
         margin_x = (travel_max_x - travel_min_x) * margin_factor
         margin_y = (travel_max_y - travel_min_y) * margin_factor
-        plt.xlim(travel_min_x - margin_x, travel_max_x + margin_x)
-        plt.ylim(travel_min_y - margin_y, travel_max_y + margin_y)
+        axes.set_xlim(travel_min_x - margin_x, travel_max_x + margin_x)
+        axes.set_ylim(travel_min_y - margin_y, travel_max_y + margin_y)
 
     set_plot_limits()
     plot_points_and_lines()
