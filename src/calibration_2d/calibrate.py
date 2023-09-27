@@ -16,20 +16,24 @@ For more information see README.md
 """
 
 import sys
-from typing import Callable
-from collections import namedtuple
+from typing import Callable, NamedTuple
 import numpy as np
 import matplotlib.pyplot as plt  # type: ignore
 from matplotlib.pyplot import figure
 from docopt import docopt
 from calibration import Point, PointPair, Calibration
 
-Travel = namedtuple("Travel", ["min", "max"])  # Range of travel of each axis
-
 # Constants for generating random data points for demo purposes.
 TRAVEL_MIN = 0.0  # Minimum limit for travel range
 TRAVEL_MAX = 1.0  # Maximum limit for travel range
 ERROR_FRACTION = 0.05  # Fraction of travel range as random error or deviation.
+
+
+class Travel(NamedTuple):
+    """Range of travel of each axis."""
+
+    min: float
+    max: float
 
 
 def main() -> None:
@@ -104,7 +108,7 @@ def generate_points(
     def rand(travel: Travel) -> float:
         """Generate random numbers within range defined by error fraction of travel range."""
         rng = np.random.default_rng()
-        travel_range = float(travel.max - travel.min)
+        travel_range = travel.max - travel.min
         error_range = error_fraction * travel_range
         return rng.uniform(-error_range, error_range)
 
