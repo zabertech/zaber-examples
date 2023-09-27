@@ -1,10 +1,21 @@
 """The core math and functionality behind the calibration algorithm."""
 
-from collections import namedtuple
+from typing import NamedTuple
 import numpy as np
 
-Point = namedtuple("Point", ["x", "y"])
-PointPair = namedtuple("PointPair", ["expected", "actual"])
+
+class Point(NamedTuple):
+    """Define a point."""
+
+    x: float
+    y: float
+
+
+class PointPair(NamedTuple):
+    """The expected and actual coordinates of a point."""
+
+    expected: Point
+    actual: Point
 
 
 class Calibration:
@@ -77,7 +88,7 @@ class Calibration:
                 x_calibrated += self._x_coeff[index].item() * point.x**n_x * point.y**n_y
                 y_calibrated += self._y_coeff[index].item() * point.x**n_x * point.y**n_y
                 index += 1
-        return Point(float(x_calibrated), float(y_calibrated))
+        return Point(x_calibrated, y_calibrated)
 
     def _fit_coefficients(self) -> None:
         """Fit the actual points to calculate the coefficients for equations for x and y."""
