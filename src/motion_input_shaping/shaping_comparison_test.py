@@ -16,6 +16,7 @@ from shaped_axis import ShapedAxis  # Zaber axis with input shaping
 from step_response_data import (
     StepResponseData,
 )  # Helper class for getting data from the onboard Oscilloscope
+from shaper_config import *
 
 # ------------------- Script Settings ----------------------
 
@@ -101,7 +102,8 @@ if __name__ == "__main__":
             print(f"Not enough axes for specified axis index ({AXIS_INDEX}), exiting.")
             sys.exit(0)
 
-        shaped_axis = ShapedAxis(device.get_axis(AXIS_INDEX), RESONANT_FREQUENCY, DAMPING_RATIO)
+        shaped_axis = ShapedAxis(device.get_axis(AXIS_INDEX), RESONANT_FREQUENCY, DAMPING_RATIO,
+                                 ShaperConfig(ShaperMode.DECEL))
 
         # Home the axis and move to zero position
         if not shaped_axis.is_homed():
