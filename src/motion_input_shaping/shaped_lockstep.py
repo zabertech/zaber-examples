@@ -49,7 +49,7 @@ class ShapedLockstep(Lockstep):
                 self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
             case ShaperMode.STREAM:
                 self.shaper = ZeroVibrationStreamGenerator(resonant_frequency, damping_ratio,
-                                                                shaper_type=shaper_config.settings.shaper_type)
+                                                           shaper_type=shaper_config.settings.shaper_type)
                 self.stream = zaber_lockstep.device.get_stream(shaper_config.settings.stream_id)
 
         self._max_speed_limit = -1.0
@@ -187,7 +187,7 @@ class ShapedLockstep(Lockstep):
                     wait_until_idle,
                     acceleration,
                     acceleration_unit,
-                    )
+                )
             case ShaperMode.STREAM:
                 self._move_relative_shaped_stream(
                     position,
@@ -296,15 +296,17 @@ class ShapedLockstep(Lockstep):
         self.stream.setup_live_composite(StreamAxisDefinition(self.lockstep_group_id, StreamAxisType.LOCKSTEP))
         self.stream.cork()
         for segment in stream_segments:
-            if self.axes[0].settings.convert_to_native_units(
-                    "accel", segment.accel, Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
+            if self.axes[0].settings.convert_to_native_units("accel",
+                                                             segment.accel,
+                                                             Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED) > 1:
                 self.stream.set_max_tangential_acceleration(segment.accel,
                                                             Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
             else:
                 self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
-            if self.axes[0].settings.convert_to_native_units(
-                    "maxspeed", segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
+            if self.axes[0].settings.convert_to_native_units("maxspeed",
+                                                             segment.speed_limit,
+                                                             Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
                 self.stream.set_max_speed(segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND)
             else:
                 self.stream.set_max_speed(1, Units.NATIVE)

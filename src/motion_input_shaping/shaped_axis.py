@@ -47,7 +47,7 @@ class ShapedAxis(Axis):
                 self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
             case ShaperMode.STREAM:
                 self.shaper = ZeroVibrationStreamGenerator(resonant_frequency, damping_ratio,
-                                                                shaper_type=shaper_config.settings.shaper_type)
+                                                           shaper_type=shaper_config.settings.shaper_type)
                 self.stream = zaber_axis.device.get_stream(shaper_config.settings.stream_id)
 
         self._max_speed_limit = -1.0
@@ -129,7 +129,7 @@ class ShapedAxis(Axis):
                     wait_until_idle,
                     acceleration,
                     acceleration_unit,
-                    )
+                )
             case ShaperMode.STREAM:
                 self._move_relative_shaped_stream(
                     position,
@@ -239,15 +239,17 @@ class ShapedAxis(Axis):
         self.stream.setup_live(self.axis_number)
         self.stream.cork()
         for segment in stream_segments:
-            if super().settings.convert_to_native_units(
-                    "accel", segment.accel, Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
+            if super().settings.convert_to_native_units("accel",
+                                                        segment.accel,
+                                                        Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED) > 1:
                 self.stream.set_max_tangential_acceleration(segment.accel,
                                                             Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
             else:
                 self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
-            if super().settings.convert_to_native_units(
-                    "maxspeed", segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
+            if super().settings.convert_to_native_units("maxspeed",
+                                                        segment.speed_limit,
+                                                        Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
                 self.stream.set_max_speed(segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND)
             else:
                 self.stream.set_max_speed(1, Units.NATIVE)
@@ -345,7 +347,8 @@ if __name__ == "__main__":
             1
         )  # Get the first axis from the device. This will become the ShapedAxis.
         shaped_axis = ShapedAxis(axis, 10,
-                                 0.1, ShaperConfig(ShaperMode.DECEL))  # Initialize the ShapedAxis class with the frequency and damping ratio
+                                 0.1, ShaperConfig(
+                ShaperMode.DECEL))  # Initialize the ShapedAxis class with the frequency and damping ratio
 
         if (
             not shaped_axis.is_homed()
