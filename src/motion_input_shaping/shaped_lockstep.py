@@ -293,6 +293,7 @@ class ShapedLockstep(Lockstep):
         stream_segments = self.shaper.shape_trapezoidal_motion(
             position_mm, accel_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
         )
+        self.stream.disable()
         self.stream.setup_live_composite(StreamAxisDefinition(self.lockstep_group_id, StreamAxisType.LOCKSTEP))
         self.stream.cork()
         for segment in stream_segments:
@@ -316,8 +317,6 @@ class ShapedLockstep(Lockstep):
 
         if wait_until_idle:
             self.stream.wait_until_idle()
-
-        self.stream.disable()
 
     def move_absolute_shaped(
         self,

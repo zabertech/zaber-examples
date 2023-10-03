@@ -236,6 +236,7 @@ class ShapedAxis(Axis):
         stream_segments = self.shaper.shape_trapezoidal_motion(
             position_mm, accel_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
         )
+        self.stream.disable()
         self.stream.setup_live(self.axis_number)
         self.stream.cork()
         for segment in stream_segments:
@@ -259,8 +260,6 @@ class ShapedAxis(Axis):
 
         if wait_until_idle:
             self.stream.wait_until_idle()
-
-        self.stream.disable()
 
     def move_absolute_shaped(
         self,
