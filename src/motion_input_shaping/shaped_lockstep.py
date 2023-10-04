@@ -396,6 +396,10 @@ class ShapedLockstep(Lockstep):
 
 # Example code for using the class.
 if __name__ == "__main__":
+    LOCKSTEP_GROUP_INDEX = 1  # The Zaber axis index to test.
+    RESONANT_FREQUENCY = 10  # Input shaping resonant frequency in Hz.
+    DAMPING_RATIO = 0.1  # Input shaping damping ratio.
+
     with Connection.open_serial_port("COMx") as connection:
         # Get all the devices on the connection
         device_list = connection.detect_devices()
@@ -407,10 +411,10 @@ if __name__ == "__main__":
 
         device = device_list[0]  # Get the first device on the port
         lockstep = device.get_lockstep(
-            1
+            LOCKSTEP_GROUP_INDEX
         )  # Get the first lockstep group from the device. This will become the ShapedLockstep.
         shaped_lockstep = ShapedLockstep(
-            lockstep, 10, 0.1, ShaperConfig(ShaperMode.DECEL)
+            lockstep, RESONANT_FREQUENCY, DAMPING_RATIO, ShaperConfig(ShaperMode.DECEL)
         )  # Initialize the ShapedLockstep class with the frequency and damping ratio
 
         if (
@@ -420,7 +424,6 @@ if __name__ == "__main__":
 
         # Perform some unshaped Moves
         print("Performing unshaped moves.")
-
         shaped_lockstep.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
         shaped_lockstep.move_relative(5, Units.LENGTH_MILLIMETRES, True)
@@ -428,6 +431,7 @@ if __name__ == "__main__":
         shaped_lockstep.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
+        print("Shaping through changing deceleration.")
         # Perform some shaped Moves
         print("Performing shaped moves.")
         shaped_lockstep.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
@@ -453,5 +457,34 @@ if __name__ == "__main__":
         # Reset the deceleration to the original value in case the shaping algorithm changed it.
         # Deceleration is the only setting that may change.
         shaped_lockstep.reset_deceleration()
+
+        print("Repeating shaped moves with ZV shaper using streams.")
+        shaped_lockstep = ShapedLockstep(
+            lockstep, RESONANT_FREQUENCY, DAMPING_RATIO, ShaperConfig(ShaperMode.STREAM, shaper_type=ShaperType.ZV)
+        )  # Re-initialize ShapedAxis class using streams to perform shaping and specify ZV shaper
+
+        # Perform some shaped Moves
+        print("Performing shaped moves.")
+        shaped_lockstep.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
+        time.sleep(0.2)
+        shaped_lockstep.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
+        time.sleep(1)
+
+        # Perform some shaped Moves
+        print("Performing shaped moves with speed limit.")
+        shaped_lockstep.set_max_speed_limit(5, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+        shaped_lockstep.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
+        time.sleep(0.2)
+        shaped_lockstep.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
+        time.sleep(1)
+
+        # Perform some shaped Moves
+        print("Performing full travel shaped moves.")
+        shaped_lockstep.reset_max_speed_limit()
+        shaped_lockstep.move_max_shaped(True)
+        time.sleep(0.2)
+        shaped_lockstep.move_min_shaped(True)
+
+        # Shaping with streams does not alter settings so no resetting is necessary
 
         print("Complete.")
