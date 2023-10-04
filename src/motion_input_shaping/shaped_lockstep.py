@@ -297,6 +297,7 @@ class ShapedLockstep(Lockstep):
         self.stream.setup_live_composite(StreamAxisDefinition(self.lockstep_group_id, StreamAxisType.LOCKSTEP))
         self.stream.cork()
         for segment in stream_segments:
+            # Set acceleration making sure it is greater than zero by comparing 1 native accel unit
             if self.axes[0].settings.convert_to_native_units("accel",
                                                              segment.accel,
                                                              Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED) > 1:
@@ -305,6 +306,7 @@ class ShapedLockstep(Lockstep):
             else:
                 self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
+            # Set max speed making sure that it is at least 1 native speed unit
             if self.axes[0].settings.convert_to_native_units("maxspeed",
                                                              segment.speed_limit,
                                                              Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
@@ -312,6 +314,7 @@ class ShapedLockstep(Lockstep):
             else:
                 self.stream.set_max_speed(1, Units.NATIVE)
 
+            # set position for the end of the segment
             self.stream.line_absolute(Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES))
         self.stream.uncork()
 

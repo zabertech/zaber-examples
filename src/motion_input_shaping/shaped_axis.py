@@ -240,6 +240,7 @@ class ShapedAxis(Axis):
         self.stream.setup_live(self.axis_number)
         self.stream.cork()
         for segment in stream_segments:
+            # Set acceleration making sure it is greater than zero by comparing 1 native accel unit
             if super().settings.convert_to_native_units("accel",
                                                         segment.accel,
                                                         Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED) > 1:
@@ -248,6 +249,7 @@ class ShapedAxis(Axis):
             else:
                 self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
+            # Set max speed making sure that it is at least 1 native speed unit
             if super().settings.convert_to_native_units("maxspeed",
                                                         segment.speed_limit,
                                                         Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
@@ -255,6 +257,7 @@ class ShapedAxis(Axis):
             else:
                 self.stream.set_max_speed(1, Units.NATIVE)
 
+            # set position for the end of the segment
             self.stream.line_absolute(Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES))
         self.stream.uncork()
 
@@ -347,7 +350,7 @@ if __name__ == "__main__":
         )  # Get the first axis from the device. This will become the ShapedAxis.
         shaped_axis = ShapedAxis(axis, 10,
                                  0.1, ShaperConfig(
-                ShaperMode.DECEL))  # Initialize the ShapedAxis class with the frequency and damping ratio
+                                ShaperMode.DECEL))  # Initialize the ShapedAxis class with the frequency and damping ratio
 
         if (
             not shaped_axis.is_homed()
