@@ -12,7 +12,7 @@ This code is designed to run on devices with [Zaber](https://www.zaber.com/) con
 
 Notes:
 - This code requires Zaber devices with firmware version 7.25 or higher.
-- [measure_vibration_test.py](measure_vibration_test.py) requires a stage with a direct reading encoder to measure the resultant system vibrations.
+- [measure_vibration_test.py](measure_vibration_test.py) and [shaping_comparison_test.py](shaping_comparison_test.py) scripts require a stage with a direct reading encoder to measure the resultant system vibrations.
 
 ## Dependencies
 
@@ -53,11 +53,14 @@ To run the example code:
 
 A brief overview of the primary files:
 - [shaped_axis.py](shaped_axis.py) - Contains the ShapedAxis class, which allows the ZeroVibrationShaper class to be easily used with Zaber devices. It is recommended for most users to import this class into their code.
+- [shaped_lockstep.py](shaped_lockstep.py) - Contains the ShapedLockstep class containing the same functionality as ShapedAxis but for use with a lockstep group
 - [shaping_comparison_test.py](shaping_comparison_test.py) - Contains code for testing the ShapedAxis class. The script performs moves with and without input shaping and plots the resulting performance comparison.
 - [measure_vibration_test.py](measure_vibration_test.py) - Contains code for determining a system's vibration parameters. A movement is performed, plotted, and then overlaid with a theoretical damped vibration curve.
 
 Helper files:
-- [zero_vibration_shaper.py](zero_vibration_shaper.py) - Contains the ZeroVibrationShaper class, which is a basic mathematical implementation of a zero vibration input shaping algorithm. Most users won't need this unless input shaping is being implemented on a non-Zaber controller.
+- [shaper_config.py](shaper_config.py) - Contains a ShaperConfig class to manage configuration and settings for the ShapedAxis or ShapedLockstep class.
+- [zero_vibration_shaper.py](zero_vibration_shaper.py) - Contains the ZeroVibrationShaper class, which is a basic mathematical implementation of a zero vibration input shaping algorithm through changing deceleration. Most users won't need this unless input shaping is being implemented on a non-Zaber controller.
+- [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py) - Contains the implementation of shapers and generate the information required to execute a trajectory through a stream.
 - [damped_vibration.py](damped_vibration.py) - Contains the DampedVibration class, which is a basic mathematical implementation of a theoretical damped vibration response curve. Most users won't need this.
 - [step_response_data.py](step_response_data.py) - Contains the StepResponseData class, which is a helper class used for perfoming a move with a Zaber axis while capturing position data via the onboard scope. It is used in the other testing scripts. Most users won't need this.
 
@@ -74,10 +77,12 @@ from shaped_axis import ShapedAxis
 Initalization (Python):
 
 ```python
-shaped_axis_var = ShapedAxis(axis, resonant_frequency, damping_ratio)
+shaper_config = ShaperConfig(ShaperMode.DECEL)
+shaped_axis_var = ShapedAxis(axis, resonant_frequency, damping_ratio, shaper_config)
 ```
 - The axis parameter is the [Axis](https://software.zaber.com/motion-library/api/matlab/ascii/axis) class from which the ShapedAxis is derived. The ShapedAxis exposes all of the underlying methods and properties from the Axis class.
 - See [here](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize the Axis class.
+- The shaper_config parameter is an instance of the ShaperConfig class that contains settings. More details on how to create a configuration can be found in [The ShaperConfig Class](#the-shaperconfig-class) section
 
 Class Properties:
 - `resonant_frequency` - Gets or sets the target resonant frequency at which the input shaping algorithm will remove vibration in Hz.
@@ -95,7 +100,54 @@ Class Methods:
 
 __Important Notes:__
 - All shaped movement commands have an optional acceleration parameter. If this parameter is not specified, the current acceleration setting will be queried from the device prior to performing each move. For maximum speed it is recommended to specify this value as it reduces communication overhead.
-- All shaped movement commands will adjust the [motion.decelonly](https://www.zaber.com/protocol-manual#topic_setting_motion_decelonly) setting. The `reset_deceleration()` method can be used to restore this value. No other trajectory settings are adjusted.
+- Shaped movement commands using DECEL mode will adjust the [motion.decelonly](https://www.zaber.com/protocol-manual#topic_setting_motion_decelonly) setting. The `reset_deceleration()` method can be used to restore this value. No other trajectory settings are adjusted.
+
+### The ShaperConfig Class
+The ShaperConfig class manages settings for ShapedAxis or ShapedLockstep class. The only required input is the shaper_mode parameter. Depending on the mode, there may be additional settings that can be specified. These additional settings are specified as keyword arguments.
+
+Modes:
+- `ShaperMode.STREAM`: Impulse based in input shaper using streams to send a more complicated trajectory. The most basic shaper is the ZV shaper which is described in [Zero Vibration Shaping](https://www.zaber.com/articles/input-shaping-for-vibration-reduction#Zero_Vibration_Shaping)
+  - Settings:
+    - `shaper_type`: Type of the input shaper to use. Available shaper types are defined in the ShaperType enumeration class in [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py)
+      - Default value: ShaperType.ZV
+    - `stream_id`: Identifier number for the stream on the device. This is necessary if multiple streams are being used on a single device in order to avoid a conflict. For example, when performing input shaping in stream mode on two separate axes on a controller, each axis will have its own stream so it is necessary to specify a different id when configuring each ShapedAxis class.
+      - Default value: 1
+- `ShaperMode.DECEL`: Implementation of algorithm described in [A Generic ZV Algorithm](https://www.zaber.com/articles/input-shaping-for-vibration-reduction#A_Generic_ZV_Algorithm).
+  - Settings:
+    - None
+
+Initializing with stream mode and using default settings:
+```python
+shaper_config = ShaperConfig(ShaperMode.STREAM)
+```
+
+Initializing with stream mode and specifying optional settings:
+```python
+shaper_config = ShaperConfig(ShaperMode.STREAM, shaper_type=ShaperType.ZV, stream_id=1)
+```
+
+Initializing with decel mode:
+```python
+shaper_config = ShaperConfig(ShaperMode.DECEL)
+```
+
+#### When To Use Each Shaper Mode
+
+##### ShaperMode.STREAM
+Using streams to send move commands to the device allows for more complex shaping algorithms to be used. These shapers independently cancel out vibrations during acceleration and deceleration so the smoothness during the move is also improved.
+
+Implementing a shaper with this method avoids making any approximations meaning the shaping will be more robust and can operate over any range of move distances. More complex shaper types can also be used to cancel out a wider frequency window making the shaper more tolerant to errors in the resonant frequency.
+
+Performing a shaped move using streams requires 3 commands to be sent in order to set the speed limit, acceleration, and position for each region of constant acceleration before starting the move on top of commands to set up the stream. The number of segments increase with more complex shapers. This communication overhead means that there will be a delay between requesting a move and the move starting.
+
+##### ShaperMode.DECEL
+This simplified method works well for short moves where the move is completed in a low number of vibration periods. The vibration cancellation only occurs while decelerating so the oscillation will persist during the move and only be reduced when coming to stop.
+
+Because of the approximations made with this method, it becomes less effective with longer moves.
+
+Because the deceleration has to begin an integer number of vibration periods from the start of the move, the time taken to perform a move may vary.
+
+Performing a move only requires sending a maximum of 3 commands to the controller so communication overhead is low.
 
 ## Troubleshooting Tips
 
