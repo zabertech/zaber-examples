@@ -1,6 +1,6 @@
 # Input Shaping for Motion Control Vibration Reduction
 
-*By Graham Kerr, Mechanical Engineering Team*
+*By Graham Kerr and Jay Leong*
 
 This repository contains code to complement our article [Input Shaping for Motion Control Vibration Reduction](https://www.zaber.com/articles/input-shaping-for-vibration-reduction). Input shaping algorithms described in the article are implemented in Python, along with classes allowing them to be easily used with Zaber stages via the [Zaber Motion Library](https://software.zaber.com/motion-library/api/py) API.
 
@@ -108,7 +108,7 @@ The ShaperConfig class manages settings for ShapedAxis or ShapedLockstep class. 
 Modes:
 - `ShaperMode.STREAM`: Impulse based in input shaper using streams to send a more complicated trajectory. The most basic shaper is the ZV shaper which is described in [Zero Vibration Shaping](https://www.zaber.com/articles/input-shaping-for-vibration-reduction#Zero_Vibration_Shaping)
   - Settings:
-    - `shaper_type`: Type of the input shaper to use. Available shaper types are defined in the ShaperType enumeration class in [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py)
+    - `shaper_type`: Type of the input shaper to use. Available shaper types are defined in the ShaperType enumeration class in [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py). More details on the different input shaper types can also be found in  [input_shaper_types.md](input_shaper_types.md).
       - Default value: ShaperType.ZV
     - `stream_id`: Identifier number for the stream on the device. This is necessary if multiple streams are being used on a single device in order to avoid a conflict. For example, when performing input shaping in stream mode on two separate axes on a controller, each axis will have its own stream so it is necessary to specify a different id when configuring each ShapedAxis class.
       - Default value: 1
@@ -136,7 +136,7 @@ shaper_config = ShaperConfig(ShaperMode.DECEL)
 ##### ShaperMode.STREAM
 Using streams to send move commands to the device allows for more complex shaping algorithms to be used. These shapers independently cancel out vibrations during acceleration and deceleration so the smoothness during the move is also improved.
 
-Implementing a shaper with this method avoids making any approximations meaning the shaping will be more robust and can operate over any range of move distances. More complex shaper types can also be used to cancel out a wider frequency window making the shaper more tolerant to errors in the resonant frequency.
+Implementing a shaper with this method avoids making any approximations meaning the shaping will be more robust and can operate over any range of move distances. More complex shaper types can also be used to cancel out a wider frequency window making the shaper more tolerant to errors in the resonant frequency. For a more detailed explanation of shaper types the benefits of each. please see [input_shaper_types.md](input_shaper_types.md).
 
 Performing a shaped move using streams requires 3 commands to be sent in order to set the speed limit, acceleration, and position for each region of constant acceleration before starting the move on top of commands to set up the stream. The number of segments increase with more complex shapers. This communication overhead means that there will be a delay between requesting a move and the move starting.
 
