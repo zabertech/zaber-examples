@@ -106,7 +106,7 @@ __Important Notes:__
 The ShaperConfig class manages settings for ShapedAxis or ShapedLockstep class. The only required input is the shaper_mode parameter. Depending on the mode, there may be additional settings that can be specified. These additional settings are specified as keyword arguments.
 
 Modes:
-- `ShaperMode.STREAM`: Impulse based in input shaper using streams to send a more complicated trajectory. The most basic shaper is the ZV shaper which is described in [Zero Vibration Shaping](https://www.zaber.com/articles/input-shaping-for-vibration-reduction#Zero_Vibration_Shaping)
+- `ShaperMode.STREAM`: Impulse based in input shaper using [streams](https://software.zaber.com/motion-library/docs/guides/streams) to send a more complicated trajectory. The most basic shaper is the ZV shaper which is described in [Zero Vibration Shaping](https://www.zaber.com/articles/input-shaping-for-vibration-reduction#Zero_Vibration_Shaping)
   - Settings:
     - `shaper_type`: Type of the input shaper to use. Available shaper types are defined in the ShaperType enumeration class in [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py). More details on the different input shaper types can also be found in  [input_shaper_types.md](input_shaper_types.md).
       - Default value: ShaperType.ZV
@@ -134,7 +134,7 @@ shaper_config = ShaperConfig(ShaperMode.DECEL)
 #### When To Use Each Shaper Mode
 
 ##### ShaperMode.STREAM
-Using streams to send move commands to the device allows for more complex shaping algorithms to be used. These shapers independently cancel out vibrations during acceleration and deceleration so the smoothness during the move is also improved.
+Using [streams](https://software.zaber.com/motion-library/docs/guides/streams) to send move commands to the device allows for more complex shaping algorithms to be used. These shapers independently cancel out vibrations during acceleration and deceleration so the smoothness during the move is also improved.
 
 Implementing a shaper with this method avoids making any approximations meaning the shaping will be more robust and can operate over any range of move distances. More complex shaper types can also be used to cancel out a wider frequency window making the shaper more tolerant to errors in the resonant frequency. For a more detailed explanation of shaper types the benefits of each. please see [input_shaper_types.md](input_shaper_types.md).
 
