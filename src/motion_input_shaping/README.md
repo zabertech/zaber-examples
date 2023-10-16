@@ -137,12 +137,12 @@ shaper_config = ShaperConfig(ShaperMode.DECEL)
 ##### ShaperMode.STREAM
 The shapers implemented through this method can operate over any range of move distances. They independently remove vibrations during each change in acceleration so the smoothness during the move is also improved. More complex shaper types can also be used to create a shaper with a wider frequency window to make it more tolerant to errors in the system's resonant frequency. For a more detailed explanation of shaper types the benefits of each, please see [input_shaper_types.md](input_shaper_types.md).
 
-Performing a shaped move using streams requires 3 commands to be sent in order to set the speed limit, acceleration, and end position for acceleration step as well as commands to initialize the stream before starting the move. This communication overhead will cause a delay between requesting a move and the move starting. The number of acceleration steps increases with more complex shapers resulting in longer delays.
+Performing a shaped move using streams requires 3 commands to be sent for each acceleration step in order to set the speed limit, acceleration, and end position of each segment. There are also commands to initialize the stream. This communication overhead will cause a delay between requesting a move and the move starting. The number of acceleration steps increases with more complex shapers resulting in longer delays.
 
 ##### ShaperMode.DECEL
-This simplified method works well for short moves that are completed in a low number of vibration periods. The vibration cancellation only occurs while decelerating so the oscillation will persist during the move and only be reduced when coming to stop. This method becomes less effective with longer moves due to the errors that are accumulating in the time between acceleration and deceleration.
+This simplified method works well for short moves that are completed in a low number of vibration periods. The vibration cancellation only occurs while decelerating meaning the oscillation will persist during the move and only be reduced when coming to stop. This method becomes less effective with longer moves due to the errors that are accumulating in the time between acceleration and deceleration.
 
-Performing a move only requires sending a maximum of 3 commands to the controller so communication overhead is low.
+Performing a move only requires sending a maximum of 3 additional commands so communication overhead is low and will only add a short delay to the start of the move.
 
 ## Troubleshooting Tips
 
