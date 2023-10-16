@@ -13,7 +13,7 @@ from zaber_motion import Units, Measurement
 from zaber_motion.ascii import Connection, Axis
 from zero_vibration_shaper import ZeroVibrationShaper
 from zero_vibration_stream_generator import ZeroVibrationStreamGenerator, ShaperType
-from shaper_config import *
+from shaper_config import ShaperConfig, ShaperMode
 
 
 class ShapedAxis(Axis):
@@ -23,8 +23,13 @@ class ShapedAxis(Axis):
     Used for performing moves with input shaping vibration reduction theory.
     """
 
-    def __init__(self, zaber_axis: Axis, resonant_frequency: float, damping_ratio: float,
-                 shaper_config: ShaperConfig) -> None:
+    def __init__(
+        self,
+        zaber_axis: Axis,
+        resonant_frequency: float,
+        damping_ratio: float,
+        shaper_config: ShaperConfig,
+    ) -> None:
         """
         Initialize the class for the specified axis.
 
@@ -46,8 +51,11 @@ class ShapedAxis(Axis):
             case ShaperMode.DECEL:
                 self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
             case ShaperMode.STREAM:
-                self.shaper = ZeroVibrationStreamGenerator(resonant_frequency, damping_ratio,
-                                                           shaper_type=shaper_config.settings.shaper_type)
+                self.shaper = ZeroVibrationStreamGenerator(
+                    resonant_frequency,
+                    damping_ratio,
+                    shaper_type=shaper_config.settings.shaper_type,
+                )
                 self.stream = zaber_axis.device.get_stream(shaper_config.settings.stream_id)
 
         self._max_speed_limit = -1.0
@@ -234,31 +242,45 @@ class ShapedAxis(Axis):
         start_position = super().get_position(Units.LENGTH_MILLIMETRES)
 
         stream_segments = self.shaper.shape_trapezoidal_motion(
-            position_mm, accel_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            position_mm,
+            accel_mm,
+            accel_mm,
+            self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
         )
         self.stream.disable()
         self.stream.setup_live(self.axis_number)
         self.stream.cork()
         for segment in stream_segments:
             # Set acceleration making sure it is greater than zero by comparing 1 native accel unit
-            if super().settings.convert_to_native_units("accel",
-                                                        segment.accel,
-                                                        Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED) > 1:
-                self.stream.set_max_tangential_acceleration(segment.accel,
-                                                            Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
+            if (
+                super().settings.convert_to_native_units(
+                    "accel", segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
+                > 1
+            ):
+                self.stream.set_max_tangential_acceleration(
+                    segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
             else:
                 self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
             # Set max speed making sure that it is at least 1 native speed unit
-            if super().settings.convert_to_native_units("maxspeed",
-                                                        segment.speed_limit,
-                                                        Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
-                self.stream.set_max_speed(segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            if (
+                super().settings.convert_to_native_units(
+                    "maxspeed", segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
+                > 1
+            ):
+                self.stream.set_max_speed(
+                    segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
             else:
                 self.stream.set_max_speed(1, Units.NATIVE)
 
             # set position for the end of the segment
-            self.stream.line_absolute(Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES))
+            self.stream.line_absolute(
+                Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES)
+            )
         self.stream.uncork()
 
         if wait_until_idle:
@@ -399,7 +421,10 @@ if __name__ == "__main__":
 
         print("Repeating shaped moves with ZV shaper using streams.")
         shaped_axis = ShapedAxis(
-            axis, RESONANT_FREQUENCY, DAMPING_RATIO, ShaperConfig(ShaperMode.STREAM, shaper_type=ShaperType.ZV)
+            axis,
+            RESONANT_FREQUENCY,
+            DAMPING_RATIO,
+            ShaperConfig(ShaperMode.STREAM, shaper_type=ShaperType.ZV),
         )  # Re-initialize ShapedAxis class using streams to perform shaping and specify ZV shaper
 
         # Perform some shaped Moves

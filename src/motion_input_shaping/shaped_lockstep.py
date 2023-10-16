@@ -14,7 +14,7 @@ from zaber_motion import Units, Measurement
 from zaber_motion.ascii import Connection, Lockstep, StreamAxisDefinition, StreamAxisType
 from zero_vibration_shaper import ZeroVibrationShaper
 from zero_vibration_stream_generator import ZeroVibrationStreamGenerator, ShaperType
-from shaper_config import *
+from shaper_config import ShaperConfig, ShaperMode
 
 
 class ShapedLockstep(Lockstep):
@@ -24,8 +24,13 @@ class ShapedLockstep(Lockstep):
     Used for performing moves with input shaping vibration reduction theory.
     """
 
-    def __init__(self, zaber_lockstep: Lockstep, resonant_frequency: float, damping_ratio: float,
-                 shaper_config: ShaperConfig) -> None:
+    def __init__(
+        self,
+        zaber_lockstep: Lockstep,
+        resonant_frequency: float,
+        damping_ratio: float,
+        shaper_config: ShaperConfig,
+    ) -> None:
         """
         Initialize the class for the specified lockstep group.
 
@@ -36,9 +41,13 @@ class ShapedLockstep(Lockstep):
         :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
         :param damping_ratio: The target damping ratio for shaped moves
         """
-        # Sanity check if the passed lockstep group has a higher number than the number of lockstep groups on the device.
-        if zaber_lockstep.lockstep_group_id > zaber_lockstep.device.settings.get(
-            'lockstep.numgroups') or zaber_lockstep is None:
+        # Sanity check if the passed lockstep group number exceeds than the number of
+        # lockstep groups on the device.
+        if (
+            zaber_lockstep.lockstep_group_id
+            > zaber_lockstep.device.settings.get("lockstep.numgroups")
+            or zaber_lockstep is None
+        ):
             raise TypeError("Invalid Lockstep class was used to initialized ShapedLockstep.")
 
         super().__init__(zaber_lockstep.device, zaber_lockstep.lockstep_group_id)
@@ -48,19 +57,24 @@ class ShapedLockstep(Lockstep):
             case ShaperMode.DECEL:
                 self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
             case ShaperMode.STREAM:
-                self.shaper = ZeroVibrationStreamGenerator(resonant_frequency, damping_ratio,
-                                                           shaper_type=shaper_config.settings.shaper_type)
+                self.shaper = ZeroVibrationStreamGenerator(
+                    resonant_frequency,
+                    damping_ratio,
+                    shaper_type=shaper_config.settings.shaper_type,
+                )
                 self.stream = zaber_lockstep.device.get_stream(shaper_config.settings.stream_id)
 
         self._max_speed_limit = -1.0
 
         # Get axis numbers that are used so that settings can be changed
-        self.axes = list()
+        self.axes = []
         for axis_number in self.get_axis_numbers():
             self.axes.append(zaber_lockstep.device.get_axis(axis_number))
 
         # Grab the current deceleration so we can reset it back to this value later if we want.
-        self._original_deceleration = self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE)
+        self._original_deceleration = self.get_setting_from_lockstep_axes(
+            "motion.decelonly", Units.NATIVE
+        )
 
         # Set the speed limit to the device's current maxspeed so it will never be exceeded
         self.reset_max_speed_limit()
@@ -86,15 +100,17 @@ class ShapedLockstep(Lockstep):
         self.shaper.damping_ratio = value
 
     def is_homed(self) -> bool:
-        """Checks if all axes in lockstep group are homed"""
+        """Check if all axes in lockstep group are homed."""
         for n in range(len(self.axes)):
             if not self.axes[n].is_homed():
                 return False
         return True
 
-    def get_setting_from_lockstep_axes(self, setting: str, unit: Units = Units.NATIVE) -> list[float]:
+    def get_setting_from_lockstep_axes(
+        self, setting: str, unit: Units = Units.NATIVE
+    ) -> list[float]:
         """
-        Gets setting values from axes in the lockstep group
+        Get setting values from axes in the lockstep group
 
         :param setting: The name of setting
         :param unit: The values will be returned in these units.
@@ -105,18 +121,23 @@ class ShapedLockstep(Lockstep):
             values.append(axis.settings.get(setting, unit))
         return values
 
-    def set_lockstep_axes_setting(self, setting: str, values: list[float], unit: Units = Units.NATIVE) -> None:
+    def set_lockstep_axes_setting(
+        self, setting: str, values: list[float], unit: Units = Units.NATIVE
+    ) -> None:
         """
-        Sets settings for all axes in the lockstep group.
+        Set settings for all axes in the lockstep group.
 
         :param setting: The name of setting
-        :param values: A list of values to apply as setting for each axis or a single value to apply to all
+        :param values: A list of values to apply as setting for each axis or a single value to
+        apply to all
         :param unit: The values will be returned in these units.
         """
         if len(values) > 1:
             if len(values) != len(self.axes):
-                raise ValueError(f"Length of setting values does not match the number of axes. "
-                                 f"The list must either be a single value or match the number of axes")
+                raise ValueError(
+                    "Length of setting values does not match the number of axes. "
+                    "The list must either be a single value or match the number of axes."
+                )
             for n in range(len(self.axes)):
                 self.axes[n].settings.set(setting, values[n], unit)
         else:
@@ -125,7 +146,7 @@ class ShapedLockstep(Lockstep):
 
     def get_axis_positions(self, unit: Units = Units.NATIVE) -> list[float]:
         """
-        Gets positions from axes in the lockstep group
+        Get positions from axes in the lockstep group
 
         :param unit: The positions will be returned in these units.
         :return: A list of setting values
@@ -142,7 +163,9 @@ class ShapedLockstep(Lockstep):
         :param unit: The value will be returned in these units.
         :return: The velocity limit.
         """
-        return self.axes[0].settings.convert_from_native_units("maxspeed", self._max_speed_limit, unit)
+        return self.axes[0].settings.convert_from_native_units(
+            "maxspeed", self._max_speed_limit, unit
+        )
 
     def set_max_speed_limit(self, value: float, unit: Units = Units.NATIVE) -> None:
         """
@@ -151,7 +174,9 @@ class ShapedLockstep(Lockstep):
         :param value: The velocity limit.
         :param unit: The units of the velocity limit value.
         """
-        self._max_speed_limit = self.axes[0].settings.convert_to_native_units("maxspeed", value, unit)
+        self._max_speed_limit = self.axes[0].settings.convert_to_native_units(
+            "maxspeed", value, unit
+        )
 
     def reset_max_speed_limit(self) -> None:
         """Reset the velocity limit for shaped moves to the device's existing maxspeed setting."""
@@ -160,7 +185,9 @@ class ShapedLockstep(Lockstep):
 
     def reset_deceleration(self) -> None:
         """Reset the trajectory deceleration to the value stored when the class was created."""
-        self.set_lockstep_axes_setting("motion.decelonly", self._original_deceleration, Units.NATIVE)
+        self.set_lockstep_axes_setting(
+            "motion.decelonly", self._original_deceleration, Units.NATIVE
+        )
 
     def move_relative_shaped(
         self,
@@ -232,7 +259,8 @@ class ShapedLockstep(Lockstep):
 
         # Apply the input shaping with all values of the same units
         deceleration_mm, max_speed_mm = self.shaper.shape_trapezoidal_motion(
-            position_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND))
+            position_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
+        )
 
         # Check if the target deceleration is different from the current value
         deceleration_native = round(
@@ -241,7 +269,10 @@ class ShapedLockstep(Lockstep):
             )
         )
 
-        if np.min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE)) != deceleration_native:
+        if (
+            np.min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE))
+            != deceleration_native
+        ):
             self.set_lockstep_axes_setting("motion.decelonly", [deceleration_native], Units.NATIVE)
 
         # Perform the move
@@ -291,31 +322,47 @@ class ShapedLockstep(Lockstep):
         start_position = super().get_position(Units.LENGTH_MILLIMETRES)
 
         stream_segments = self.shaper.shape_trapezoidal_motion(
-            position_mm, accel_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            position_mm,
+            accel_mm,
+            accel_mm,
+            self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
         )
         self.stream.disable()
-        self.stream.setup_live_composite(StreamAxisDefinition(self.lockstep_group_id, StreamAxisType.LOCKSTEP))
+        self.stream.setup_live_composite(
+            StreamAxisDefinition(self.lockstep_group_id, StreamAxisType.LOCKSTEP)
+        )
         self.stream.cork()
         for segment in stream_segments:
             # Set acceleration making sure it is greater than zero by comparing 1 native accel unit
-            if self.axes[0].settings.convert_to_native_units("accel",
-                                                             segment.accel,
-                                                             Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED) > 1:
-                self.stream.set_max_tangential_acceleration(segment.accel,
-                                                            Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED)
+            if (
+                self.axes[0].settings.convert_to_native_units(
+                    "accel", segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
+                > 1
+            ):
+                self.stream.set_max_tangential_acceleration(
+                    segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
             else:
                 self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
             # Set max speed making sure that it is at least 1 native speed unit
-            if self.axes[0].settings.convert_to_native_units("maxspeed",
-                                                             segment.speed_limit,
-                                                             Units.VELOCITY_MILLIMETRES_PER_SECOND) > 1:
-                self.stream.set_max_speed(segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            if (
+                self.axes[0].settings.convert_to_native_units(
+                    "maxspeed", segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
+                > 1
+            ):
+                self.stream.set_max_speed(
+                    segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
             else:
                 self.stream.set_max_speed(1, Units.NATIVE)
 
             # set position for the end of the segment
-            self.stream.line_absolute(Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES))
+            self.stream.line_absolute(
+                Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES)
+            )
         self.stream.uncork()
 
         if wait_until_idle:
@@ -460,7 +507,10 @@ if __name__ == "__main__":
 
         print("Repeating shaped moves with ZV shaper using streams.")
         shaped_lockstep = ShapedLockstep(
-            lockstep, RESONANT_FREQUENCY, DAMPING_RATIO, ShaperConfig(ShaperMode.STREAM, shaper_type=ShaperType.ZV)
+            lockstep,
+            RESONANT_FREQUENCY,
+            DAMPING_RATIO,
+            ShaperConfig(ShaperMode.STREAM, shaper_type=ShaperType.ZV),
         )  # Re-initialize ShapedAxis class using streams to perform shaping and specify ZV shaper
 
         # Perform some shaped Moves
