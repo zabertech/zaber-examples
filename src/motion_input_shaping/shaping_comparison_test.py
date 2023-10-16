@@ -20,7 +20,7 @@ from shaper_config import *
 
 # ------------------- Script Settings ----------------------
 
-COM_PORT = "COMX"  # The COM port with the connected Zaber device.
+COM_PORT = "COMx"  # The COM port with the connected Zaber device.
 DEVICE_INDEX = 0  # The Zaber device index to test.
 AXIS_INDEX = 1  # The Zaber axis index to test.
 MOVE_DISTANCE = 5  # The move distance in mm to test.
