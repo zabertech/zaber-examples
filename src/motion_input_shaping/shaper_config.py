@@ -10,27 +10,24 @@ Run the file directly to test the class out with a Zaber Device.
 
 import warnings
 from enum import Enum
+from typing import Any
 from zero_vibration_stream_generator import ShaperType
 
 
 class ShaperMode(Enum):
     """Enumeration for different shaper modes"""
+
     DECEL = 1
     STREAM = 2
 
 
-class Settings(dict):
+class Settings(dict[str, Any]):
     """
-    Settings class that is a dictionary where parameters can be accessed like a class
+    Settings class that is a dictionary where creating new entries is not allowed and the value
+    type must match the type of the existing value
     """
 
-    def __getstate__(self):
-        return self
-
-    def __setstate__(self, state):
-        self.update(state)
-
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         if key not in self:
             raise KeyError(f"{key} is not a setting.")
 
@@ -40,26 +37,19 @@ class Settings(dict):
 
         super().__setitem__(key, value)
 
-    __getattr__ = dict.__getitem__
-    __setattr__ = __setitem__
-    __delattr__ = dict.__delitem__
-
-    def copy(self, **extra_params):
-        return Settings(**self, **extra_params)
-
 
 class ShaperConfig:
     """
     Configuration to class to select a shaper mode and specify settings
     """
 
-    def __init__(self, shaper_mode: ShaperMode, **kwargs):
+    def __init__(self, shaper_mode: ShaperMode, **options: Any):
         """
         :param ShaperMode: Method to use to create shaping
-        :param kwargs: Settings specified as keyword pairs
+        :param options: Settings specified as keyword pairs
         """
         self.shaper_mode = shaper_mode
-        self._write_settings(kwargs)  # process key word arguments and
+        self._write_settings(options)  # process key word arguments and
 
     @property
     def shaper_mode(self) -> ShaperMode:
@@ -80,7 +70,7 @@ class ShaperConfig:
             case ShaperMode.STREAM:
                 self.settings = Settings(shaper_type=ShaperType.ZV, stream_id=1)
 
-    def _write_settings(self, settings_dictionary: dict):
+    def _write_settings(self, settings_dictionary: dict[str, Any]) -> None:
         """
         Save relevant settings to dictionary
         """
@@ -94,6 +84,6 @@ class ShaperConfig:
                     f"Setting was ignored."
                 )
 
-    def set(self, **kwargs):
+    def set(self, **options: Any) -> None:
         """Set settings using keyword arguments"""
-        self._write_settings(kwargs)
+        self._write_settings(options)
