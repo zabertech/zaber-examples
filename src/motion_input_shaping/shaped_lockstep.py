@@ -110,8 +110,8 @@ class ShapedLockstep(Lockstep):
 
     def is_homed(self) -> bool:
         """Check if all axes in lockstep group are homed."""
-        for n in range(len(self.axes)):
-            if not self.axes[n].is_homed():
+        for axis in self.axes:
+            if not axis.is_homed():
                 return False
         return True
 
@@ -147,11 +147,11 @@ class ShapedLockstep(Lockstep):
                     "Length of setting values does not match the number of axes. "
                     "The list must either be a single value or match the number of axes."
                 )
-            for n in range(len(self.axes)):
-                self.axes[n].settings.set(setting, values[n], unit)
+            for n, axis in enumerate(self.axes):
+                axis.settings.set(setting, values[n], unit)
         else:
-            for n in range(len(self.axes)):
-                self.axes[n].settings.set(setting, values[0], unit)
+            for n, axis in enumerate(self.axes):
+                axis.settings.set(setting, values[0], unit)
 
     def get_axis_positions(self, unit: Units = Units.NATIVE) -> list[float]:
         """
