@@ -100,8 +100,9 @@ class ZeroVibrationStreamGenerator:
         self.damping_ratio = damping_ratio
         self.shaper_type = shaper_type
 
-        self._impulses = None
-        self._impulse_times = None
+        # Initialize impulses as a single impulse with no delay for no shaping
+        self._impulse_times = [0.0]
+        self._impulses = [1.0]
         self.impulses_updated = False
         self.update_shaper_impulses()  # Update impulses
 
@@ -164,13 +165,13 @@ class ZeroVibrationStreamGenerator:
 
     def get_impulses(self) -> list[float]:
         """Get shaper impulse magnitudes"""
-        if self._impulses is None or self._impulse_times is None or self.impulses_updated is False:
+        if self.impulses_updated is False:
             self.update_shaper_impulses()
         return self._impulses
 
     def get_impulse_times(self) -> list[float]:
         """Get shaper impulse times"""
-        if self._impulses is None or self._impulse_times is None or self.impulses_updated is False:
+        if self.impulses_updated is False:
             self.update_shaper_impulses()
         return self._impulse_times
 
