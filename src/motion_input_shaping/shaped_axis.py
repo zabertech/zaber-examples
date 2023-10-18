@@ -49,9 +49,9 @@ class ShapedAxis(Axis):
 
         match self._shaper_mode:
             case ShaperMode.DECEL:
-                self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
+                self._shaper_decel = ZeroVibrationShaper(resonant_frequency, damping_ratio)
             case ShaperMode.STREAM:
-                self.shaper = ZeroVibrationStreamGenerator(
+                self._shaper_stream = ZeroVibrationStreamGenerator(
                     resonant_frequency,
                     damping_ratio,
                     shaper_type=shaper_config.settings["shaper_type"],
@@ -65,6 +65,15 @@ class ShapedAxis(Axis):
 
         # Set the speed limit to the device's current maxspeed so it will never be exceeded
         self.reset_max_speed_limit()
+
+    @property
+    def shaper(self) -> ZeroVibrationShaper | ZeroVibrationStreamGenerator:
+        """Gets the shaper for the specified mode"""
+        match self._shaper_mode:
+            case ShaperMode.DECEL:
+                return self._shaper_decel
+            case ShaperMode.STREAM:
+                return self._shaper_stream
 
     @property
     def resonant_frequency(self) -> float:
@@ -181,7 +190,7 @@ class ShapedAxis(Axis):
         )
 
         # Apply the input shaping with all values of the same units
-        deceleration_mm, max_speed_mm = self.shaper.shape_trapezoidal_motion(
+        deceleration_mm, max_speed_mm = self._shaper_decel.shape_trapezoidal_motion(
             position_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
         )
 
@@ -241,7 +250,7 @@ class ShapedAxis(Axis):
 
         start_position = super().get_position(Units.LENGTH_MILLIMETRES)
 
-        stream_segments = self.shaper.shape_trapezoidal_motion(
+        stream_segments = self._shaper_stream.shape_trapezoidal_motion(
             position_mm,
             accel_mm,
             accel_mm,
