@@ -103,7 +103,7 @@ class ZeroVibrationStreamGenerator:
         # Initialize impulses as a single impulse with no delay for no shaping
         self._impulse_times = [0.0]
         self._impulses = [1.0]
-        self.impulses_updated = False
+        self._impulses_updated = False
         self.update_shaper_impulses()  # Update impulses
 
     @property
@@ -116,7 +116,7 @@ class ZeroVibrationStreamGenerator:
         """Set the target resonant frequency for input shaping in Hz."""
         if value <= 0:
             raise ValueError(f"Invalid resonant frequency: {value}. Value must be greater than 0.")
-        self.impulses_updated = False
+        self._impulses_updated = False
         self._resonant_frequency = value
 
     @property
@@ -136,7 +136,7 @@ class ZeroVibrationStreamGenerator:
             raise ValueError(
                 f"Invalid damping ratio: {value}. Value must be greater than or equal to 0."
             )
-        self.impulses_updated = False
+        self._impulses_updated = False
         self._damping_ratio = value
 
     @property
@@ -147,31 +147,18 @@ class ZeroVibrationStreamGenerator:
     @shaper_type.setter
     def shaper_type(self, value: ShaperType) -> None:
         """Set input shaper type."""
-        self.impulses_updated = False
+        self._impulses_updated = False
         self._shaper_type = value
-
-    @property
-    def min_timestep(self) -> float:
-        """Get the minimum time step for shaped pvt sequence in seconds."""
-        return self._min_timestep
-
-    @min_timestep.setter
-    def min_timestep(self, value: float) -> None:
-        """Set the minimum time step for shaped pvt sequence in seconds."""
-        if value <= 0:
-            raise ValueError(f"Invalid minimum timestep: {value}. Value must be greater than 0.")
-
-        self._min_timestep = value
 
     def get_impulses(self) -> list[float]:
         """Get shaper impulse magnitudes"""
-        if self.impulses_updated is False:
+        if self._impulses_updated is False:
             self.update_shaper_impulses()
         return self._impulses
 
     def get_impulse_times(self) -> list[float]:
         """Get shaper impulse times"""
-        if self.impulses_updated is False:
+        if self._impulses_updated is False:
             self.update_shaper_impulses()
         return self._impulse_times
 
@@ -214,7 +201,7 @@ class ZeroVibrationStreamGenerator:
                 self._impulse_times = [t0, t1, t2, t3]
             case _:
                 raise ValueError(f"Shaper type {self.shaper_type} is not valid.")
-        self.impulses_updated = True
+        self._impulses_updated = True
 
     def shape_trapezoidal_motion(
         self, distance: float, acceleration: float, deceleration: float, max_speed_limit: float
