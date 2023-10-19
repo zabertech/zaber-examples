@@ -6,7 +6,7 @@ This article explains the different input shapers types and their benefits.
 Different types of shapers can be used to generate the shaped trajectories that can be executed by a controller through streams. A shaper consists of a series of impulses with responses that cancel each other out when combined. These impulses are convolved with the original trajectory to produce a shaped trajectory that reduces vibration at the resonant frequency of the system. The trajectory duration is extended by the duration of the shaper so there is a move time penalty incurred with input shaping.
 
 ## The Zero Vibration Shaper
-The most basic implementation of a shaper is the ZV shaper. This shaper consists of two impulses separated by half a resonant period. The resulting responses from each impulse destructively interfere with each other resulting in no residual vibration as shown in the figure below.
+The most basic implementation of a shaper is the ZV shaper which consists of two impulses separated by half a resonant period. The resulting responses from each impulse destructively interfere with each other resulting in no residual vibration as demonstrated in the figure below.
 
 ![input_shaping.jpg](img/input_shaping.jpg)
 
@@ -36,7 +36,7 @@ The figure below shows the shaper applied to a full trapezoidal velocity move.
 ![zv_trapezoidal_motion_acceleration.jpg](img/zv_trapezoidal_motion_acceleration.jpg)
 
 ## More Robust Shapers
-A shaper is tuned to target a specific resonant frequency and will be less effective if the actual resonant frequency of the system deviates from the shaper frequency. More complex shaper types can be used to widen the effective frequency window. These typically have longer durations so the additional robustness comes at the expense of longer move times.
+A shaper is tuned to target a specific resonant frequency and will be less effective if the actual resonant frequency of the system deviates from the shaper frequency. More complex shaper types can be used to widen the effective frequency window, but they typically have longer durations so the additional robustness comes at the expense of longer move times.
 
 The figure below shows the theoretical effectiveness of various shapers with varying amounts of error between the actual resonant frequency and shaper frequency. The amount of residual vibration with a ZV shaper quickly increases when there is any error in the frequency while the others have a wider tolerance band.
 
@@ -65,7 +65,7 @@ A ZVDD shaper sets the second derivative to zero to further widen the window.
 | $1.0T$       | $\frac\{3K^2}{1+3K+3K^2+K^3}$ |
 | $1.5T$       | $\frac\{K^3}{1+3K+3K^2+K^3}$  |
 
-In addition to the longer move times due to the increased shaper duration, each impulse increases the number of commands that need to be sent to the controller to set up the stream. This additional communication overhead will increase the delay before the start of the move.
+In addition to the longer move times due to the increased shaper duration, each impulse increases the number of commands that need to be sent to the controller to set up the stream. This additional communication overhead will increase the delay before the start of a move.
 
 ### Summary of Shaper Types
 
