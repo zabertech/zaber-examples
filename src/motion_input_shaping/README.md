@@ -44,6 +44,7 @@ Before running `measure_vibration_test.py` or `shaping_comparison_test.py`:
 - Edit `COM_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
+- In `shaping_comparison_test.py`, the shaper mode and settings should be changed to suit a particular system. More details on how to configure the shaper is provided in the sections below.
 
 To run the example code:
 
