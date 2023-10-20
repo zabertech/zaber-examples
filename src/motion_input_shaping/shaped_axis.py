@@ -68,7 +68,7 @@ class ShapedAxis(Axis):
 
     @property
     def shaper(self) -> ZeroVibrationShaper | ZeroVibrationStreamGenerator:
-        """Gets the shaper for the specified mode"""
+        """Gets the shaper for the specified mode."""
         match self._shaper_mode:
             case ShaperMode.DECEL:
                 return self._shaper_decel

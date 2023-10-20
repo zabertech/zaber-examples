@@ -81,7 +81,7 @@ class ShapedLockstep(Lockstep):
 
     @property
     def shaper(self) -> ZeroVibrationShaper | ZeroVibrationStreamGenerator:
-        """Gets the shaper for the specified mode"""
+        """Gets the shaper for the specified mode."""
         match self._shaper_mode:
             case ShaperMode.DECEL:
                 return self._shaper_decel
@@ -119,7 +119,7 @@ class ShapedLockstep(Lockstep):
         self, setting: str, unit: Units = Units.NATIVE
     ) -> list[float]:
         """
-        Get setting values from axes in the lockstep group
+        Get setting values from axes in the lockstep group.
 
         :param setting: The name of setting
         :param unit: The values will be returned in these units.
@@ -155,7 +155,7 @@ class ShapedLockstep(Lockstep):
 
     def get_axis_positions(self, unit: Units = Units.NATIVE) -> list[float]:
         """
-        Get positions from axes in the lockstep group
+        Get positions from axes in the lockstep group.
 
         :param unit: The positions will be returned in these units.
         :return: A list of setting values

@@ -1,12 +1,4 @@
-"""
-This file contains the ShapedConfig class which is used to specify settings for a ShapedAxis or
-ShapedLockstep class.
-
-Run the file directly to test the class out with a Zaber Device.
-"""
-
-# pylint: disable=too-many-arguments
-# This is not an issue.
+"""This file contains the ShaperConfig class which is used to specify shaping mode and settings."""
 
 import warnings
 from enum import Enum
@@ -15,19 +7,17 @@ from zero_vibration_stream_generator import ShaperType
 
 
 class ShaperMode(Enum):
-    """Enumeration for different shaper modes"""
+    """Enumeration for different shaper modes."""
 
     DECEL = 1
     STREAM = 2
 
 
 class Settings(dict[str, Any]):
-    """
-    Settings class that is a dictionary where creating new entries is not allowed and the value
-    type must match the type of the existing value
-    """
+    """Settings dictionary where keys and value types are fixed after initialization."""
 
     def __setitem__(self, key: str, value: Any) -> None:
+        """Set item in dictionary if it matches an existing item."""
         if key not in self:
             raise KeyError(f"{key} is not a setting.")
 
@@ -39,12 +29,12 @@ class Settings(dict[str, Any]):
 
 
 class ShaperConfig:
-    """
-    Configuration to class to select a shaper mode and specify settings
-    """
+    """Configuration to class to select a shaper mode and specify settings."""
 
     def __init__(self, shaper_mode: ShaperMode, **options: Any):
         """
+        Initialize the class in specified mode and with options.
+
         :param ShaperMode: Method to use to create shaping
         :param options: Settings specified as keyword pairs
         """
@@ -53,12 +43,12 @@ class ShaperConfig:
 
     @property
     def shaper_mode(self) -> ShaperMode:
-        """Get shaper mode"""
+        """Get shaper mode."""
         return self._shaper_mode
 
     @shaper_mode.setter
     def shaper_mode(self, mode: ShaperMode) -> None:
-        """Set shaper mode"""
+        """Set shaper mode."""
         self._shaper_mode = mode
 
         # Initialize settings dictionary with default values for specific mode.
@@ -72,7 +62,12 @@ class ShaperConfig:
 
     def _write_settings(self, settings_dictionary: dict[str, Any]) -> None:
         """
-        Save relevant settings to dictionary
+        Save relevant settings to dictionary.
+
+        Checks whether each item matches an existing item in the dictionary and provides a warning
+        that item is ignored if it doesn't match.
+
+        :param settings_dictionary: Dictionary containing settings to write.
         """
         for key in settings_dictionary:
             if key in self.settings:
@@ -85,5 +80,5 @@ class ShaperConfig:
                 )
 
     def set(self, **options: Any) -> None:
-        """Set settings using keyword arguments"""
+        """Set settings using keyword arguments."""
         self._write_settings(options)

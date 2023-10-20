@@ -9,7 +9,7 @@ capture position data.
 
 import time
 import sys
-from matplotlib import pyplot as plt  # type: ignore
+from matplotlib import pyplot as plt
 from zaber_motion import Units
 from zaber_motion.ascii import Connection
 from shaped_axis import ShapedAxis  # Zaber axis with input shaping

@@ -14,7 +14,7 @@ import numpy as np
 
 
 class ShaperType(Enum):
-    """Enumeration for different input shaper types"""
+    """Enumeration for different input shaper types."""
 
     ZV = 1
     ZVD = 2
@@ -23,7 +23,7 @@ class ShaperType(Enum):
 
 @dataclass
 class StreamSegment:
-    """A class that contains information for a single segment of the trajectory"""
+    """A class that contains information for a single segment of the trajectory."""
 
     position: float
     speed_limit: float
@@ -35,7 +35,8 @@ def trapezoidal_motion_generator(
     distance: float, acceleration: float, deceleration: float, max_speed_limit: float
 ) -> list[list[float]]:
     """
-    Produce acceleration profile for basic trapezoidal motion
+    Produce acceleration profile for basic trapezoidal motion.
+
     Returns time and acceleration at points where acceleration changes
     All acceleration changes are step changes for trapezoidal motion.
 
@@ -88,10 +89,11 @@ def calculate_acceleration_convolution(
     unshaped_acceleration: list[float],
 ) -> list[list[float]]:
     """
-    Perform the shaping by convolving acceleration with the shaper impulses.
-    This algorithm computes the convolution without actually performing a convolution on a full
-    timeseries dataset which reduces the amount of computation and number of points generated.
-    It is also more accurate since it is not constrained by fixed timestep size.
+    Perform the shaping by computing convolution of acceleration with the shaper impulses.
+
+    This algorithm computes the result of the convolution without actually performing a convolution
+    on a full timeseries dataset. This reduces the amount of computation and number of points
+    generated and is also more accurate since it is not constrained by fixed timestep size.
     This algorithm only works if the acceleration changes are steps changes.
     Returns shaped segment times and accelerations.
 
@@ -134,9 +136,10 @@ def create_stream_trajectory(
     trajectory_time: list[float], trajectory_acceleration: list[float]
 ) -> list[StreamSegment]:
     """
-    From a list of accelerations calculate velocity and position information needed to execute
-    trajectory through streams. This assumes final acceleration is 0.
-    Returns list of StreamSegment objects
+    Compute information needed to execute trajectory through streams.
+
+    Returns list of StreamSegment objects.
+    The final acceleration must be 0.
 
     :param trajectory_time: Start time of each constant acceleration segment
     :param trajectory_acceleration: Acceleration of each segment
@@ -173,10 +176,7 @@ def create_stream_trajectory(
 
 
 class ZeroVibrationStreamGenerator:
-    """
-    A class for implementing zero vibration input shaping theory and generating information needed
-    to stream trajectory.
-    """
+    """A class for creating stream motion with zero vibration input shaping theory."""
 
     # pylint: disable=too-many-instance-attributes
     # Ignore number of attributes warning because calling property setters in init is being counted
@@ -250,20 +250,21 @@ class ZeroVibrationStreamGenerator:
         self._impulses_updated = False
 
     def get_impulses(self) -> list[float]:
-        """Get shaper impulse magnitudes"""
+        """Get shaper impulse magnitudes."""
         if self._impulses_updated is False:
             self._update_shaper_impulses()
         return self._impulses
 
     def get_impulse_times(self) -> list[float]:
-        """Get shaper impulse times"""
+        """Get shaper impulse times."""
         if self._impulses_updated is False:
             self._update_shaper_impulses()
         return self._impulse_times
 
     def _update_shaper_impulses(self) -> None:
         """
-        Calculates times and unitless magnitude of impulses to perform the input shaping.
+        Calculate times and unitless magnitude of impulses to perform the input shaping.
+
         The sum of all impulses should total to 1 to maintain the same final state.
         """
         k = math.exp(
@@ -307,6 +308,7 @@ class ZeroVibrationStreamGenerator:
     ) -> list[StreamSegment]:
         """
         Create stream points for zero vibration trapezoidal motion.
+
         All distance, speed, and accel units must be consistent.
 
         :param distance: The trajectory distance.
