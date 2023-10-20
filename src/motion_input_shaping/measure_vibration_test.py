@@ -13,9 +13,9 @@ capture position data.
 
 import time
 import sys
-from matplotlib import pyplot as plt  # type: ignore
-from matplotlib.pyplot import Axes  # type: ignore
-from matplotlib.widgets import TextBox  # type: ignore
+from typing import Any
+from matplotlib import pyplot as plt
+from matplotlib.widgets import TextBox
 from zaber_motion import Units
 from zaber_motion.ascii import Connection
 from damped_vibration import DampedVibration  # For calculating a theoretical vibration curve
@@ -35,7 +35,7 @@ SCOPE_TIMEBASE = 1  # The scope sampling period in ms.
 # ------------------- Script Settings ----------------------
 
 
-def update_vibration_plot(plot_series: Axes, damped_vibration: DampedVibration) -> None:
+def update_vibration_plot(plot_series: Any, damped_vibration: DampedVibration) -> None:
     """
     Redraw the theoretical vibration curve in the plot.
 
@@ -56,7 +56,7 @@ def update_vibration_plot(plot_series: Axes, damped_vibration: DampedVibration) 
 def update_vibration_parameter(
     value: str,
     value_name: str,
-    plot_series: plt.Axes,
+    plot_series: Any,
     damped_vibration: DampedVibration,
 ) -> None:
     """
@@ -143,13 +143,13 @@ def plot(data: StepResponseData) -> None:
     box_height = 0.05
     box_width = 0.2
 
-    axbox1 = fig.add_axes([0.2, 0.01, box_width, box_height])  # Left, Bottom, Width, Height
+    axbox1 = fig.add_axes((0.2, 0.01, box_width, box_height))  # Left, Bottom, Width, Height
     axbox2 = fig.add_axes(
-        [0.2, 0.02 + box_height, box_width, box_height]
+        (0.2, 0.02 + box_height, box_width, box_height)
     )  # Left, Bottom, Width, Height
-    axbox3 = fig.add_axes([0.7, 0.01, box_width, box_height])  # Left, Bottom, Width, Height
+    axbox3 = fig.add_axes((0.7, 0.01, box_width, box_height))  # Left, Bottom, Width, Height
     axbox4 = fig.add_axes(
-        [0.7, 0.02 + box_height, box_width, box_height]
+        (0.7, 0.02 + box_height, box_width, box_height)
     )  # Left, Bottom, Width, Height
 
     text_box_start = TextBox(
@@ -193,7 +193,7 @@ def plot(data: StepResponseData) -> None:
 
     print("Displaying plot...")
     axes.legend(loc="lower right")
-    plt.show()
+    plt.show()  # type: ignore
 
 
 if __name__ == "__main__":

@@ -83,7 +83,7 @@ def plot(data_unshaped: StepResponseData, data_shaped: StepResponseData) -> None
     )
 
     plt.legend(loc="lower right")
-    plt.show()
+    plt.show()  # type: ignore
 
 
 if __name__ == "__main__":
