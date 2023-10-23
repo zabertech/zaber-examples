@@ -3,7 +3,7 @@
 This article explains the different input shapers types and their benefits.
 
 ## Introduction
-Different types of shapers can be used to generate the shaped trajectories that can be executed by a controller through streams. A shaper consists of a series of impulses with responses that cancel each other out when combined. These impulses are convolved with the original trajectory to produce a shaped trajectory that reduces vibration at the resonant frequency of the system. The trajectory duration is extended by the duration of the shaper so there is a move time penalty incurred with input shaping.
+Different types of shapers can be used to generate shaped trajectories that can be executed by a controller through streams. A shaper consists of a series of impulses with responses that cancel each other out when combined. These impulses are convolved with the original trajectory to produce a shaped trajectory that reduces vibration at the resonant frequency of the system. The trajectory duration is extended by the duration of the shaper so a move time penalty is incurred with input shaping.
 
 ## The Zero Vibration Shaper
 The most basic implementation of a shaper is the ZV shaper which consists of two impulses separated by half a resonant period. The resulting responses from each impulse destructively interfere with each other resulting in no residual vibration as demonstrated in the figure below.
