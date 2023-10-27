@@ -39,7 +39,7 @@ class ShaperConfig:
         :param options: Settings specified as keyword pairs
         """
         self.shaper_mode = shaper_mode
-        self._write_settings(options)  # process key word arguments and
+        self._write_settings(options)
 
     @property
     def shaper_mode(self) -> ShaperMode:

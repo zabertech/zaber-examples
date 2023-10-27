@@ -5,7 +5,6 @@ Run the file directly to test the class out with a Zaber Device.
 """
 
 # pylint: disable=too-many-arguments
-# This is not an issue.
 
 import time
 import sys
@@ -40,6 +39,7 @@ class ShapedLockstep(Lockstep):
         :param zaber_lockstep: The Zaber Motion Lockstep object
         :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
         :param damping_ratio: The target damping ratio for shaped moves
+        :shaper_config: ShaperConfig object containing settings for the shaper
         """
         # Sanity check if the passed lockstep group number exceeds than the number of
         # lockstep groups on the device.
@@ -478,7 +478,6 @@ if __name__ == "__main__":
         ):  # The ShapedLockstep has all the same functionality as the normal Lockstep class.
             shaped_lockstep.home()
 
-        # Perform some unshaped Moves
         print("Performing unshaped moves.")
         shaped_lockstep.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
@@ -488,14 +487,13 @@ if __name__ == "__main__":
         time.sleep(1)
 
         print("Shaping through changing deceleration.")
-        # Perform some shaped Moves
+
         print("Performing shaped moves.")
         shaped_lockstep.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
         shaped_lockstep.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
-        # Perform some shaped Moves
         print("Performing shaped moves with speed limit.")
         shaped_lockstep.set_max_speed_limit(5, Units.VELOCITY_MILLIMETRES_PER_SECOND)
         shaped_lockstep.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
@@ -503,7 +501,6 @@ if __name__ == "__main__":
         shaped_lockstep.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
-        # Perform some shaped Moves
         print("Performing full travel shaped moves.")
         shaped_lockstep.reset_max_speed_limit()
         shaped_lockstep.move_max_shaped(True)
@@ -522,14 +519,12 @@ if __name__ == "__main__":
             ShaperConfig(ShaperMode.STREAM, shaper_type=ShaperType.ZV),
         )  # Re-initialize ShapedAxis class using streams to perform shaping and specify ZV shaper
 
-        # Perform some shaped Moves
         print("Performing shaped moves.")
         shaped_lockstep.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
         shaped_lockstep.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
-        # Perform some shaped Moves
         print("Performing shaped moves with speed limit.")
         shaped_lockstep.set_max_speed_limit(5, Units.VELOCITY_MILLIMETRES_PER_SECOND)
         shaped_lockstep.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
@@ -537,7 +532,6 @@ if __name__ == "__main__":
         shaped_lockstep.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
-        # Perform some shaped Moves
         print("Performing full travel shaped moves.")
         shaped_lockstep.reset_max_speed_limit()
         shaped_lockstep.move_max_shaped(True)

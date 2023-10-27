@@ -12,7 +12,7 @@ import sys
 from matplotlib import pyplot as plt
 from zaber_motion import Units
 from zaber_motion.ascii import Connection
-from shaped_axis import ShapedAxis  # Zaber axis with input shaping
+from shaped_axis import ShapedAxis
 from step_response_data import (
     StepResponseData,
 )  # Helper class for getting data from the onboard Oscilloscope
