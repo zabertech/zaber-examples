@@ -4,12 +4,11 @@ Contains the ZeroVibrationShaper class for re-use in other code.
 Run the file directly to test the class functionality.
 """
 
-# pylint: disable=invalid-name
-# Allow short variable names
 
 import math
 from enum import Enum
 from dataclasses import dataclass
+from typing import NamedTuple
 import numpy as np
 
 
@@ -23,7 +22,7 @@ class ShaperType(Enum):
 
 @dataclass
 class StreamSegment:
-    """A class that contains information for a single segment of the trajectory."""
+    """A class that contains information for a single segment of the stream trajectory."""
 
     position: float
     speed_limit: float
@@ -31,13 +30,20 @@ class StreamSegment:
     duration: float
 
 
+class AccelPoint(NamedTuple):
+    """Acceleration points used to define trajectories."""
+
+    time: float
+    acceleration: float
+
+
 def trapezoidal_motion_generator(
     distance: float, acceleration: float, deceleration: float, max_speed_limit: float
-) -> list[list[float]]:
+) -> list[AccelPoint]:
     """
     Produce acceleration profile for basic trapezoidal motion.
 
-    Returns time and acceleration at points where acceleration changes
+    Returns list of time and acceleration points where acceleration changes.
     All acceleration changes are step changes for trapezoidal motion.
 
     :param distance: The trajectory distance.
@@ -51,43 +57,42 @@ def trapezoidal_motion_generator(
     deceleration_distance = max_speed_limit**2 / (2 * deceleration)
     max_speed_distance = abs(distance) - acceleration_distance - deceleration_distance
 
-    if max_speed_distance <= 0:
+    if max_speed_distance > 0:
+        # Trapezoidal Motion
+        max_speed = max_speed_limit
+    else:
         # Max speed is not reached.
+        max_speed_distance = 0
         max_speed = np.sqrt(abs(distance) / (1 / (2 * acceleration) + 1 / (2 * deceleration)))
-        acceleration_duration = max_speed / acceleration
-        deceleration_duration = max_speed / deceleration
 
-        acceleration_endtime = acceleration_duration
-        deceleration_endtime = acceleration_duration + deceleration_duration
-
-        return [
-            [0, acceleration_endtime, deceleration_endtime],
-            [acceleration * direction, deceleration * (-1 * direction), 0],
-        ]
-
-    # Trapezoidal Motion
-    max_speed = max_speed_limit
-
-    acceleration_duration = max_speed_limit / acceleration
-    max_speed_duration = max_speed_distance / max_speed_limit
-    deceleration_duration = max_speed_limit / deceleration
+    acceleration_duration = max_speed / acceleration
+    max_speed_duration = max_speed_distance / max_speed
+    deceleration_duration = max_speed / deceleration
 
     acceleration_endtime = acceleration_duration
     max_speed_endtime = acceleration_endtime + max_speed_duration
     deceleration_endtime = max_speed_endtime + deceleration_duration
 
+    if max_speed_distance == 0:
+        return [
+            AccelPoint(0, acceleration * direction),
+            AccelPoint(acceleration_endtime, deceleration * (-1 * direction)),
+            AccelPoint(deceleration_endtime, 0)
+        ]
+
     return [
-        [0, acceleration_endtime, max_speed_endtime, deceleration_endtime],
-        [acceleration * direction, 0, deceleration * (-1 * direction), 0],
+        AccelPoint(0, acceleration * direction),
+        AccelPoint(acceleration_endtime, 0),
+        AccelPoint(max_speed_endtime, deceleration * (-1 * direction)),
+        AccelPoint(deceleration_endtime, 0)
     ]
 
 
 def calculate_acceleration_convolution(
     impulse_times: list[float],
     impulses: list[float],
-    unshaped_time: list[float],
-    unshaped_acceleration: list[float],
-) -> list[list[float]]:
+    unshaped_trajectory: list[AccelPoint],
+) -> list[AccelPoint]:
     """
     Perform the shaping by computing convolution of acceleration with the shaper impulses.
 
@@ -99,9 +104,11 @@ def calculate_acceleration_convolution(
 
     :param impulse_times: List of shaper impulse times
     :param impulses: List of shaper impulse magnitudes
-    :param unshaped_time: List of times when acceleration changes in unshaped trajectory
-    :param unshaped_acceleration: Acceleration of each segment of the unshaped trajectory
+    :param unshaped_trajectory: List of acceleration points
     """
+    unshaped_time = [x.time for x in unshaped_trajectory]
+    unshaped_acceleration = [x.acceleration for x in unshaped_trajectory]
+
     unshaped_accel_changes = np.diff(
         np.concatenate([np.array([0]), np.array(unshaped_acceleration)])
     )  # append a 0 to start of list of accelerations and take diff to get changes
@@ -129,11 +136,15 @@ def calculate_acceleration_convolution(
     # superposition of the contribution from each impulse and is equivalent to the convolution
     shaped_acceleration = np.cumsum(accel_changes)  # Acceleration
 
-    return [shaped_time.tolist(), shaped_acceleration.tolist()]
+    shaped_trajectory = []
+    for n, accel in enumerate(shaped_acceleration):
+        shaped_trajectory.append(AccelPoint(shaped_time[n], accel))
+
+    return shaped_trajectory
 
 
 def create_stream_trajectory(
-    trajectory_time: list[float], trajectory_acceleration: list[float]
+    trajectory: list[AccelPoint]
 ) -> list[StreamSegment]:
     """
     Compute information needed to execute trajectory through streams.
@@ -141,9 +152,11 @@ def create_stream_trajectory(
     Returns list of StreamSegment objects.
     The final acceleration must be 0.
 
-    :param trajectory_time: Start time of each constant acceleration segment
-    :param trajectory_acceleration: Acceleration of each segment
+    :param trajectory: List of acceleration points to create trajectory from
     """
+    trajectory_time = [x.time for x in trajectory]
+    trajectory_acceleration = [x.acceleration for x in trajectory]
+
     stream_segments = []
     # trajectory is one row less than list of accelerations since first row would be the
     # initial position (zeros)
@@ -178,10 +191,6 @@ def create_stream_trajectory(
 class ZeroVibrationStreamGenerator:
     """A class for creating stream motion with zero vibration input shaping theory."""
 
-    # pylint: disable=too-many-instance-attributes
-    # Ignore number of attributes warning because calling property setters in init is being counted
-    # as additional attributes
-
     def __init__(
         self,
         resonant_frequency: float,
@@ -195,15 +204,9 @@ class ZeroVibrationStreamGenerator:
         :param damping_ratio: The target vibration damping ratio.
         :param damping_ratio: Minimum timestep in pvt sequence in seconds.
         """
-        self.resonant_frequency = resonant_frequency
-        self.damping_ratio = damping_ratio
-        self.shaper_type = shaper_type
-
-        # Initialize impulses as a single impulse with no delay for no shaping
-        self._impulse_times = [0.0]
-        self._impulses = [1.0]
-        self._impulses_updated = False
-        self._update_shaper_impulses()  # Update impulses
+        self._resonant_frequency = resonant_frequency
+        self._damping_ratio = damping_ratio
+        self._shaper_type = shaper_type
 
     @property
     def resonant_frequency(self) -> float:
@@ -216,7 +219,6 @@ class ZeroVibrationStreamGenerator:
         if value <= 0:
             raise ValueError(f"Invalid resonant frequency: {value}. Value must be greater than 0.")
         self._resonant_frequency = value
-        self._impulses_updated = False
 
     @property
     def resonant_period(self) -> float:
@@ -236,7 +238,6 @@ class ZeroVibrationStreamGenerator:
                 f"Invalid damping ratio: {value}. Value must be greater than or equal to 0."
             )
         self._damping_ratio = value
-        self._impulses_updated = False
 
     @property
     def shaper_type(self) -> ShaperType:
@@ -247,61 +248,57 @@ class ZeroVibrationStreamGenerator:
     def shaper_type(self, value: ShaperType) -> None:
         """Set input shaper type."""
         self._shaper_type = value
-        self._impulses_updated = False
 
-    def get_impulses(self) -> list[float]:
+    def get_impulse_amplitudes(self) -> list[float]:
         """Get shaper impulse magnitudes."""
-        if self._impulses_updated is False:
-            self._update_shaper_impulses()
-        return self._impulses
-
-    def get_impulse_times(self) -> list[float]:
-        """Get shaper impulse times."""
-        if self._impulses_updated is False:
-            self._update_shaper_impulses()
-        return self._impulse_times
-
-    def _update_shaper_impulses(self) -> None:
-        """
-        Calculate times and unitless magnitude of impulses to perform the input shaping.
-
-        The sum of all impulses should total to 1 to maintain the same final state.
-        """
         k = math.exp(
-            (-1 * math.pi * self.damping_ratio) / math.sqrt(1 - self.damping_ratio**2)
+            (-1 * math.pi * self.damping_ratio) / math.sqrt(1 - self.damping_ratio ** 2)
         )  # Decay factor
 
         match self.shaper_type:
             case ShaperType.ZV:
-                a0 = 1 / (1 + k)
-                a1 = k / (1 + k)
-                t0 = 0
-                t1 = self.resonant_period / 2
-                self._impulses = [a0, a1]
-                self._impulse_times = [t0, t1]
+                return [
+                    1 / (1 + k),
+                    k / (1 + k)
+                ]
             case ShaperType.ZVD:
-                a0 = 1 / (1 + 2 * k + k**2)
-                a1 = 2 * k / (1 + 2 * k + k**2)
-                a2 = k**2 / (1 + 2 * k + k**2)
-                t0 = 0
-                t1 = self.resonant_period / 2
-                t2 = self.resonant_period
-                self._impulses = [a0, a1, a2]
-                self._impulse_times = [t0, t1, t2]
+                return [
+                    1 / (1 + 2 * k + k ** 2),
+                    2 * k / (1 + 2 * k + k ** 2),
+                    k ** 2 / (1 + 2 * k + k ** 2)
+                ]
             case ShaperType.ZVDD:
-                a0 = 1 / (1 + 3 * k + 3 * k**2 + k**3)
-                a1 = 3 * k / (1 + 3 * k + 3 * k**2 + k**3)
-                a2 = 3 * k**2 / (1 + 3 * k + 3 * k**2 + k**3)
-                a3 = k**3 / (1 + 3 * k + 3 * k**2 + k**3)
-                t0 = 0
-                t1 = self.resonant_period / 2
-                t2 = self.resonant_period
-                t3 = self.resonant_period * 3 / 2
-                self._impulses = [a0, a1, a2, a3]
-                self._impulse_times = [t0, t1, t2, t3]
+                return [
+                    1 / (1 + 3 * k + 3 * k ** 2 + k ** 3),
+                    3 * k / (1 + 3 * k + 3 * k ** 2 + k ** 3),
+                    3 * k ** 2 / (1 + 3 * k + 3 * k ** 2 + k ** 3),
+                    k ** 3 / (1 + 3 * k + 3 * k ** 2 + k ** 3)
+                ]
             case _:
                 raise ValueError(f"Shaper type {self.shaper_type} is not valid.")
-        self._impulses_updated = True
+
+    def get_impulse_times(self) -> list[float]:
+        """Get shaper impulse times."""
+        match self.shaper_type:
+            case ShaperType.ZV:
+                return [
+                    0,
+                    self.resonant_period / 2
+                ]
+            case ShaperType.ZVD:
+                return [
+                    0,
+                    self.resonant_period / 2,
+                    self.resonant_period
+                ]
+            case ShaperType.ZVDD:
+                return [
+                    0,
+                    self.resonant_period / 2,
+                    self.resonant_period, self.resonant_period * 3 / 2
+                ]
+            case _:
+                raise ValueError(f"Shaper type {self.shaper_type} is not valid.")
 
     def shape_trapezoidal_motion(
         self, distance: float, acceleration: float, deceleration: float, max_speed_limit: float
@@ -318,21 +315,21 @@ class ZeroVibrationStreamGenerator:
         output motion.
         """
         # Get time and magnitude of the impulses used for shaping
-        impulses = self.get_impulses()
+        impulses = self.get_impulse_amplitudes()
         impulse_times = self.get_impulse_times()
 
-        (unshaped_time, unshaped_acceleration) = trapezoidal_motion_generator(
+        unshaped_trajectory = trapezoidal_motion_generator(
             distance,
             acceleration,
             deceleration,
             max_speed_limit,
         )
 
-        (shaped_time, shaped_acceleration) = calculate_acceleration_convolution(
-            impulse_times, impulses, unshaped_time, unshaped_acceleration
+        shaped_trajectory = calculate_acceleration_convolution(
+            impulse_times, impulses, unshaped_trajectory
         )
 
-        stream_segments = create_stream_trajectory(shaped_time, shaped_acceleration)
+        stream_segments = create_stream_trajectory(shaped_trajectory)
 
         # make sure end point position is exactly on target
         stream_segments[-1].position = distance
