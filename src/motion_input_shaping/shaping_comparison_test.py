@@ -108,10 +108,10 @@ if __name__ == "__main__":
         )
 
         # Home the axis and move to zero position
-        if not shaped_axis.is_homed():
-            shaped_axis.home()
+        if not shaped_axis.axis.is_homed():
+            shaped_axis.axis.home()
 
-        shaped_axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
 
         # Get the first dataset with no shaping
@@ -121,8 +121,8 @@ if __name__ == "__main__":
         )
 
         step_response_data_unshaped.capture_data(
-            shaped_axis,
-            lambda: shaped_axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False),
+            shaped_axis.axis,
+            lambda: shaped_axis.axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False),
             True,
         )
 
@@ -135,10 +135,8 @@ if __name__ == "__main__":
         )
 
         step_response_data_shaped.capture_data(
-            shaped_axis,
-            lambda: shaped_axis.move_relative_shaped(
-                MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False
-            ),
+            shaped_axis.axis,
+            lambda: shaped_axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False),
             True,
         )
 

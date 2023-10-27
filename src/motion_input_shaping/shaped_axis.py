@@ -9,13 +9,13 @@ Run the file directly to test the class out with a Zaber Device.
 import time
 import sys
 from zaber_motion import Units, Measurement
-from zaber_motion.ascii import Connection, Axis
+from zaber_motion.ascii import Connection, Axis, Lockstep
 from zero_vibration_shaper import ZeroVibrationShaper
 from zero_vibration_stream_generator import ZeroVibrationStreamGenerator, ShaperType
 from shaper_config import ShaperConfig, ShaperMode
 
 
-class ShapedAxis(Axis):
+class ShapedAxis:
     """
     A Zaber device axis with extra functions.
 
@@ -35,16 +35,18 @@ class ShapedAxis(Axis):
         Set a max speed limit to the current maxspeed setting
         so the input shaping algorithm won't exceed that value.
 
-        :param zaber_axis: The Zaber Motion Axis object
+        :param zaber_axis: The Zaber Motion Axis or Lockstep object
         :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
         :param damping_ratio: The target damping ratio for shaped moves
         :shaper_config: ShaperConfig object containing settings for the shaper
         """
+
         # Sanity check if the passed axis has a higher number than the number of axes on the device.
         if zaber_axis.axis_number > zaber_axis.device.axis_count or zaber_axis is None:
             raise TypeError("Invalid Axis class was used to initialized ShapedAxis.")
 
-        super().__init__(zaber_axis.device, zaber_axis.axis_number)
+        self.axis = zaber_axis
+
         self._shaper_mode = shaper_config.shaper_mode
 
         match self._shaper_mode:
@@ -61,7 +63,7 @@ class ShapedAxis(Axis):
         self._max_speed_limit = -1.0
 
         # Grab the current deceleration so we can reset it back to this value later if we want.
-        self._original_deceleration = super().settings.get("motion.decelonly", Units.NATIVE)
+        self._original_deceleration = self.axis.settings.get("motion.decelonly", Units.NATIVE)
 
         # Set the speed limit to the device's current maxspeed so it will never be exceeded
         self.reset_max_speed_limit()
@@ -75,26 +77,6 @@ class ShapedAxis(Axis):
             case ShaperMode.STREAM:
                 return self._shaper_stream
 
-    @property
-    def resonant_frequency(self) -> float:
-        """Get the target resonant frequency for input shaping in Hz."""
-        return self.shaper.resonant_frequency
-
-    @resonant_frequency.setter
-    def resonant_frequency(self, value: float) -> None:
-        """Set the target resonant frequency for input shaping in Hz."""
-        self.shaper.resonant_frequency = value
-
-    @property
-    def damping_ratio(self) -> float:
-        """Get the target damping ratio for input shaping."""
-        return self.shaper.damping_ratio
-
-    @damping_ratio.setter
-    def damping_ratio(self, value: float) -> None:
-        """Set the target damping ratio for input shaping."""
-        self.shaper.damping_ratio = value
-
     def get_max_speed_limit(self, unit: Units = Units.NATIVE) -> float:
         """
         Get the current velocity limit for which shaped moves will not exceed.
@@ -102,7 +84,7 @@ class ShapedAxis(Axis):
         :param unit: The value will be returned in these units.
         :return: The velocity limit.
         """
-        return super().settings.convert_from_native_units("maxspeed", self._max_speed_limit, unit)
+        return self.axis.settings.convert_from_native_units("maxspeed", self._max_speed_limit, unit)
 
     def set_max_speed_limit(self, value: float, unit: Units = Units.NATIVE) -> None:
         """
@@ -111,17 +93,17 @@ class ShapedAxis(Axis):
         :param value: The velocity limit.
         :param unit: The units of the velocity limit value.
         """
-        self._max_speed_limit = super().settings.convert_to_native_units("maxspeed", value, unit)
+        self._max_speed_limit = self.axis.settings.convert_to_native_units("maxspeed", value, unit)
 
     def reset_max_speed_limit(self) -> None:
         """Reset the velocity limit for shaped moves to the device's existing maxspeed setting."""
-        self.set_max_speed_limit(super().settings.get("maxspeed"))
+        self.set_max_speed_limit(self.axis.settings.get("maxspeed"))
 
     def reset_deceleration(self) -> None:
         """Reset the trajectory deceleration to the value stored when the class was created."""
-        super().settings.set("motion.decelonly", self._original_deceleration, Units.NATIVE)
+        self.axis.settings.set("motion.decelonly", self._original_deceleration, Units.NATIVE)
 
-    def move_relative_shaped(
+    def move_relative(
         self,
         position: float,
         unit: Units = Units.NATIVE,
@@ -140,23 +122,11 @@ class ShapedAxis(Axis):
         """
         match self._shaper_mode:
             case ShaperMode.DECEL:
-                self._move_relative_shaped_decel(
-                    position,
-                    unit,
-                    wait_until_idle,
-                    acceleration,
-                    acceleration_unit,
-                )
+                self._move_relative_decel(position, unit, wait_until_idle, acceleration, acceleration_unit)
             case ShaperMode.STREAM:
-                self._move_relative_shaped_stream(
-                    position,
-                    unit,
-                    wait_until_idle,
-                    acceleration,
-                    acceleration_unit,
-                )
+                self._move_relative_stream(position, unit, wait_until_idle, acceleration, acceleration_unit)
 
-    def _move_relative_shaped_decel(
+    def _move_relative_decel(
         self,
         position: float,
         unit: Units = Units.NATIVE,
@@ -174,18 +144,18 @@ class ShapedAxis(Axis):
         :param acceleration_unit: The units for the acceleration value.
         """
         # Convert all to values to the same units
-        position_native = super().settings.convert_to_native_units("pos", position, unit)
-        accel_native = super().settings.convert_to_native_units(
+        position_native = self.axis.settings.convert_to_native_units("pos", position, unit)
+        accel_native = self.axis.settings.convert_to_native_units(
             "accel", acceleration, acceleration_unit
         )
 
         if acceleration == 0:  # Get the acceleration if it wasn't specified
-            accel_native = super().settings.get("accel", Units.NATIVE)
+            accel_native = self.axis.settings.get("accel", Units.NATIVE)
 
-        position_mm = super().settings.convert_from_native_units(
+        position_mm = self.axis.settings.convert_from_native_units(
             "pos", position_native, Units.LENGTH_MILLIMETRES
         )
-        accel_mm = super().settings.convert_from_native_units(
+        accel_mm = self.axis.settings.convert_from_native_units(
             "accel", accel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
         )
 
@@ -196,16 +166,16 @@ class ShapedAxis(Axis):
 
         # Check if the target deceleration is different from the current value
         deceleration_native = round(
-            super().settings.convert_to_native_units(
+            self.axis.settings.convert_to_native_units(
                 "accel", deceleration_mm, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
             )
         )
 
-        if super().settings.get("motion.decelonly", Units.NATIVE) != deceleration_native:
-            super().settings.set("motion.decelonly", deceleration_native, Units.NATIVE)
+        if self.axis.settings.get("motion.decelonly", Units.NATIVE) != deceleration_native:
+            self.axis.settings.set("motion.decelonly", deceleration_native, Units.NATIVE)
 
         # Perform the move
-        super().move_relative(
+        self.axis.move_relative(
             position,
             unit,
             wait_until_idle,
@@ -215,7 +185,7 @@ class ShapedAxis(Axis):
             Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED,
         )
 
-    def _move_relative_shaped_stream(
+    def _move_relative_stream(
         self,
         position: float,
         unit: Units = Units.NATIVE,
@@ -233,22 +203,22 @@ class ShapedAxis(Axis):
         :param acceleration_unit: The units for the acceleration value.
         """
         # Convert all to values to the same units
-        position_native = super().settings.convert_to_native_units("pos", position, unit)
-        accel_native = super().settings.convert_to_native_units(
+        position_native = self.axis.settings.convert_to_native_units("pos", position, unit)
+        accel_native = self.axis.settings.convert_to_native_units(
             "accel", acceleration, acceleration_unit
         )
 
         if acceleration == 0:  # Get the acceleration if it wasn't specified
-            accel_native = super().settings.get("accel", Units.NATIVE)
+            accel_native = self.axis.settings.get("accel", Units.NATIVE)
 
-        position_mm = super().settings.convert_from_native_units(
+        position_mm = self.axis.settings.convert_from_native_units(
             "pos", position_native, Units.LENGTH_MILLIMETRES
         )
-        accel_mm = super().settings.convert_from_native_units(
+        accel_mm = self.axis.settings.convert_from_native_units(
             "accel", accel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
         )
 
-        start_position = super().get_position(Units.LENGTH_MILLIMETRES)
+        start_position = self.axis.get_position(Units.LENGTH_MILLIMETRES)
 
         stream_segments = self._shaper_stream.shape_trapezoidal_motion(
             position_mm,
@@ -257,12 +227,12 @@ class ShapedAxis(Axis):
             self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
         )
         self.stream.disable()
-        self.stream.setup_live(self.axis_number)
+        self.stream.setup_live(self.axis.axis_number)
         self.stream.cork()
         for segment in stream_segments:
             # Set acceleration making sure it is greater than zero by comparing 1 native accel unit
             if (
-                super().settings.convert_to_native_units(
+                self.axis.settings.convert_to_native_units(
                     "accel", segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
                 )
                 > 1
@@ -275,7 +245,7 @@ class ShapedAxis(Axis):
 
             # Set max speed making sure that it is at least 1 native speed unit
             if (
-                super().settings.convert_to_native_units(
+                self.axis.settings.convert_to_native_units(
                     "maxspeed", segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
                 )
                 > 1
@@ -295,7 +265,7 @@ class ShapedAxis(Axis):
         if wait_until_idle:
             self.stream.wait_until_idle()
 
-    def move_absolute_shaped(
+    def move_absolute(
         self,
         position: float,
         unit: Units = Units.NATIVE,
@@ -312,12 +282,10 @@ class ShapedAxis(Axis):
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-        current_position = super().get_position(unit)
-        self.move_relative_shaped(
-            position - current_position, unit, wait_until_idle, acceleration, acceleration_unit
-        )
+        current_position = self.axis.get_position(unit)
+        self.move_relative(position - current_position, unit, wait_until_idle, acceleration, acceleration_unit)
 
-    def move_max_shaped(
+    def move_max(
         self,
         wait_until_idle: bool = True,
         acceleration: float = 0,
@@ -330,17 +298,12 @@ class ShapedAxis(Axis):
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-        current_position = super().get_position(Units.NATIVE)
-        end_position = super().settings.get("limit.max", Units.NATIVE)
-        self.move_relative_shaped(
-            end_position - current_position,
-            Units.NATIVE,
-            wait_until_idle,
-            acceleration,
-            acceleration_unit,
-        )
+        current_position = self.axis.get_position(Units.NATIVE)
+        end_position = self.axis.settings.get("limit.max", Units.NATIVE)
+        self.move_relative(end_position - current_position, Units.NATIVE, wait_until_idle, acceleration,
+                           acceleration_unit)
 
-    def move_min_shaped(
+    def move_min(
         self,
         wait_until_idle: bool = True,
         acceleration: float = 0,
@@ -353,15 +316,10 @@ class ShapedAxis(Axis):
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-        current_position = super().get_position(Units.NATIVE)
-        end_position = super().settings.get("limit.min", Units.NATIVE)
-        self.move_relative_shaped(
-            end_position - current_position,
-            Units.NATIVE,
-            wait_until_idle,
-            acceleration,
-            acceleration_unit,
-        )
+        current_position = self.axis.get_position(Units.NATIVE)
+        end_position = self.axis.settings.get("limit.min", Units.NATIVE)
+        self.move_relative(end_position - current_position, Units.NATIVE, wait_until_idle, acceleration,
+                           acceleration_unit)
 
 
 # Example code for using the class.
@@ -388,38 +346,38 @@ if __name__ == "__main__":
         )  # Initialize the ShapedAxis class with the frequency and damping ratio
 
         if (
-            not shaped_axis.is_homed()
+            not shaped_axis.axis.is_homed()
         ):  # The ShapedAxis has all the same functionality as the normal Axis class.
-            shaped_axis.home()
+            shaped_axis.axis.home()
 
         print("Performing unshaped moves.")
-        shaped_axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
-        shaped_axis.move_relative(5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.axis.move_relative(5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
-        shaped_axis.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.axis.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
         print("Shaping through changing deceleration.")
 
         print("Performing shaped moves.")
-        shaped_axis.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
-        shaped_axis.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
         print("Performing shaped moves with speed limit.")
         shaped_axis.set_max_speed_limit(5, Units.VELOCITY_MILLIMETRES_PER_SECOND)
-        shaped_axis.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
-        shaped_axis.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
         print("Performing full travel shaped moves.")
         shaped_axis.reset_max_speed_limit()
-        shaped_axis.move_max_shaped(True)
+        shaped_axis.move_max(True)
         time.sleep(0.2)
-        shaped_axis.move_min_shaped(True)
+        shaped_axis.move_min(True)
 
         # Reset the deceleration to the original value in case the shaping algorithm changed it.
         # Deceleration is the only setting that may change.
@@ -434,23 +392,23 @@ if __name__ == "__main__":
         )  # Re-initialize ShapedAxis class using streams to perform shaping and specify ZV shaper
 
         print("Performing shaped moves.")
-        shaped_axis.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
-        shaped_axis.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
         print("Performing shaped moves with speed limit.")
         shaped_axis.set_max_speed_limit(5, Units.VELOCITY_MILLIMETRES_PER_SECOND)
-        shaped_axis.move_relative_shaped(5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(0.2)
-        shaped_axis.move_relative_shaped(-5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
         time.sleep(1)
 
         print("Performing full travel shaped moves.")
         shaped_axis.reset_max_speed_limit()
-        shaped_axis.move_max_shaped(True)
+        shaped_axis.move_max(True)
         time.sleep(0.2)
-        shaped_axis.move_min_shaped(True)
+        shaped_axis.move_min(True)
 
         # Shaping with streams does not alter settings so no resetting is necessary
 
