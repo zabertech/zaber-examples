@@ -47,13 +47,11 @@ class ShapedAxis:
 
         self.axis = zaber_axis
 
-        self._shaper_mode = shaper_config.shaper_mode
-
-        match self._shaper_mode:
+        match shaper_config.shaper_mode:
             case ShaperMode.DECEL:
-                self._shaper_decel = ZeroVibrationShaper(resonant_frequency, damping_ratio)
+                self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
             case ShaperMode.STREAM:
-                self._shaper_stream = ZeroVibrationStreamGenerator(
+                self.shaper = ZeroVibrationStreamGenerator(
                     resonant_frequency,
                     damping_ratio,
                     shaper_type=shaper_config.settings["shaper_type"],
@@ -67,15 +65,6 @@ class ShapedAxis:
 
         # Set the speed limit to the device's current maxspeed so it will never be exceeded
         self.reset_max_speed_limit()
-
-    @property
-    def shaper(self) -> ZeroVibrationShaper | ZeroVibrationStreamGenerator:
-        """Gets the shaper for the specified mode."""
-        match self._shaper_mode:
-            case ShaperMode.DECEL:
-                return self._shaper_decel
-            case ShaperMode.STREAM:
-                return self._shaper_stream
 
     def get_max_speed_limit(self, unit: Units = Units.NATIVE) -> float:
         """
@@ -120,11 +109,12 @@ class ShapedAxis:
         :param acceleration: The acceleration for the move.
         :param acceleration_unit: The units for the acceleration value.
         """
-        match self._shaper_mode:
-            case ShaperMode.DECEL:
-                self._move_relative_decel(position, unit, wait_until_idle, acceleration, acceleration_unit)
-            case ShaperMode.STREAM:
-                self._move_relative_stream(position, unit, wait_until_idle, acceleration, acceleration_unit)
+        if isinstance(self.shaper, ZeroVibrationShaper):
+            self._move_relative_decel(position, unit, wait_until_idle, acceleration, acceleration_unit)
+        elif isinstance(self.shaper, ZeroVibrationStreamGenerator):
+            self._move_relative_stream(position, unit, wait_until_idle, acceleration, acceleration_unit)
+        else:
+            raise TypeError("Invalid shaper type.")
 
     def _move_relative_decel(
         self,
@@ -159,10 +149,16 @@ class ShapedAxis:
             "accel", accel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
         )
 
-        # Apply the input shaping with all values of the same units
-        deceleration_mm, max_speed_mm = self._shaper_decel.shape_trapezoidal_motion(
-            position_mm, accel_mm, self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
-        )
+        if isinstance(self.shaper, ZeroVibrationShaper):
+            # Apply the input shaping with all values of the same units
+            deceleration_mm, max_speed_mm = self.shaper.shape_trapezoidal_motion(
+                position_mm, accel_mm,
+                self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND)
+            )
+        else:
+            raise TypeError("_move_relative_decel method requires a shaper to be an instance of "
+                            "ZeroVibrationShaper class.")
+
 
         # Check if the target deceleration is different from the current value
         deceleration_native = round(
@@ -220,12 +216,17 @@ class ShapedAxis:
 
         start_position = self.axis.get_position(Units.LENGTH_MILLIMETRES)
 
-        stream_segments = self._shaper_stream.shape_trapezoidal_motion(
-            position_mm,
-            accel_mm,
-            accel_mm,
-            self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
-        )
+        if isinstance(self.shaper, ZeroVibrationStreamGenerator):
+            stream_segments = self.shaper.shape_trapezoidal_motion(
+                position_mm,
+                accel_mm,
+                accel_mm,
+                self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
+            )
+        else:
+            raise TypeError("_move_relative_stream method requires a shaper to be an instance of "
+                            "ZeroVibrationStreamGenerator class.")
+
         self.stream.disable()
         self.stream.setup_live(self.axis.axis_number)
         self.stream.cork()
