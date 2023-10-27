@@ -77,14 +77,14 @@ def trapezoidal_motion_generator(
         return [
             AccelPoint(0, acceleration * direction),
             AccelPoint(acceleration_endtime, deceleration * (-1 * direction)),
-            AccelPoint(deceleration_endtime, 0)
+            AccelPoint(deceleration_endtime, 0),
         ]
 
     return [
         AccelPoint(0, acceleration * direction),
         AccelPoint(acceleration_endtime, 0),
         AccelPoint(max_speed_endtime, deceleration * (-1 * direction)),
-        AccelPoint(deceleration_endtime, 0)
+        AccelPoint(deceleration_endtime, 0),
     ]
 
 
@@ -143,9 +143,7 @@ def calculate_acceleration_convolution(
     return shaped_trajectory
 
 
-def create_stream_trajectory(
-    trajectory: list[AccelPoint]
-) -> list[StreamSegment]:
+def create_stream_trajectory(trajectory: list[AccelPoint]) -> list[StreamSegment]:
     """
     Compute information needed to execute trajectory through streams.
 
@@ -252,27 +250,24 @@ class ZeroVibrationStreamGenerator:
     def get_impulse_amplitudes(self) -> list[float]:
         """Get shaper impulse magnitudes."""
         k = math.exp(
-            (-1 * math.pi * self.damping_ratio) / math.sqrt(1 - self.damping_ratio ** 2)
+            (-1 * math.pi * self.damping_ratio) / math.sqrt(1 - self.damping_ratio**2)
         )  # Decay factor
 
         match self.shaper_type:
             case ShaperType.ZV:
-                return [
-                    1 / (1 + k),
-                    k / (1 + k)
-                ]
+                return [1 / (1 + k), k / (1 + k)]
             case ShaperType.ZVD:
                 return [
-                    1 / (1 + 2 * k + k ** 2),
-                    2 * k / (1 + 2 * k + k ** 2),
-                    k ** 2 / (1 + 2 * k + k ** 2)
+                    1 / (1 + 2 * k + k**2),
+                    2 * k / (1 + 2 * k + k**2),
+                    k**2 / (1 + 2 * k + k**2),
                 ]
             case ShaperType.ZVDD:
                 return [
-                    1 / (1 + 3 * k + 3 * k ** 2 + k ** 3),
-                    3 * k / (1 + 3 * k + 3 * k ** 2 + k ** 3),
-                    3 * k ** 2 / (1 + 3 * k + 3 * k ** 2 + k ** 3),
-                    k ** 3 / (1 + 3 * k + 3 * k ** 2 + k ** 3)
+                    1 / (1 + 3 * k + 3 * k**2 + k**3),
+                    3 * k / (1 + 3 * k + 3 * k**2 + k**3),
+                    3 * k**2 / (1 + 3 * k + 3 * k**2 + k**3),
+                    k**3 / (1 + 3 * k + 3 * k**2 + k**3),
                 ]
             case _:
                 raise ValueError(f"Shaper type {self.shaper_type} is not valid.")
@@ -281,21 +276,15 @@ class ZeroVibrationStreamGenerator:
         """Get shaper impulse times."""
         match self.shaper_type:
             case ShaperType.ZV:
-                return [
-                    0,
-                    self.resonant_period / 2
-                ]
+                return [0, self.resonant_period / 2]
             case ShaperType.ZVD:
-                return [
-                    0,
-                    self.resonant_period / 2,
-                    self.resonant_period
-                ]
+                return [0, self.resonant_period / 2, self.resonant_period]
             case ShaperType.ZVDD:
                 return [
                     0,
                     self.resonant_period / 2,
-                    self.resonant_period, self.resonant_period * 3 / 2
+                    self.resonant_period,
+                    self.resonant_period * 3 / 2,
                 ]
             case _:
                 raise ValueError(f"Shaper type {self.shaper_type} is not valid.")
