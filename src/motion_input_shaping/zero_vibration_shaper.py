@@ -9,56 +9,20 @@ Run the file directly to test the class functionality.
 
 import math
 import numpy as np
+from plant import Plant
 
 
 class ZeroVibrationShaper:
     """A class for implementing zero vibration input shaping theory."""
 
-    def __init__(self, resonant_frequency: float, damping_ratio: float) -> None:
+    def __init__(self, plant: Plant) -> None:
         """
         Initialize the class.
 
-        :param resonant_frequency: The target vibration resonant frequency in Hz.
-        :param damping_ratio: The target vibration damping ratio.
+        :param plant: The Plant instance defining the system that the shaper targeting.
         """
-        self.resonant_frequency = resonant_frequency
-        self.damping_ratio = damping_ratio
+        self.plant = plant
         self.n = 1  # How many periods to wait before starting deceleration.
-
-    @property
-    def resonant_frequency(self) -> float:
-        """Get the target resonant frequency for input shaping in Hz."""
-        return self._resonant_frequency
-
-    @resonant_frequency.setter
-    def resonant_frequency(self, value: float) -> None:
-        """Set the target resonant frequency for input shaping in Hz."""
-        if value <= 0:
-            raise ValueError(f"Invalid resonant frequency: {value}. Value must be greater than 0.")
-
-        self._resonant_frequency = value
-        self.n = 1  # Reset the value of n because it won't be valid anymore.
-
-    @property
-    def resonant_period(self) -> float:
-        """Get the target resonant period for input shaping in s."""
-        return 1.0 / self.resonant_frequency
-
-    @property
-    def damping_ratio(self) -> float:
-        """Get the target damping ratio for input shaping."""
-        return self._damping_ratio
-
-    @damping_ratio.setter
-    def damping_ratio(self, value: float) -> None:
-        """Set the target damping ratio for input shaping."""
-        if value < 0:
-            raise ValueError(
-                f"Invalid damping ratio: {value}. Value must be greater than or equal to 0."
-            )
-
-        self._damping_ratio = value
-        self.n = 1  # Reset the value of n because it won't be valid anymore.
 
     @property
     def n(self) -> int:
@@ -76,7 +40,8 @@ class ZeroVibrationShaper:
     def get_impulse_amplitudes(self) -> list[float]:
         """Get the unitless magnitude of both impulses to perform the input shaping."""
         k = math.exp(
-            (-2 * math.pi * self.n * self.damping_ratio) / math.sqrt(1 - self.damping_ratio**2)
+            (-2 * math.pi * self.n * self.plant.damping_ratio)
+            / math.sqrt(1 - self.plant.damping_ratio**2)
         )
 
         a1 = 1 / (1 + k)
@@ -86,7 +51,7 @@ class ZeroVibrationShaper:
 
     def get_impulse_times(self) -> list[float]:
         """Get the time of both impulses to perform the input shaping in seconds."""
-        return [0, self.resonant_period * self.n]
+        return [0, self.plant.resonant_period * self.n]
 
     def get_minimum_acceleration(self, distance: float) -> float:
         """
@@ -185,7 +150,8 @@ class ZeroVibrationShaper:
 
 # Example code for using the class.
 if __name__ == "__main__":
-    shaper = ZeroVibrationShaper(10.0, 0.01)
+    plant_var = Plant(10.0, 0.01)
+    shaper = ZeroVibrationShaper(plant_var)
 
     DIST = 25.0
     ACCEL = 500.0
@@ -201,5 +167,5 @@ if __name__ == "__main__":
 
     print(
         f"Shaped Move 2: Distance: {DIST:.2f}, Acceleration: {ACCEL:.2f}, "
-        f"Deceleration: {decel:.2f}], Max Speed: {speed:.2f}"
+        f"Deceleration: {decel:.2f}, Max Speed: {speed:.2f}"
     )

@@ -10,6 +10,7 @@ from enum import Enum
 from dataclasses import dataclass
 from typing import NamedTuple
 import numpy as np
+from plant import Plant
 
 
 class ShaperType(Enum):
@@ -189,53 +190,15 @@ def create_stream_trajectory(trajectory: list[AccelPoint]) -> list[StreamSegment
 class ZeroVibrationStreamGenerator:
     """A class for creating stream motion with zero vibration input shaping theory."""
 
-    def __init__(
-        self,
-        resonant_frequency: float,
-        damping_ratio: float,
-        shaper_type: ShaperType = ShaperType.ZV,
-    ) -> None:
+    def __init__(self, plant: Plant, shaper_type: ShaperType = ShaperType.ZV) -> None:
         """
         Initialize the class.
 
-        :param resonant_frequency: The target vibration resonant frequency in Hz.
-        :param damping_ratio: The target vibration damping ratio.
-        :param damping_ratio: Minimum timestep in pvt sequence in seconds.
+        :param plant: The Plant instance defining the system that the shaper targeting.
+        :param shaper_type: Type of input shaper to use to generate impulses.
         """
-        self._resonant_frequency = resonant_frequency
-        self._damping_ratio = damping_ratio
+        self.plant = plant
         self._shaper_type = shaper_type
-
-    @property
-    def resonant_frequency(self) -> float:
-        """Get the target resonant frequency for input shaping in Hz."""
-        return self._resonant_frequency
-
-    @resonant_frequency.setter
-    def resonant_frequency(self, value: float) -> None:
-        """Set the target resonant frequency for input shaping in Hz."""
-        if value <= 0:
-            raise ValueError(f"Invalid resonant frequency: {value}. Value must be greater than 0.")
-        self._resonant_frequency = value
-
-    @property
-    def resonant_period(self) -> float:
-        """Get the target resonant period for input shaping in s."""
-        return 1.0 / self.resonant_frequency
-
-    @property
-    def damping_ratio(self) -> float:
-        """Get the target damping ratio for input shaping."""
-        return self._damping_ratio
-
-    @damping_ratio.setter
-    def damping_ratio(self, value: float) -> None:
-        """Set the target damping ratio for input shaping."""
-        if value < 0:
-            raise ValueError(
-                f"Invalid damping ratio: {value}. Value must be greater than or equal to 0."
-            )
-        self._damping_ratio = value
 
     @property
     def shaper_type(self) -> ShaperType:
@@ -250,7 +213,7 @@ class ZeroVibrationStreamGenerator:
     def get_impulse_amplitudes(self) -> list[float]:
         """Get shaper impulse magnitudes."""
         k = math.exp(
-            (-1 * math.pi * self.damping_ratio) / math.sqrt(1 - self.damping_ratio**2)
+            (-1 * math.pi * self.plant.damping_ratio) / math.sqrt(1 - self.plant.damping_ratio**2)
         )  # Decay factor
 
         match self.shaper_type:
@@ -276,15 +239,15 @@ class ZeroVibrationStreamGenerator:
         """Get shaper impulse times."""
         match self.shaper_type:
             case ShaperType.ZV:
-                return [0, self.resonant_period / 2]
+                return [0, self.plant.resonant_period / 2]
             case ShaperType.ZVD:
-                return [0, self.resonant_period / 2, self.resonant_period]
+                return [0, self.plant.resonant_period / 2, self.plant.resonant_period]
             case ShaperType.ZVDD:
                 return [
                     0,
-                    self.resonant_period / 2,
-                    self.resonant_period,
-                    self.resonant_period * 3 / 2,
+                    self.plant.resonant_period / 2,
+                    self.plant.resonant_period,
+                    self.plant.resonant_period * 3 / 2,
                 ]
             case _:
                 raise ValueError(f"Shaper type {self.shaper_type} is not valid.")
@@ -328,7 +291,8 @@ class ZeroVibrationStreamGenerator:
 
 # Example code for using the class.
 if __name__ == "__main__":
-    shaper = ZeroVibrationStreamGenerator(4.64, 0.04, ShaperType.ZV)
+    plant_var = Plant(4.64, 0.04)
+    shaper = ZeroVibrationStreamGenerator(plant_var, ShaperType.ZV)
 
     DIST = 600
     ACCEL = 2100

@@ -12,6 +12,7 @@ import numpy as np
 from zaber_motion import Units
 from zaber_motion.ascii import Connection, Axis, Lockstep
 from zero_vibration_shaper import ZeroVibrationShaper
+from plant import Plant
 
 
 class ShapedAxis:
@@ -20,18 +21,13 @@ class ShapedAxis:
     def __init__(
         self,
         zaber_axis: Axis | Lockstep,
-        resonant_frequency: float,
-        damping_ratio: float,
+        plant: Plant,
     ) -> None:
         """
         Initialize the class for the specified axis.
 
-        Set a max speed limit to the current maxspeed setting
-        so the input shaping algorithm won't exceed that value.
-
         :param zaber_axis: The Zaber Motion Axis or Lockstep object
-        :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
-        :param damping_ratio: The target damping ratio for shaped moves
+        :param plant: The Plant instance defining the system that the shaper targeting.
         """
         # Sanity check if the passed axis has a higher number than the number of axes on the device.
         if isinstance(zaber_axis, Axis):
@@ -57,7 +53,7 @@ class ShapedAxis:
         else:
             self._primary_axis = self.axis
 
-        self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
+        self.shaper = ZeroVibrationShaper(plant)
 
         self._max_speed_limit = -1.0
 
@@ -359,11 +355,10 @@ if __name__ == "__main__":
         else:
             zaber_object = device.get_lockstep(LOCKSTEP_INDEX)
 
-        shaped_axis = ShapedAxis(
-            zaber_object,
-            RESONANT_FREQUENCY,
-            DAMPING_RATIO,
-        )  # Initialize the ShapedAxis class with the frequency and damping ratio
+        plant_var = Plant(
+            RESONANT_FREQUENCY, DAMPING_RATIO
+        )  # Initialize a Plant class with the frequency and damping ratio
+        shaped_axis = ShapedAxis(zaber_object, plant_var)
 
         if not shaped_axis.is_homed():
             shaped_axis.axis.home()

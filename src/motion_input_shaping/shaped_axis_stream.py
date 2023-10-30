@@ -12,6 +12,7 @@ import numpy as np
 from zaber_motion import Units, Measurement
 from zaber_motion.ascii import Connection, Axis, Lockstep, StreamAxisDefinition, StreamAxisType
 from zero_vibration_stream_generator import ZeroVibrationStreamGenerator, ShaperType
+from plant import Plant
 
 
 class ShapedAxisStream:
@@ -20,16 +21,12 @@ class ShapedAxisStream:
     def __init__(
         self,
         zaber_axis: Axis | Lockstep,
-        resonant_frequency: float,
-        damping_ratio: float,
+        plant: Plant,
         shaper_type: ShaperType = ShaperType.ZV,
         stream_id: int = 1,
     ) -> None:
         """
         Initialize the class for the specified axis.
-
-        Set a max speed limit to the current maxspeed setting
-        so the input shaping algorithm won't exceed that value.
 
         :param zaber_axis: The Zaber Motion Axis or Lockstep object
         :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
@@ -61,11 +58,7 @@ class ShapedAxisStream:
         else:
             self._primary_axis = self.axis
 
-        self.shaper = ZeroVibrationStreamGenerator(
-            resonant_frequency,
-            damping_ratio,
-            shaper_type,
-        )
+        self.shaper = ZeroVibrationStreamGenerator(plant, shaper_type)
         self.stream = zaber_axis.device.get_stream(stream_id)
 
         self._max_speed_limit = -1.0
@@ -373,12 +366,10 @@ if __name__ == "__main__":
         else:
             zaber_object = device.get_lockstep(LOCKSTEP_INDEX)
 
-        shaped_axis = ShapedAxisStream(
-            zaber_object,
-            RESONANT_FREQUENCY,
-            DAMPING_RATIO,
-            ShaperType.ZV,
-        )  # Initialize the ShapedAxisStream class with the frequency, damping ratio, and ZV shaper
+        plant_var = Plant(
+            RESONANT_FREQUENCY, DAMPING_RATIO
+        )  # Initialize a Plant class with the frequency and damping ratio
+        shaped_axis = ShapedAxisStream(zaber_object, plant_var, ShaperType.ZV)
 
         print("Performing unshaped moves.")
         shaped_axis.axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
