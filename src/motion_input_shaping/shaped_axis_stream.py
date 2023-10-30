@@ -1,5 +1,5 @@
 """
-This file contains the ShapedAxis class, which is to be re-used in your code.
+This file contains the ShapedAxisStream class, which is to be re-used in your code.
 
 Run the file directly to test the class out with a Zaber Device.
 """
@@ -185,18 +185,24 @@ class ShapedAxisStream:
         accel_native = self._primary_axis.settings.convert_to_native_units(
             "accel", acceleration, acceleration_unit
         )
+        decel_native = accel_native
 
-        if acceleration == 0:  # Get the acceleration if it wasn't specified
+        if acceleration == 0:  # Get the acceleration and deceleration if it wasn't specified
             if isinstance(self.axis, Lockstep):
                 accel_native = min(self.get_setting_from_lockstep_axes("accel", Units.NATIVE))
+                decel_native = min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE))
             else:
                 accel_native = self.axis.settings.get("accel", Units.NATIVE)
+                decel_native = self.axis.settings.get("motion.decelonly", Units.NATIVE)
 
         position_mm = self._primary_axis.settings.convert_from_native_units(
             "pos", position_native, Units.LENGTH_MILLIMETRES
         )
         accel_mm = self._primary_axis.settings.convert_from_native_units(
             "accel", accel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+        )
+        decel_mm = self._primary_axis.settings.convert_from_native_units(
+            "accel", decel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
         )
 
         start_position = self.axis.get_position(Units.LENGTH_MILLIMETRES)
@@ -205,7 +211,7 @@ class ShapedAxisStream:
             stream_segments = self.shaper.shape_trapezoidal_motion(
                 position_mm,
                 accel_mm,
-                accel_mm,
+                decel_mm,
                 self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
             )
         else:
