@@ -16,7 +16,6 @@ from shaped_axis import ShapedAxis
 from step_response_data import (
     StepResponseData,
 )  # Helper class for getting data from the onboard Oscilloscope
-from shaper_config import ShaperConfig, ShaperMode
 
 # ------------------- Script Settings ----------------------
 
@@ -27,7 +26,6 @@ MOVE_DISTANCE = 5  # The move distance in mm to test.
 SCOPE_TIMEBASE = 1  # The scope sampling period in ms. Adjust if the whole move isn't captured.
 RESONANT_FREQUENCY = 5.07  # Input shaping resonant frequency in Hz.
 DAMPING_RATIO = 0.1  # Input shaping damping ratio.
-SHAPER_CONFIG = ShaperConfig(ShaperMode.DECEL)
 
 # ------------------- Script Settings ----------------------
 
@@ -103,12 +101,10 @@ if __name__ == "__main__":
             print(f"Not enough axes for specified axis index ({AXIS_INDEX}), exiting.")
             sys.exit(0)
 
-        shaped_axis = ShapedAxis(
-            device.get_axis(AXIS_INDEX), RESONANT_FREQUENCY, DAMPING_RATIO, SHAPER_CONFIG
-        )
+        shaped_axis = ShapedAxis(device.get_axis(AXIS_INDEX), RESONANT_FREQUENCY, DAMPING_RATIO)
 
         # Home the axis and move to zero position
-        if not shaped_axis.axis.is_homed():
+        if not shaped_axis.is_homed():
             shaped_axis.axis.home()
 
         shaped_axis.axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)

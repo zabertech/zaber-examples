@@ -9,19 +9,21 @@ Run the file directly to test the class out with a Zaber Device.
 import time
 import sys
 import numpy as np
-from zaber_motion import Units
-from zaber_motion.ascii import Connection, Axis, Lockstep
-from zero_vibration_shaper import ZeroVibrationShaper
+from zaber_motion import Units, Measurement
+from zaber_motion.ascii import Connection, Axis, Lockstep, StreamAxisDefinition, StreamAxisType
+from zero_vibration_stream_generator import ZeroVibrationStreamGenerator, ShaperType
 
 
-class ShapedAxis:
-    """A Zaber device axis that performs moves with input shaping vibration reduction theory."""
+class ShapedAxisStream:
+    """A Zaber device axis that performs streamed moves with input shaping vibration reduction."""
 
     def __init__(
         self,
         zaber_axis: Axis | Lockstep,
         resonant_frequency: float,
         damping_ratio: float,
+        shaper_type: ShaperType = ShaperType.ZV,
+        stream_id: int = 1,
     ) -> None:
         """
         Initialize the class for the specified axis.
@@ -32,6 +34,8 @@ class ShapedAxis:
         :param zaber_axis: The Zaber Motion Axis or Lockstep object
         :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
         :param damping_ratio: The target damping ratio for shaped moves
+        :shaper_type: Type of input shaper to use
+        :stream_id: Stream number on device to use to perform moves
         """
         # Sanity check if the passed axis has a higher number than the number of axes on the device.
         if isinstance(zaber_axis, Axis):
@@ -57,17 +61,14 @@ class ShapedAxis:
         else:
             self._primary_axis = self.axis
 
-        self.shaper = ZeroVibrationShaper(resonant_frequency, damping_ratio)
+        self.shaper = ZeroVibrationStreamGenerator(
+            resonant_frequency,
+            damping_ratio,
+            shaper_type,
+        )
+        self.stream = zaber_axis.device.get_stream(stream_id)
 
         self._max_speed_limit = -1.0
-
-        # Grab the current deceleration so we can reset it back to this value later if we want.
-        if isinstance(self.axis, Lockstep):
-            self._original_deceleration = self.get_setting_from_lockstep_axes(
-                "motion.decelonly", Units.NATIVE
-            )
-        else:
-            self._original_deceleration = [self.axis.settings.get("motion.decelonly", Units.NATIVE)]
 
         # Set the speed limit to the device's current maxspeed so it will never be exceeded
         self.reset_max_speed_limit()
@@ -100,15 +101,6 @@ class ShapedAxis:
             self.set_max_speed_limit(min(self.get_setting_from_lockstep_axes("maxspeed")))
         else:
             self.set_max_speed_limit(self.axis.settings.get("maxspeed"))
-
-    def reset_deceleration(self) -> None:
-        """Reset the trajectory deceleration to the value stored when the class was created."""
-        if isinstance(self.axis, Lockstep):
-            self.set_lockstep_axes_setting(
-                "motion.decelonly", self._original_deceleration, Units.NATIVE
-            )
-        else:
-            self.axis.settings.set("motion.decelonly", self._original_deceleration[0], Units.NATIVE)
 
     def is_homed(self) -> bool:
         """Check if all axes in lockstep group are homed."""
@@ -207,48 +199,64 @@ class ShapedAxis:
             "accel", accel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
         )
 
-        if isinstance(self.shaper, ZeroVibrationShaper):
-            # Apply the input shaping with all values of the same units
-            deceleration_mm, max_speed_mm = self.shaper.shape_trapezoidal_motion(
+        start_position = self.axis.get_position(Units.LENGTH_MILLIMETRES)
+
+        if isinstance(self.shaper, ZeroVibrationStreamGenerator):
+            stream_segments = self.shaper.shape_trapezoidal_motion(
                 position_mm,
+                accel_mm,
                 accel_mm,
                 self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
             )
         else:
             raise TypeError(
-                "_move_relative_decel method requires a shaper to be an instance of "
-                "ZeroVibrationShaper class."
+                "_move_relative_stream method requires a shaper to be an instance of "
+                "ZeroVibrationStreamGenerator class."
             )
 
-        # Check if the target deceleration is different from the current value
-        deceleration_native = round(
-            self._primary_axis.settings.convert_to_native_units(
-                "accel", deceleration_mm, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
-            )
-        )
-
+        self.stream.disable()
         if isinstance(self.axis, Lockstep):
-            if (
-                min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE))
-                != deceleration_native
-            ):
-                self.set_lockstep_axes_setting(
-                    "motion.decelonly", [deceleration_native], Units.NATIVE
-                )
+            self.stream.setup_live_composite(
+                StreamAxisDefinition(self.axis.lockstep_group_id, StreamAxisType.LOCKSTEP)
+            )
         else:
-            if self.axis.settings.get("motion.decelonly", Units.NATIVE) != deceleration_native:
-                self.axis.settings.set("motion.decelonly", deceleration_native, Units.NATIVE)
+            self.stream.setup_live(self.axis.axis_number)
+        self.stream.cork()
+        for segment in stream_segments:
+            # Set acceleration making sure it is greater than zero by comparing 1 native accel unit
+            if (
+                self._primary_axis.settings.convert_to_native_units(
+                    "accel", segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
+                > 1
+            ):
+                self.stream.set_max_tangential_acceleration(
+                    segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
+            else:
+                self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
-        # Perform the move
-        self.axis.move_relative(
-            position,
-            unit,
-            wait_until_idle,
-            max_speed_mm,
-            Units.VELOCITY_MILLIMETRES_PER_SECOND,
-            accel_mm,
-            Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED,
-        )
+            # Set max speed making sure that it is at least 1 native speed unit
+            if (
+                self._primary_axis.settings.convert_to_native_units(
+                    "maxspeed", segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
+                > 1
+            ):
+                self.stream.set_max_speed(
+                    segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
+            else:
+                self.stream.set_max_speed(1, Units.NATIVE)
+
+            # set position for the end of the segment
+            self.stream.line_absolute(
+                Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES)
+            )
+        self.stream.uncork()
+
+        if wait_until_idle:
+            self.stream.wait_until_idle()
 
     def move_absolute(
         self,
@@ -359,14 +367,12 @@ if __name__ == "__main__":
         else:
             zaber_object = device.get_lockstep(LOCKSTEP_INDEX)
 
-        shaped_axis = ShapedAxis(
+        shaped_axis = ShapedAxisStream(
             zaber_object,
             RESONANT_FREQUENCY,
             DAMPING_RATIO,
-        )  # Initialize the ShapedAxis class with the frequency and damping ratio
-
-        if not shaped_axis.is_homed():
-            shaped_axis.axis.home()
+            ShaperType.ZV,
+        )  # Initialize the ShapedAxisStream class with the frequency, damping ratio, and ZV shaper
 
         print("Performing unshaped moves.")
         shaped_axis.axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
@@ -394,9 +400,5 @@ if __name__ == "__main__":
         shaped_axis.move_max(True)
         time.sleep(0.2)
         shaped_axis.move_min(True)
-
-        # Reset the deceleration to the original value in case the shaping algorithm changed it.
-        # Deceleration is the only setting that may change.
-        shaped_axis.reset_deceleration()
 
         print("Complete.")
