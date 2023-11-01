@@ -19,7 +19,7 @@ class ZeroVibrationShaper:
         """
         Initialize the class.
 
-        :param plant: The Plant instance defining the system that the shaper targeting.
+        :param plant: The Plant instance defining the system that the shaper is targeting.
         """
         self.plant = plant
         self.n = 1  # How many periods to wait before starting deceleration.

@@ -194,7 +194,7 @@ class ZeroVibrationStreamGenerator:
         """
         Initialize the class.
 
-        :param plant: The Plant instance defining the system that the shaper targeting.
+        :param plant: The Plant instance defining the system that the shaper is targeting.
         :param shaper_type: Type of input shaper to use to generate impulses.
         """
         self.plant = plant

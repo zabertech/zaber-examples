@@ -29,13 +29,13 @@ class ShapedAxisStream:
         Initialize the class for the specified axis.
 
         :param zaber_axis: The Zaber Motion Axis or Lockstep object
-        :param resonant_frequency: The target resonant frequency for shaped moves [Hz]
-        :param damping_ratio: The target damping ratio for shaped moves
+        :param plant: The Plant instance defining the system that the shaper is targeting
         :shaper_type: Type of input shaper to use
         :stream_id: Stream number on device to use to perform moves
         """
-        # Sanity check if the passed axis has a higher number than the number of axes on the device.
         if isinstance(zaber_axis, Axis):
+            # Sanity check if the passed axis has a higher number than the number of axes on the
+            # device.
             if zaber_axis.axis_number > zaber_axis.device.axis_count or zaber_axis is None:
                 raise TypeError("Invalid Axis class was used to initialized ShapedAxis.")
         elif isinstance(zaber_axis, Lockstep):

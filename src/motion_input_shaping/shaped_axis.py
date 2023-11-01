@@ -27,10 +27,11 @@ class ShapedAxis:
         Initialize the class for the specified axis.
 
         :param zaber_axis: The Zaber Motion Axis or Lockstep object
-        :param plant: The Plant instance defining the system that the shaper targeting.
+        :param plant: The Plant instance defining the system that the shaper is targeting.
         """
-        # Sanity check if the passed axis has a higher number than the number of axes on the device.
         if isinstance(zaber_axis, Axis):
+            # Sanity check if the passed axis has a higher number than the number of axes on the
+            # device.
             if zaber_axis.axis_number > zaber_axis.device.axis_count or zaber_axis is None:
                 raise TypeError("Invalid Axis class was used to initialized ShapedAxis.")
         elif isinstance(zaber_axis, Lockstep):
