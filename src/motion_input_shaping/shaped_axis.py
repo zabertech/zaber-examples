@@ -204,18 +204,12 @@ class ShapedAxis:
             "accel", accel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
         )
 
-        if isinstance(self.shaper, ZeroVibrationShaper):
-            # Apply the input shaping with all values of the same units
-            deceleration_mm, max_speed_mm = self.shaper.shape_trapezoidal_motion(
-                position_mm,
-                accel_mm,
-                self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
-            )
-        else:
-            raise TypeError(
-                "_move_relative_decel method requires a shaper to be an instance of "
-                "ZeroVibrationShaper class."
-            )
+        # Apply the input shaping with all values of the same units
+        deceleration_mm, max_speed_mm = self.shaper.shape_trapezoidal_motion(
+            position_mm,
+            accel_mm,
+            self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
+        )
 
         # Check if the target deceleration is different from the current value
         deceleration_native = round(

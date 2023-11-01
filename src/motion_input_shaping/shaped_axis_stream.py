@@ -183,7 +183,9 @@ class ShapedAxisStream:
         if acceleration == 0:  # Get the acceleration and deceleration if it wasn't specified
             if isinstance(self.axis, Lockstep):
                 accel_native = min(self.get_setting_from_lockstep_axes("accel", Units.NATIVE))
-                decel_native = min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE))
+                decel_native = min(
+                    self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE)
+                )
             else:
                 accel_native = self.axis.settings.get("accel", Units.NATIVE)
                 decel_native = self.axis.settings.get("motion.decelonly", Units.NATIVE)
@@ -200,18 +202,12 @@ class ShapedAxisStream:
 
         start_position = self.axis.get_position(Units.LENGTH_MILLIMETRES)
 
-        if isinstance(self.shaper, ZeroVibrationStreamGenerator):
-            stream_segments = self.shaper.shape_trapezoidal_motion(
-                position_mm,
-                accel_mm,
-                decel_mm,
-                self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
-            )
-        else:
-            raise TypeError(
-                "_move_relative_stream method requires a shaper to be an instance of "
-                "ZeroVibrationStreamGenerator class."
-            )
+        stream_segments = self.shaper.shape_trapezoidal_motion(
+            position_mm,
+            accel_mm,
+            decel_mm,
+            self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
+        )
 
         self.stream.disable()
         if isinstance(self.axis, Lockstep):
