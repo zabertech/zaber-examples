@@ -18,10 +18,8 @@ from matplotlib import pyplot as plt
 from matplotlib.widgets import TextBox
 from zaber_motion import Units
 from zaber_motion.ascii import Connection
-from damped_vibration import DampedVibration  # For calculating a theoretical vibration curve
-from step_response_data import (
-    StepResponseData,
-)  # Helper class for getting data from the on board Oscilloscope
+from damped_vibration import DampedVibration
+from step_response_data import StepResponseData
 
 # ------------------- Script Settings ----------------------
 

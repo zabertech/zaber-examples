@@ -13,10 +13,8 @@ from matplotlib import pyplot as plt
 from zaber_motion import Units
 from zaber_motion.ascii import Connection
 from shaped_axis import ShapedAxis
-from step_response_data import (
-    StepResponseData,
-)  # Helper class for getting data from the onboard Oscilloscope
 from plant import Plant
+from step_response_data import StepResponseData
 
 # ------------------- Script Settings ----------------------
 
