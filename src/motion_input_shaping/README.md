@@ -30,6 +30,8 @@ Most of the files in this repository are designed to be imported and reused in o
 However, most Python files contain example code at the bottom demonstrating how to properly use the classes defined in that file.
 Running the Python file directly will run the example code.
 
+The `shaped_axis.py` and `shaped_axis_stream.py` files each contain an implementation of input shaping using different methods. The ideal choice will depend on the system and application it is being used for. Details on the benefits of each method are provided below in the [ShapedAxis Class](#shapedaxis-class) and [The ShapedAxisStream Class](#shapedaxisstream-class) sections.
+
 Before running `measure_vibration_test.py` or `shaping_comparison_test.py`:
 - Edit `COM_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
@@ -56,9 +58,15 @@ Helper files:
 - [damped_vibration.py](damped_vibration.py) - Contains the `DampedVibration` class, which is a basic mathematical implementation of a theoretical damped vibration response curve.
 - [step_response_data.py](step_response_data.py) - Contains the `StepResponseData` class, which is a helper class used for perfoming a move with a Zaber axis while capturing position data via the onboard scope. It is used in the other testing scripts.
 
-### The ShapedAxis Class
+### ShapedAxis Class
 
-Most users will want to reuse the `ShapedAxis` class in their code. The `ShapedAxis` class has all the functionality of the Zaber Motion Library [Axis](https://software.zaber.com/motion-library/api/matlab/ascii/axis) class, but adds a few extra commands for performing moves with the zero vibration input shaping algorithm. The general class usage is shown below.
+This class performs shaping by attempting to cancel the impulse from acceleration by changing the timing and magnitude of the deceleration.
+
+This simplified method works well for short moves that are completed in a low number of vibration periods. The vibration cancellation only occurs while decelerating meaning the oscillation will persist during the move and only be reduced when coming to stop. This method becomes less effective with longer moves due to the errors that are accumulating in the time between acceleration and deceleration.
+
+Performing a move only requires sending a maximum of 3 additional commands so communication overhead is low and will only add a short delay to the start of the move.
+
+The general class usage is shown below.
 
 Importing the class (Python):
 
@@ -70,16 +78,13 @@ from plant import Plant
 Initalization (Python):
 
 ```python
-plant_var = Plant(resonant_frequency, damping_ratio)
-shaped_axis_var = ShapedAxis(axis, plant_var)
+plant = Plant(resonant_frequency, damping_ratio)
+shaped_axis_var = ShapedAxis(axis, plant)
 ```
-- The axis parameter is the [`Axis`](https://software.zaber.com/motion-library/api/py/ascii/axis) or [`Lockstep`](https://software.zaber.com/motion-library/api/py/ascii/lockstep) class instance that the `ShapedAxis` class will perform input shaped moves on.
+- The `axis` parameter is the [`Axis`](https://software.zaber.com/motion-library/api/py/ascii/axis) or [`Lockstep`](https://software.zaber.com/motion-library/api/py/ascii/lockstep) class instance that the `ShapedAxis` class will perform input shaped moves on.
 - See [here](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize the `Axis` class.
-- The `shaper_config` parameter is an instance of the `ShaperConfig` class that contains settings. More details on how to create a configuration can be found in [The ShaperConfig Class](#the-shaperconfig-class) section
-
-Class Properties:
-- `resonant_frequency` - Gets or sets the target resonant frequency at which the input shaping algorithm will remove vibration in Hz.
-- `damping_ratio` - Gets or sets the target damping ratio at which the input shaping algorithm will remove vibration.
+- The `plant` parameter is an instance of the `Plant` class which defines the vibration that the input shaper is targeting.
+  - The `Plant` class has `resonant_frequency` and `damping_ratio` properties that define the target vibration frequency in Hz and damping ratio at which the input shaping algorithm will remove vibration.
 
 Class Methods:
 - `move_absolute_shaped()` - Moves to an absolute position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_absolute()](https://software.zaber.com/motion-library/api/py/ascii/axis#_moveabsolute) command.
@@ -95,9 +100,15 @@ __Important Notes:__
 - All shaped movement commands have an optional acceleration parameter. If this parameter is not specified, the current acceleration setting will be queried from the device prior to performing each move. For maximum speed it is recommended to specify this value as it reduces communication overhead.
 - Shaped movement commands will adjust the [motion.decelonly](https://www.zaber.com/protocol-manual#topic_setting_motion_decelonly) setting. The `reset_deceleration()` method can be used to restore this value. No other trajectory settings are adjusted.
 
-### The ShapedAxisStream Class
+### ShapedAxisStream Class
 
-Input shaper using [streams](https://software.zaber.com/motion-library/docs/guides/streams) to send a trajectory generated by convolving impulses with trapezoidal motion. The most basic shaper is the ZV shaper which is described in [Zero Vibration Shaping](https://www.zaber.com/articles/input-shaping-for-vibration-reduction#Zero_Vibration_Shaping). The general class usage is shown below.
+This class uses [streams](https://software.zaber.com/motion-library/docs/guides/streams) to send more complicated input shaped trajectories that are generated by convolving shaper impulses with trapezoidal motion. The most basic shaper is the ZV shaper which is described in [Zero Vibration Shaping](https://www.zaber.com/articles/input-shaping-for-vibration-reduction#Zero_Vibration_Shaping).
+
+The shapers implemented through this method can operate over any range of move distances. They independently remove vibrations during acceleration and deceleration so the smoothness during the move is also improved. More complex shaper types can also be used to create a shaper with a wider frequency window to make it more tolerant to errors in the system's resonant frequency. For a more detailed explanation of shaper types the benefits of each, please see [input_shaper_types.md](input_shaper_types.md).
+
+Performing a shaped move using streams requires 3 commands to be sent for each acceleration step in order to set the speed limit, acceleration, and end position of each segment. There are also commands to initialize the stream. This communication overhead will cause a delay between requesting a move and the move starting. The number of acceleration steps increases with more complex shapers resulting in longer delays.
+
+The general class usage is shown below.
 
 Importing the class (Python):
 
@@ -110,15 +121,15 @@ from plant import Plant
 Initalization (Python):
 
 ```python
-plant_var = Plant(resonant_frequency, damping_ratio)
-shaped_axis_var = ShapedAxisStream(axis, plant_var, ShaperType.ZV, stream_id)
+plant = Plant(resonant_frequency, damping_ratio)
+shaped_axis_var = ShapedAxisStream(axis, plant, ShaperType.ZV, stream_id)
 ```
 - The axis parameter is the [`Axis`](https://software.zaber.com/motion-library/api/py/ascii/axis) or [`Lockstep`](https://software.zaber.com/motion-library/api/py/ascii/lockstep) class instance that the `ShapedAxisStream` class will perform input shaped moves on.
 - See [here](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize the `Axis` class.
+- The `plant` parameter is an instance of the `Plant` class which defines the vibration that the input shaper is targeting.
+  - The `Plant` class has `resonant_frequency` and `damping_ratio` properties that define the target vibration frequency in Hz and damping ratio at which the input shaping algorithm will remove vibration.
 
 Class Properties:
-- `resonant_frequency` - Gets or sets the target resonant frequency at which the input shaping algorithm will remove vibration in Hz.
-- `damping_ratio` - Gets or sets the target damping ratio at which the input shaping algorithm will remove vibration.
 - `shaper_type`: Type of the input shaper to use. Defaults to `ShaperType.ZV` if unspecified. Available shaper types are defined in the `ShaperType` enumeration class in [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py). More details on the different input shaper types can be found in  [input_shaper_types.md](input_shaper_types.md).
 - `stream_id`: Identifier number for the stream on the device. This defaults to 1 if unspecified. This is necessary if multiple streams are being used on a single device in order to avoid a conflict. For example, when performing input shaping in stream mode on two separate axes on a controller, each axis will need its own stream, so a different id needs to be specified when configuring each class instance.
 
@@ -137,17 +148,3 @@ __Important Notes:__
 ## Troubleshooting Tips
 
 - If you encounter an error when running one of the example scripts, check the Serial Port number (ex. COM5) using [Zaber Launcher](https://software.zaber.com/zaber-launcher/download).
-
-## Selecting ShapedAxis or ShapedAxisStream
-
-There are two different methods available to perform input shaping and the ideal choice will depend on the system and application it is being used for. Some details on the benefits of each method is summarized below.
-
-### ShapedAxis
-This simplified method works well for short moves that are completed in a low number of vibration periods. The vibration cancellation only occurs while decelerating meaning the oscillation will persist during the move and only be reduced when coming to stop. This method becomes less effective with longer moves due to the errors that are accumulating in the time between acceleration and deceleration.
-
-Performing a move only requires sending a maximum of 3 additional commands so communication overhead is low and will only add a short delay to the start of the move.
-
-### ShapedAxisStream
-The shapers implemented through this method can operate over any range of move distances. They independently remove vibrations during acceleration and deceleration so the smoothness during the move is also improved. More complex shaper types can also be used to create a shaper with a wider frequency window to make it more tolerant to errors in the system's resonant frequency. For a more detailed explanation of shaper types the benefits of each, please see [input_shaper_types.md](input_shaper_types.md).
-
-Performing a shaped move using streams requires 3 commands to be sent for each acceleration step in order to set the speed limit, acceleration, and end position of each segment. There are also commands to initialize the stream. This communication overhead will cause a delay between requesting a move and the move starting. The number of acceleration steps increases with more complex shapers resulting in longer delays.
