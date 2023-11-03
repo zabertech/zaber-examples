@@ -22,25 +22,17 @@ class ZeroVibrationShaper:
         :param plant: The Plant instance defining the system that the shaper is targeting.
         """
         self.plant = plant
-        self.n = 1  # How many periods to wait before starting deceleration.
+        self._n = 1  # How many periods to wait before starting deceleration.
 
     @property
     def n(self) -> int:
         """Get the number of vibration periods to wait before starting deceleration."""
         return self._n
 
-    @n.setter
-    def n(self, value: int) -> None:
-        """Set the number of vibration periods to wait before starting deceleration."""
-        if value < 1 or value % 1 != 0:
-            raise ValueError(f"Invalid number of periods: {value}. Must be a whole number >=1.")
-
-        self._n = value
-
     def get_impulse_amplitudes(self) -> list[float]:
         """Get the unitless magnitude of both impulses to perform the input shaping."""
         k = math.exp(
-            (-2 * math.pi * self.n * self.plant.damping_ratio)
+            (-2 * math.pi * self._n * self.plant.damping_ratio)
             / math.sqrt(1 - self.plant.damping_ratio**2)
         )
 
@@ -51,7 +43,7 @@ class ZeroVibrationShaper:
 
     def get_impulse_times(self) -> list[float]:
         """Get the time of both impulses to perform the input shaping in seconds."""
-        return [0, self.plant.resonant_period * self.n]
+        return [0, self.plant.resonant_period * self._n]
 
     def get_minimum_acceleration(self, distance: float) -> float:
         """
@@ -111,18 +103,18 @@ class ZeroVibrationShaper:
         :param max_speed_limit: An optional limit to place on maximum trajectory speed in the
         output motion.
         """
-        self.n = 1  # always reset to 1
+        self._n = 1  # always reset to 1
 
         # We need to increment n if the required acceleration is too high
         while self.get_minimum_acceleration(distance) > acceleration:
-            self.n += 1
+            self._n += 1
 
         # Also do the same check for max speed if a limit is specified
         if max_speed_limit != -1:
             while self.get_maximum_speed(distance, acceleration) > max_speed_limit:
-                self.n += 1
+                self._n += 1
 
-        return self.n
+        return self._n
 
     def shape_trapezoidal_motion(
         self, distance: float, acceleration: float, max_speed_limit: float = -1
