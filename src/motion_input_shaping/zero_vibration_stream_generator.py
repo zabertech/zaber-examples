@@ -8,7 +8,6 @@ Run the file directly to test the class functionality.
 import math
 from enum import Enum
 from dataclasses import dataclass
-from typing import NamedTuple
 import numpy as np
 from plant import Plant
 
@@ -31,7 +30,8 @@ class StreamSegment:
     duration: float
 
 
-class AccelPoint(NamedTuple):
+@dataclass
+class AccelPoint:
     """Acceleration points used to define trajectories."""
 
     time: float
