@@ -56,7 +56,7 @@ Helper files:
 - [zero_vibration_shaper.py](zero_vibration_shaper.py) - Contains the `ZeroVibrationShaper` class, which is a basic mathematical implementation of a zero vibration input shaping algorithm through changing deceleration.
 - [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py) - Contains the implementation of shapers and generate the information required to execute a trajectory through a stream.
 - [damped_vibration.py](damped_vibration.py) - Contains the `DampedVibration` class, which is a basic mathematical implementation of a theoretical damped vibration response curve.
-- [step_response_data.py](step_response_data.py) - Contains the `StepResponseData` class, which is a helper class used for perfoming a move with a Zaber axis while capturing position data via the onboard scope. It is used in the other testing scripts.
+- [step_response_data.py](step_response_data.py) - Contains the `StepResponseData` class, which is a helper class used for performing a move with a Zaber axis while capturing position data via the onboard scope. It is used in the other testing scripts.
 
 ### ShapedAxis Class
 
