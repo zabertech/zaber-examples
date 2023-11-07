@@ -6,11 +6,9 @@ Run the file directly to test the class out with a Zaber Device.
 
 # pylint: disable=too-many-arguments
 
-import time
-import sys
 import numpy as np
 from zaber_motion import Units
-from zaber_motion.ascii import Connection, Axis, Lockstep
+from zaber_motion.ascii import Axis, Lockstep
 from zero_vibration_shaper import ZeroVibrationShaper
 from plant import Plant
 
