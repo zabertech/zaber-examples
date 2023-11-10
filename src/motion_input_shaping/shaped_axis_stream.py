@@ -35,7 +35,7 @@ class ShapedAxisStream:
             # Sanity check if the passed axis has a higher number than the number of axes on the
             # device.
             if zaber_axis.axis_number > zaber_axis.device.axis_count or zaber_axis is None:
-                raise TypeError("Invalid Axis class was used to initialized ShapedAxis.")
+                raise TypeError("Invalid Axis class was used to initialized ShapedAxisStream.")
         elif isinstance(zaber_axis, Lockstep):
             # Sanity check if the passed lockstep group number exceeds than the number of
             # lockstep groups on the device.
@@ -43,7 +43,7 @@ class ShapedAxisStream:
                 zaber_axis.lockstep_group_id > zaber_axis.device.settings.get("lockstep.numgroups")
                 or zaber_axis is None
             ):
-                raise TypeError("Invalid Lockstep class was used to initialized ShapedLockstep.")
+                raise TypeError("Invalid Lockstep class was used to initialized ShapedAxisStream.")
 
         self.axis = zaber_axis
 

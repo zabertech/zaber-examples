@@ -39,7 +39,7 @@ class ShapedAxis:
                 zaber_axis.lockstep_group_id > zaber_axis.device.settings.get("lockstep.numgroups")
                 or zaber_axis is None
             ):
-                raise TypeError("Invalid Lockstep class was used to initialized ShapedLockstep.")
+                raise TypeError("Invalid Lockstep class was used to initialized ShapedAxis.")
 
         self.axis = zaber_axis
 
