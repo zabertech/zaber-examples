@@ -1,5 +1,5 @@
 """
-This file contains the ShapedAxis class, which is to be re-used in your code.
+This file contains the ShapedAxisStream class, which is to be re-used in your code.
 
 Run the file directly to test the class out with a Zaber Device.
 """
@@ -7,31 +7,35 @@ Run the file directly to test the class out with a Zaber Device.
 # pylint: disable=too-many-arguments
 
 import numpy as np
-from zaber_motion import Units
-from zaber_motion.ascii import Axis, Lockstep
-from zero_vibration_shaper import ZeroVibrationShaper
+from zaber_motion import Units, Measurement
+from zaber_motion.ascii import Axis, Lockstep, StreamAxisDefinition, StreamAxisType
+from zero_vibration_stream_generator import ZeroVibrationStreamGenerator, ShaperType
 from plant import Plant
 
 
-class ShapedAxis:
-    """A Zaber device axis that performs moves with input shaping vibration reduction theory."""
+class ShapedAxisStream:
+    """A Zaber device axis that performs streamed moves with input shaping vibration reduction."""
 
     def __init__(
         self,
         zaber_axis: Axis | Lockstep,
         plant: Plant,
+        shaper_type: ShaperType = ShaperType.ZV,
+        stream_id: int = 1,
     ) -> None:
         """
         Initialize the class for the specified axis.
 
         :param zaber_axis: The Zaber Motion Axis or Lockstep object
-        :param plant: The Plant instance defining the system that the shaper is targeting.
+        :param plant: The Plant instance defining the system that the shaper is targeting
+        :shaper_type: Type of input shaper to use
+        :stream_id: Stream number on device to use to perform moves
         """
         if isinstance(zaber_axis, Axis):
             # Sanity check if the passed axis has a higher number than the number of axes on the
             # device.
             if zaber_axis.axis_number > zaber_axis.device.axis_count or zaber_axis is None:
-                raise TypeError("Invalid Axis class was used to initialized ShapedAxis.")
+                raise TypeError("Invalid Axis class was used to initialized ShapedAxisStream.")
         elif isinstance(zaber_axis, Lockstep):
             # Sanity check if the passed lockstep group number exceeds than the number of
             # lockstep groups on the device.
@@ -39,7 +43,7 @@ class ShapedAxis:
                 zaber_axis.lockstep_group_id > zaber_axis.device.settings.get("lockstep.numgroups")
                 or zaber_axis is None
             ):
-                raise TypeError("Invalid Lockstep class was used to initialized ShapedAxis.")
+                raise TypeError("Invalid Lockstep class was used to initialized ShapedAxisStream.")
 
         self.axis = zaber_axis
 
@@ -52,17 +56,10 @@ class ShapedAxis:
         else:
             self._primary_axis = self.axis
 
-        self.shaper = ZeroVibrationShaper(plant)
+        self.shaper = ZeroVibrationStreamGenerator(plant, shaper_type)
+        self.stream = zaber_axis.device.get_stream(stream_id)
 
         self._max_speed_limit = -1.0
-
-        # Grab the current deceleration so we can reset it back to this value later if we want.
-        if isinstance(self.axis, Lockstep):
-            self._original_deceleration = self.get_setting_from_lockstep_axes(
-                "motion.decelonly", Units.NATIVE
-            )
-        else:
-            self._original_deceleration = [self.axis.settings.get("motion.decelonly", Units.NATIVE)]
 
         # Set the speed limit to the device's current maxspeed so it will never be exceeded
         self.reset_max_speed_limit()
@@ -95,15 +92,6 @@ class ShapedAxis:
             self.set_max_speed_limit(min(self.get_setting_from_lockstep_axes("maxspeed")))
         else:
             self.set_max_speed_limit(self.axis.settings.get("maxspeed"))
-
-    def reset_deceleration(self) -> None:
-        """Reset the trajectory deceleration to the value stored when the class was created."""
-        if isinstance(self.axis, Lockstep):
-            self.set_lockstep_axes_setting(
-                "motion.decelonly", self._original_deceleration, Units.NATIVE
-            )
-        else:
-            self.axis.settings.set("motion.decelonly", self._original_deceleration[0], Units.NATIVE)
 
     def is_homed(self) -> bool:
         """Check if all axes in lockstep group are homed."""
@@ -188,12 +176,17 @@ class ShapedAxis:
         accel_native = self._primary_axis.settings.convert_to_native_units(
             "accel", acceleration, acceleration_unit
         )
+        decel_native = accel_native
 
-        if acceleration == 0:  # Get the acceleration if it wasn't specified
+        if acceleration == 0:  # Get the acceleration and deceleration if it wasn't specified
             if isinstance(self.axis, Lockstep):
                 accel_native = min(self.get_setting_from_lockstep_axes("accel", Units.NATIVE))
+                decel_native = min(
+                    self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE)
+                )
             else:
                 accel_native = self.axis.settings.get("accel", Units.NATIVE)
+                decel_native = self.axis.settings.get("motion.decelonly", Units.NATIVE)
 
         position_mm = self._primary_axis.settings.convert_from_native_units(
             "pos", position_native, Units.LENGTH_MILLIMETRES
@@ -201,43 +194,62 @@ class ShapedAxis:
         accel_mm = self._primary_axis.settings.convert_from_native_units(
             "accel", accel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
         )
+        decel_mm = self._primary_axis.settings.convert_from_native_units(
+            "accel", decel_native, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+        )
 
-        # Apply the input shaping with all values of the same units
-        deceleration_mm, max_speed_mm = self.shaper.shape_trapezoidal_motion(
+        start_position = self.axis.get_position(Units.LENGTH_MILLIMETRES)
+
+        stream_segments = self.shaper.shape_trapezoidal_motion(
             position_mm,
             accel_mm,
+            decel_mm,
             self.get_max_speed_limit(Units.VELOCITY_MILLIMETRES_PER_SECOND),
         )
 
-        # Check if the target deceleration is different from the current value
-        deceleration_native = round(
-            self._primary_axis.settings.convert_to_native_units(
-                "accel", deceleration_mm, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
-            )
-        )
-
+        self.stream.disable()
         if isinstance(self.axis, Lockstep):
-            if (
-                min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE))
-                != deceleration_native
-            ):
-                self.set_lockstep_axes_setting(
-                    "motion.decelonly", [deceleration_native], Units.NATIVE
-                )
+            self.stream.setup_live_composite(
+                StreamAxisDefinition(self.axis.lockstep_group_id, StreamAxisType.LOCKSTEP)
+            )
         else:
-            if self.axis.settings.get("motion.decelonly", Units.NATIVE) != deceleration_native:
-                self.axis.settings.set("motion.decelonly", deceleration_native, Units.NATIVE)
+            self.stream.setup_live(self.axis.axis_number)
+        self.stream.cork()
+        for segment in stream_segments:
+            # Set acceleration making sure it is greater than zero by comparing 1 native accel unit
+            if (
+                self._primary_axis.settings.convert_to_native_units(
+                    "accel", segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
+                > 1
+            ):
+                self.stream.set_max_tangential_acceleration(
+                    segment.accel, Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED
+                )
+            else:
+                self.stream.set_max_tangential_acceleration(1, Units.NATIVE)
 
-        # Perform the move
-        self.axis.move_relative(
-            position,
-            unit,
-            wait_until_idle,
-            max_speed_mm,
-            Units.VELOCITY_MILLIMETRES_PER_SECOND,
-            accel_mm,
-            Units.ACCELERATION_MILLIMETRES_PER_SECOND_SQUARED,
-        )
+            # Set max speed making sure that it is at least 1 native speed unit
+            if (
+                self._primary_axis.settings.convert_to_native_units(
+                    "maxspeed", segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
+                > 1
+            ):
+                self.stream.set_max_speed(
+                    segment.speed_limit, Units.VELOCITY_MILLIMETRES_PER_SECOND
+                )
+            else:
+                self.stream.set_max_speed(1, Units.NATIVE)
+
+            # set position for the end of the segment
+            self.stream.line_absolute(
+                Measurement(segment.position + start_position, Units.LENGTH_MILLIMETRES)
+            )
+        self.stream.uncork()
+
+        if wait_until_idle:
+            self.stream.wait_until_idle()
 
     def move_absolute(
         self,

@@ -1,7 +1,7 @@
 """This file contains the StepResponseData class for re-use in other code."""
 from typing import Callable, Any
 from zaber_motion import Units
-from zaber_motion.ascii import Axis
+from zaber_motion.ascii import Axis, Lockstep
 
 
 class StepResponseData:
@@ -39,7 +39,10 @@ class StepResponseData:
         self.measured_positions: list[float] = []
 
     def capture_data(
-        self, axis: Axis, motion_function: Callable[[], Any], return_to_start: bool = True
+        self,
+        axis: Axis | Lockstep,
+        motion_function: Callable[[], Any],
+        return_to_start: bool = True,
     ) -> None:
         """
         Execute the movement and fill the class data fields with collected data.
@@ -50,11 +53,16 @@ class StepResponseData:
         :param return_to_start: If true, the axis will return to it's starting position after the
         data is captured.
         """
+        if isinstance(axis, Lockstep):
+            axis_number = axis.get_axis_numbers()[0]  # Scope primary axis
+        else:
+            axis_number = axis.axis_number
+
         # Setup the scope
         scope = axis.device.oscilloscope
         scope.clear()
-        scope.add_channel(axis.axis_number, "pos")
-        scope.add_channel(axis.axis_number, "encoder.pos")
+        scope.add_channel(axis_number, "pos")
+        scope.add_channel(axis_number, "encoder.pos")
         scope.set_timebase(self.timebase, self.time_units)
 
         # Get the starting position in case we want to move back
@@ -86,7 +94,7 @@ class StepResponseData:
 
         # Populate the data in the class
         for data_channel in data:
-            if data_channel.axis_number == axis.axis_number and data_channel.setting == "pos":
+            if data_channel.axis_number == axis_number and data_channel.setting == "pos":
                 self.target_positions = data_channel.get_data(self.length_units)
 
                 # Calculate the timestamps at each target position (they will be the same for all
@@ -94,10 +102,7 @@ class StepResponseData:
                 for i in range(len(self.target_positions)):
                     self.time_stamps.append(data_channel.get_sample_time(i, self.time_units))
 
-            if (
-                data_channel.axis_number == axis.axis_number
-                and data_channel.setting == "encoder.pos"
-            ):
+            if data_channel.axis_number == axis_number and data_channel.setting == "encoder.pos":
                 self.measured_positions = data_channel.get_data(self.length_units)
 
     def get_time_stamps(self) -> list[float]:
