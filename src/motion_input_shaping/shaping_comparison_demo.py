@@ -92,7 +92,7 @@ def plot(datasets: list[StepResponseData], labels: list[str], colors: list[str])
 
     fig.tight_layout()
 
-    plt.show()  # type: ignore
+    plt.show()
 
 
 if __name__ == "__main__":

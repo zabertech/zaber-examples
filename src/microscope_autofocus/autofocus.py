@@ -5,7 +5,7 @@ import math
 from typing import Any
 
 import cv2
-from matplotlib import pyplot as plt  # type: ignore
+from matplotlib import pyplot as plt
 from simple_pyspin import Camera  # type: ignore
 from zaber_motion.ascii import Connection
 from zaber_motion.units import Units
