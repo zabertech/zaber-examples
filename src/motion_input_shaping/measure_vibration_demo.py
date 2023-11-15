@@ -191,7 +191,7 @@ def plot(data: StepResponseData) -> None:
 
     print("Displaying plot...")
     axes.legend(loc="lower right")
-    plt.show()  # type: ignore
+    plt.show()
 
 
 if __name__ == "__main__":

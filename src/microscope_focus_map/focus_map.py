@@ -22,7 +22,8 @@ from typing import Callable
 from collections import namedtuple
 from docopt import docopt
 import numpy as np
-import matplotlib.pyplot as plt  # type: ignore
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D  # type: ignore
 
 # Parameters affecting random point generation
 TARGET_X_SLOPE = 2
@@ -55,8 +56,8 @@ def plot_points_and_best_fit(
     points: list[Point], best_fit: Callable[[float, float], float]
 ) -> None:
     """Plot both the randomly generated points, generate best-fit function with a function."""
-    plt.figure()
-    axes = plt.subplot(111, projection="3d")
+    fig = plt.figure()
+    axes: Axes3D = fig.add_subplot(111, projection="3d")
     x_rand = [point.x for point in points]
     y_rand = [point.y for point in points]
     z_rand = [point.z for point in points]

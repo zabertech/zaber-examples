@@ -1,2 +1,2 @@
-matplotlib==3.7.1
+matplotlib==3.8.1
 zaber-motion==3.3.0
