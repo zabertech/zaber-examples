@@ -24,9 +24,7 @@ COM_PORT = "COMx"  # The COM port with the connected Zaber device.
 DEVICE_INDEX = 0  # The Zaber device index to test.
 AXIS_INDEX = 1  # The Zaber axis index to test.
 MOVE_DISTANCE = 5  # The move distance in mm to test.
-SCOPE_TIMEBASE = (
-    1  # The scope sampling period in ms. Adjust if the whole move isn't captured.
-)
+SCOPE_TIMEBASE = 1  # The scope sampling period in ms. Adjust if the whole move isn't captured.
 RESONANT_FREQUENCY = 5.07  # Input shaping resonant frequency in Hz.
 DAMPING_RATIO = 0.1  # Input shaping damping ratio.
 STREAM_SHAPER_TYPE = ShaperType.ZV  # Input shaper type for ShapedAxisStream
@@ -35,9 +33,7 @@ SETTLING_TIME = 1  # Amount of time to wait between moves for vibrations to sett
 # ------------------- Script Settings ----------------------
 
 
-def plot(
-    datasets: list[StepResponseData], labels: list[str], colors: list[str]
-) -> None:
+def plot(datasets: list[StepResponseData], labels: list[str], colors: list[str]) -> None:
     """
     Plot step response data.
 
@@ -106,9 +102,7 @@ if __name__ == "__main__":
         print(f"Found {len(device_list)} devices")
 
         if len(device_list) < DEVICE_INDEX + 1:
-            print(
-                f"Not enough devices for specified device index ({DEVICE_INDEX}), exiting."
-            )
+            print(f"Not enough devices for specified device index ({DEVICE_INDEX}), exiting.")
             sys.exit(0)
 
         # Get the device and setup the input shaping axis
@@ -126,9 +120,7 @@ if __name__ == "__main__":
                 try:
                     axis_nums = device.get_lockstep(group_num).get_axis_numbers()
                     if AXIS_INDEX in axis_nums:
-                        print(
-                            f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}."
-                        )
+                        print(f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}.")
                         LOCKSTEP_INDEX = group_num
                         break
                 except LockstepNotEnabledException:
@@ -162,9 +154,7 @@ if __name__ == "__main__":
 
         step_response_data_unshaped.capture_data(
             shaped_axis.axis,
-            lambda: shaped_axis.axis.move_relative(
-                MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False
-            ),
+            lambda: shaped_axis.axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False),
             True,
         )
 
@@ -178,9 +168,7 @@ if __name__ == "__main__":
 
         step_response_data_shaped.capture_data(
             shaped_axis.axis,
-            lambda: shaped_axis.move_relative(
-                MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False
-            ),
+            lambda: shaped_axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False),
             True,
         )
 

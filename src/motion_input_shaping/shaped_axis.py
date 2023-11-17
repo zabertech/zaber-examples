@@ -226,9 +226,7 @@ class ShapedAxis:
                         "motion.decelonly", [deceleration_native], Units.NATIVE
                     )
                 else:
-                    self.set_lockstep_axes_setting(
-                        "motion.decelonly", [1], Units.NATIVE
-                    )
+                    self.set_lockstep_axes_setting("motion.decelonly", [1], Units.NATIVE)
         else:
             if self.axis.settings.get("motion.decelonly", Units.NATIVE) != deceleration_native:
                 if deceleration_native > 0:
