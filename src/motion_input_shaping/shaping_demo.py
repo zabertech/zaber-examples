@@ -2,7 +2,7 @@
 
 import time
 import sys
-from zaber_motion import Units, CommandFailedException
+from zaber_motion import Units, CommandFailedException, LockstepNotEnabledException
 from zaber_motion.ascii import Connection, Axis, Lockstep
 from shaped_axis import ShapedAxis
 from shaped_axis_stream import ShapedAxisStream
@@ -19,6 +19,8 @@ DAMPING_RATIO = 0.1  # Input shaping damping ratio.
 MOVE_DISTANCE = 5  # The move distance in mm to use in relative moves.
 PAUSE_TIME = 1  # Amount of time in seconds to pause between moves.
 STREAM_SHAPER_TYPE = ShaperType.ZV  # Input shaper type to use for ShapedAxisStream.
+LIMITED_MOVE_SPEED = 5  # Speed limit in mm/s to use in demo of moves with speed limit
+
 
 # ------------------- Script Settings ----------------------
 
@@ -27,6 +29,7 @@ def demo_shaping_class(
     shaped_axis: ShapedAxis | ShapedAxisStream,
     move_rel_distance: float,
     pause_time: float,
+    limited_move_speed: float = 5,
 ) -> None:
     """
     Perform a series of moves to demo usage of ShapedAxis and ShapedAxisStream classes.
@@ -34,6 +37,7 @@ def demo_shaping_class(
     :param shaped_axis: ShapedAxis or ShapedAxisStream class to perform moves with
     :param move_rel_distance: Distance to move in mm for move_relative demo
     :param pause_time: Time to pause between moves in seconds
+    :param limited_move_speed: Speed limit in mm/s to apply for speed limiting demo
     """
     print("Performing shaped moves.")
     shaped_axis.move_relative(move_rel_distance, Units.LENGTH_MILLIMETRES, True)
@@ -42,7 +46,7 @@ def demo_shaping_class(
     time.sleep(pause_time)
 
     print("Performing shaped moves with speed limit.")
-    shaped_axis.set_max_speed_limit(5, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+    shaped_axis.set_max_speed_limit(limited_move_speed, Units.VELOCITY_MILLIMETRES_PER_SECOND)
     shaped_axis.move_relative(move_rel_distance, Units.LENGTH_MILLIMETRES, True)
     time.sleep(pause_time)
     shaped_axis.move_relative(-move_rel_distance, Units.LENGTH_MILLIMETRES, True)
@@ -77,11 +81,14 @@ if __name__ == "__main__":
         try:
             num_lockstep_groups_possible = device.settings.get("lockstep.numgroups")
             for group_num in range(1, int(num_lockstep_groups_possible) + 1):
-                axis_nums = device.get_lockstep(group_num).get_axis_numbers()
-                if AXIS_INDEX in axis_nums:
-                    print(f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}.")
-                    LOCKSTEP_INDEX = group_num
-                    break
+                try:
+                    axis_nums = device.get_lockstep(group_num).get_axis_numbers()
+                    if AXIS_INDEX in axis_nums:
+                        print(f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}.")
+                        LOCKSTEP_INDEX = group_num
+                        break
+                except LockstepNotEnabledException:
+                    pass
         except CommandFailedException:
             # Unable to get lockstep.numgroups settings meaning device is not capable of lockstep.
             pass
@@ -106,15 +113,20 @@ if __name__ == "__main__":
         print("Performing unshaped moves.")
         shaped_axis_decel.axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
         time.sleep(PAUSE_TIME)
-        shaped_axis_decel.axis.move_relative(5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis_decel.axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, True)
         time.sleep(PAUSE_TIME)
-        shaped_axis_decel.axis.move_relative(-5, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis_decel.axis.move_relative(-MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, True)
         time.sleep(PAUSE_TIME)
 
         print("Demoing ShapedAxis.")
-        demo_shaping_class(shaped_axis_decel, MOVE_DISTANCE, PAUSE_TIME)
+        try:
+            demo_shaping_class(shaped_axis_decel, MOVE_DISTANCE, PAUSE_TIME, LIMITED_MOVE_SPEED)
+        except Exception:
+            # Reset deceleration in case any of any errors
+            shaped_axis_decel.reset_deceleration()
+            raise
 
         print("Demoing ShapedAxisStream.")
-        demo_shaping_class(shaped_axis_stream, MOVE_DISTANCE, PAUSE_TIME)
+        demo_shaping_class(shaped_axis_stream, MOVE_DISTANCE, PAUSE_TIME, LIMITED_MOVE_SPEED)
 
         print("Complete.")

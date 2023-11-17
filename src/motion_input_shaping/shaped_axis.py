@@ -222,11 +222,13 @@ class ShapedAxis:
                 != deceleration_native
             ):
                 self.set_lockstep_axes_setting(
-                    "motion.decelonly", [deceleration_native], Units.NATIVE
+                    "motion.decelonly", [max(1, deceleration_native)], Units.NATIVE
                 )
         else:
             if self.axis.settings.get("motion.decelonly", Units.NATIVE) != deceleration_native:
-                self.axis.settings.set("motion.decelonly", deceleration_native, Units.NATIVE)
+                self.axis.settings.set(
+                    "motion.decelonly", max(1, deceleration_native), Units.NATIVE
+                )
 
         # Perform the move
         self.axis.move_relative(
