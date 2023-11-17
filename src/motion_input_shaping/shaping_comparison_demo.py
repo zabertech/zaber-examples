@@ -10,7 +10,7 @@ capture position data.
 import time
 import sys
 from matplotlib import pyplot as plt
-from zaber_motion import Units, CommandFailedException
+from zaber_motion import Units, CommandFailedException, LockstepNotEnabledException
 from zaber_motion.ascii import Connection, Axis, Lockstep
 from shaped_axis import ShapedAxis
 from shaped_axis_stream import ShapedAxisStream
@@ -117,11 +117,14 @@ if __name__ == "__main__":
         try:
             num_lockstep_groups_possible = device.settings.get("lockstep.numgroups")
             for group_num in range(1, int(num_lockstep_groups_possible) + 1):
-                axis_nums = device.get_lockstep(group_num).get_axis_numbers()
-                if AXIS_INDEX in axis_nums:
-                    print(f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}.")
-                    LOCKSTEP_INDEX = group_num
-                    break
+                try:
+                    axis_nums = device.get_lockstep(group_num).get_axis_numbers()
+                    if AXIS_INDEX in axis_nums:
+                        print(f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}.")
+                        LOCKSTEP_INDEX = group_num
+                        break
+                except LockstepNotEnabledException:
+                    pass
         except CommandFailedException:
             # Unable to get lockstep.numgroups settings meaning device is not capable of lockstep.
             pass
