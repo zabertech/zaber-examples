@@ -26,10 +26,10 @@ LIMITED_MOVE_SPEED = 5  # Speed limit in mm/s to use in demo of moves with speed
 
 
 def demo_shaping_class(
-        shaped_axis: ShapedAxis | ShapedAxisStream,
-        move_rel_distance: float,
-        pause_time: float,
-        limited_move_speed: float = 5,
+    shaped_axis: ShapedAxis | ShapedAxisStream,
+    move_rel_distance: float,
+    pause_time: float,
+    limited_move_speed: float = 5,
 ) -> None:
     """
     Perform a series of moves to demo usage of ShapedAxis and ShapedAxisStream classes.
@@ -46,7 +46,9 @@ def demo_shaping_class(
     time.sleep(pause_time)
 
     print("Performing shaped moves with speed limit.")
-    shaped_axis.set_max_speed_limit(limited_move_speed, Units.VELOCITY_MILLIMETRES_PER_SECOND)
+    shaped_axis.set_max_speed_limit(
+        limited_move_speed, Units.VELOCITY_MILLIMETRES_PER_SECOND
+    )
     shaped_axis.move_relative(move_rel_distance, Units.LENGTH_MILLIMETRES, True)
     time.sleep(pause_time)
     shaped_axis.move_relative(-move_rel_distance, Units.LENGTH_MILLIMETRES, True)
@@ -84,7 +86,9 @@ if __name__ == "__main__":
                 try:
                     axis_nums = device.get_lockstep(group_num).get_axis_numbers()
                     if AXIS_INDEX in axis_nums:
-                        print(f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}.")
+                        print(
+                            f"Axis {AXIS_INDEX} is part of Lockstep group {group_num}."
+                        )
                         LOCKSTEP_INDEX = group_num
                         break
                 except LockstepNotEnabledException:
@@ -105,7 +109,9 @@ if __name__ == "__main__":
 
         # Initialize both input shaping axis classes
         shaped_axis_decel = ShapedAxis(zaber_object, plant_var)
-        shaped_axis_stream = ShapedAxisStream(zaber_object, plant_var, STREAM_SHAPER_TYPE)
+        shaped_axis_stream = ShapedAxisStream(
+            zaber_object, plant_var, STREAM_SHAPER_TYPE
+        )
 
         if not shaped_axis_decel.is_homed():
             shaped_axis_decel.axis.home()
@@ -113,20 +119,28 @@ if __name__ == "__main__":
         print("Performing unshaped moves.")
         shaped_axis_decel.axis.move_absolute(0, Units.LENGTH_MILLIMETRES, True)
         time.sleep(PAUSE_TIME)
-        shaped_axis_decel.axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis_decel.axis.move_relative(
+            MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, True
+        )
         time.sleep(PAUSE_TIME)
-        shaped_axis_decel.axis.move_relative(-MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, True)
+        shaped_axis_decel.axis.move_relative(
+            -MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, True
+        )
         time.sleep(PAUSE_TIME)
 
         print("Demoing ShapedAxis.")
         try:
-            demo_shaping_class(shaped_axis_decel, MOVE_DISTANCE, PAUSE_TIME, LIMITED_MOVE_SPEED)
+            demo_shaping_class(
+                shaped_axis_decel, MOVE_DISTANCE, PAUSE_TIME, LIMITED_MOVE_SPEED
+            )
         except Exception:
             # Reset deceleration in case any of any errors
             shaped_axis_decel.reset_deceleration()
             raise
 
         print("Demoing ShapedAxisStream.")
-        demo_shaping_class(shaped_axis_stream, MOVE_DISTANCE, PAUSE_TIME, LIMITED_MOVE_SPEED)
+        demo_shaping_class(
+            shaped_axis_stream, MOVE_DISTANCE, PAUSE_TIME, LIMITED_MOVE_SPEED
+        )
 
         print("Complete.")
