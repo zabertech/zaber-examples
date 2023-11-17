@@ -11,7 +11,7 @@ Created 2022, Contributors: Nathan P
 from collections import namedtuple
 import time
 
-import matplotlib.pyplot as plt  # type: ignore
+import matplotlib.pyplot as plt
 from zaber_motion import Units, MovementFailedException
 from zaber_motion.ascii import Axis, Connection, AxisType
 

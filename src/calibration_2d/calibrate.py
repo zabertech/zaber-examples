@@ -18,8 +18,7 @@ For more information see README.md
 import sys
 from typing import Callable, NamedTuple
 import numpy as np
-import matplotlib.pyplot as plt  # type: ignore
-from matplotlib.pyplot import figure
+import matplotlib.pyplot as plt
 from docopt import docopt
 from calibration import Point, PointPair, Calibration
 
@@ -141,8 +140,8 @@ def plot(
     :param subscale: Subdivisions to use between points when drawing the mapping to show curves
     :param annotation: Optional annotation for generating graphics for documentation.
     """
-    fig: figure.Figure = plt.figure()
-    axes: figure.Axes = fig.add_subplot(1, 1, 1)
+    fig = plt.figure()
+    axes = fig.add_subplot(1, 1, 1)
 
     def annotate_point(point_pair: PointPair, subscript: int) -> None:
         """Optionally annotate points."""
