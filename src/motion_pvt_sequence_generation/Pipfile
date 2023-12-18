@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+matplotlib = "*"
+numpy = "*"
+scipy = "*"
+
+[dev-packages]
+black = "*"
+colorama = {version = "*", markers = "platform_system == 'Windows'"}
+pylint = "*"
+mypy = "*"
+pydocstyle = "*"
+
+[requires]
+python_version = "3.10"
