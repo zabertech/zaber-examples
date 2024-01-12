@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Zaber.Motion" Version="4.8.0" />
+    <PackageReference Include="Zaber.Motion" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

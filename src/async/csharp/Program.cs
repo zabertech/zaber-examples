@@ -1,4 +1,5 @@
 // Zaber Motion Library advanced async usage example for C#.
+// Use "dotnet restore" to install the Zaber Motion Library NuGet package before running this program.
 // Use "dotnet run" to run the program or open the .csproj file in Visual Studio and use the debugger to run it.
 // See ../README.md for more information.
 
@@ -27,6 +28,9 @@ var GridSpacingUnits = UnitTable.GetUnit("mm");
 // However, this is not available .NET Framework programs, so in that case you can use the normal using statement.
 // If you cannot encapsulate all Zaber device use in a single code block like this, you should make sure
 // you manually close and dispose the Connection instance when your program is finished talking to devices.
+//
+// Note "await using" is only supported with ZML 5.0.0 or later under .NET or .NET Standard.
+// For other configurations remove both "await" statements from this line.
 await using (var port = await Connection.OpenSerialPortAsync(Port))
 {
     // There is no async GetDevice because it just instantiates a device object
@@ -64,6 +68,10 @@ await using (var port = await Connection.OpenSerialPortAsync(Port))
         await Parallel.ForEachAsync(Enumerable.Range(0, axes.Length), async (index, _) =>
         {
             var position = coords[index] * GridSpacing;
+            // Avoid the tempation to save the tasks in an array and await them as a group in the
+            // case of movement commands, as the device may not be able to consume the commands as
+            // fast as you can send them, and a system error may occur. Two or three should
+            // be safe, as in the home command above.
             await axes[index].MoveAbsoluteAsync(position, GridSpacingUnits, false);
         });
 
@@ -72,16 +80,21 @@ await using (var port = await Connection.OpenSerialPortAsync(Port))
         // does not need to be written here; it could be running from some other async call
         // stack but sharing the same thread.
 
-        // Here's another way to control multiple devices in parallel. Here we make a list of tasks
-        // that wait for the device movements to finish, then wait for them all to complete.
-        var tasks = Enumerable.Range(0, axes.Length).Select(index => axes[index].WaitUntilIdleAsync());
-        await Task.WhenAll(tasks);
+        // Now when we need to be sure the devices have stopped moving, we can wait until they are idle.
+        foreach(var axis in axes)
+        {
+            await axis.WaitUntilIdleAsync();
+        }
 
-        // At this time the devices have reached one of the target points and have stopped moving.
-        // Add a short delay at each point to simulate doing some work at the grid points.
+        // At this time the devices have all reached one of the target points and have stopped moving.
+        // This is where you could insert some other code to do something like take a picture
+        // or sample a well plate cell.
         Console.WriteLine($"At point { string.Join(", ", coords.Select(n => n.ToString())) }");
-        await Task.Delay(100);
     }
+
+    // With ZML versions prior to 5.0.0 the program could freeze when disposing the Connection.
+    // The workaround was to await any non-ZML task before disposing the Connection.
+    // await Task.Delay(0);
 }
 
 
