@@ -187,8 +187,8 @@ point in the sequence will be set to zero if unspecified.
 For example, generate a 1-D PVT sequence from position and time data:
 ```python
 time = [0, 1, 2]
-position = [4, 5, 6]
-sequence = pvt.Sequence.generate_positions(time, position)
+velocities = [4, 5, 6]
+sequence = pvt.Sequence.generate_positions(time, velocities)
 ```
 
 #### Class Properties
