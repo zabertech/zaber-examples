@@ -1,6 +1,4 @@
 // Zaber Motion Library advanced async usage example for C#.
-// Use "dotnet restore" to install the Zaber Motion Library NuGet package before running this program.
-// Use "dotnet run" to run the program or open the .csproj file in Visual Studio and use the debugger to run it.
 // See ../README.md for more information.
 
 // This is an SDK-style project for simpler cross-platform compatibility.
@@ -10,7 +8,7 @@ using Zaber.Motion;
 using Zaber.Motion.Ascii;
 
 // Edit these constants to match your setup.
-var Port = "COM10";
+var Port = "COM4";
 var XDeviceAddress = 1;
 var XAxisNumber = 1;
 var YDeviceAddress = 1;
@@ -31,11 +29,11 @@ var GridSpacingUnits = UnitTable.GetUnit("mm");
 //
 // Note "await using" is only supported with ZML 5.0.0 or later under .NET or .NET Standard.
 // For other configurations remove both "await" statements from this line.
-await using (var port = await Connection.OpenSerialPortAsync(Port))
+await using (var connection = await Connection.OpenSerialPortAsync(Port))
 {
     // There is no async GetDevice because it just instantiates a device object
     // without communicating with anything.
-    var xDevice = port.GetDevice(XDeviceAddress);
+    var xDevice = connection.GetDevice(XDeviceAddress);
 
     // Everywhere you await a Zaber async function call, you have the option to do some other
     // processing in parallel. Instead of using "await" immediately, you can assign the function's
@@ -51,7 +49,7 @@ await using (var port = await Connection.OpenSerialPortAsync(Port))
     }
     else
     {
-        var yDevice = port.GetDevice(YDeviceAddress);
+        var yDevice = connection.GetDevice(YDeviceAddress);
         await yDevice.IdentifyAsync();
         yAxis = yDevice.GetAxis(YAxisNumber);
     }
@@ -72,6 +70,7 @@ await using (var port = await Connection.OpenSerialPortAsync(Port))
             // case of movement commands, as the device may not be able to consume the commands as
             // fast as you can send them, and a system error may occur. Two or three should
             // be safe, as in the home command above.
+            // Again, you can move the await to a later point in the loop if you want to.
             await axes[index].MoveAbsoluteAsync(position, GridSpacingUnits, false);
         });
 
