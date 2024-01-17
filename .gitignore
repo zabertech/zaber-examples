@@ -24,3 +24,6 @@ bin/
 venv/
 *.pyc
 .mypy_cache/
+
+## JavaScript and TypeScript
+node_modules/

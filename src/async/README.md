@@ -3,7 +3,8 @@
 *By Soleil Lapierre*
 
 This example demonstrates fully asynchronous use of the library in each language.  It's intended as
-a reference for advanced programmers and to help debug async-related problems.
+a reference for advanced programmers and to help debug async-related problems.  It is not only about
+best practices; some of the comments in the example code discuss usage patterns to avoid.
 
 The example generates a two-dimensional grid of points to visit, as needed, and moves two
 device axes to each point in order, waiting for motion to stop at each point.
@@ -42,6 +43,7 @@ default values may not address your devices or may produce out-of-range motion).
 Running the example requires the following software setup:
 * C#: DotNet 8.0 or later, or Visual Studio 2022 v17.8.2 or later.
 * Java: Maven 3.6.3 or compatible, and a Java 8 or later runtime (tested with OpenJDK 1.8.0_302).
+* JavaScript: Node 16 or later with a compatible version of npm.
 
 ## Running the Script
 
@@ -62,4 +64,9 @@ The device addresses can be the same if you have a multi-axis controller.
   > mvn clean compile assembly:single
   > java -jar target\async-1.0-SNAPSHOT-jar-with-dependencies.jar
   > ```
-
+# JavaScript:
+  > ```
+  > cd javscript
+  > npm i
+  > node index.js
+  > ```

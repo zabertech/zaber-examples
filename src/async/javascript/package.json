@@ -1,0 +1,12 @@
+{
+  "name": "async",
+  "version": "1.0.0",
+  "description": "Asynchronous programming example for the Zaber Motion Library.",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@zaber/motion": "^4.8.0"
+  }
+}
