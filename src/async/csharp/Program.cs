@@ -31,6 +31,12 @@ var GridSpacingUnits = UnitTable.GetUnit("mm");
 // For other configurations remove both "await" statements from this line.
 await using (var connection = await Connection.OpenSerialPortAsync(Port))
 {
+    // Enabling alerts speeds up detection of the end of device movement, but may cause problems
+    // for non-Zaber software communicating with the devices because it leaves them in a state
+    // where they can generate spontaneous messages. It is recommended if you are only using
+    // Zaber software (including the Zaber Motion Library).
+    connection.EnableAlerts();
+
     // There is no async GetDevice because it just instantiates a device object
     // without communicating with anything.
     var xDevice = connection.GetDevice(XDeviceAddress);
@@ -75,9 +81,7 @@ await using (var connection = await Connection.OpenSerialPortAsync(Port))
         });
 
         // At this point the axes are moving and we may have many milliseconds or seconds to
-        // do other work (not shown). Since this is all async code, the code for the other work
-        // does not need to be written here; it could be running from some other async call
-        // stack but sharing the same thread.
+        // do other work (not shown).
 
         // Now when we need to be sure the devices have stopped moving, we can wait until they are idle.
         foreach(var axis in axes)

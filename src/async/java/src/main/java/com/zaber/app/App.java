@@ -3,6 +3,7 @@ package com.zaber.examples;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.IntStream;
 
 import zaber.motion.Units;
 import zaber.motion.ascii.Axis;
@@ -36,6 +37,10 @@ public class App {
         // versions of the Connection.open... methods because the connection instance
         // will likely get disposed before the open method returns.
         try (Connection connection = Connection.openSerialPort("COM10")) {
+            // Enabling alerts speeds up detection of the end of device movement, but may cause problems
+            // for non-Zaber software communicating with the devices because it leaves them in a state
+            // where they can generate spontaneous messages. It is recommended if you are only using
+            // Zaber software (including the Zaber Motion Library).
             connection.enableAlerts();
 
             // There is no async GetDevice because it just instantiates a device object
@@ -97,8 +102,7 @@ public class App {
                 });
 
                 // At this point the axes are moving and we may have many milliseconds or seconds to
-                // do other work (not shown). Since this is all async code, the code for the other work
-                // does not need to be written here; it could be running on another thread.
+                // do other work (not shown).
 
                 // Now when we need to be sure the devices have stopped moving, we can wait until they are idle.
                 axes.forEach(axis -> {
