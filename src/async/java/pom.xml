@@ -32,18 +32,13 @@
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
-        <!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>3.12.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>3.3.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-install-plugin</artifactId>
@@ -51,6 +46,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.6.0</version>
           <configuration>
               <archive>
                 <manifest>
