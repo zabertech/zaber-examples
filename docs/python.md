@@ -30,3 +30,4 @@ If you are using `pipenv`, make sure you are in `/src/<example_directory>/python
     pipenv install --dev black pylint mypy pydocstyle
     pipenv shell
 
+Windows users should replace `pipenv` in the above commands with `py -3 -m pipenv`

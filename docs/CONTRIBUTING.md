@@ -9,7 +9,7 @@ before submitting your contribution.
 and more generally to help people working on motion control and automation projects
 get up and running quickly.
 - Examples are in the [`src/`](../src/) directory in a flat structure and can be browsed directly on GitHub.
-For an overview of the repository, please see document on [Directory Structure](directory-structure.md)
+For an overview of the repository, please see the document on [Directory Structure](directory-structure.md)
 
 ## Issues and Bugs
 
@@ -32,7 +32,7 @@ is not a duplicate or closely related to another example already in the reposito
 or is a building block that that is likely to be useful to others.  Consider how to structure
 and write the example code to avoid excessive boilerplate that does not contribute to explaining
 the central concept.
-3. Fork
+3. Fork (Zaber employees can create a branch instead)
 4. Create a subdirectory `<example_directory>` under [`src/`](../src/)
     - i.e. `/src/microplate_scanning_basic`
     - See [Example Subdirectory Naming Convention](example-subdirectory-naming.md)
