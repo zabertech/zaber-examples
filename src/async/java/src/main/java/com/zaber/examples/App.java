@@ -23,16 +23,16 @@ import zaber.motion.ascii.Device;
  */
 public class App {
     /* Edit these constants to match your setup. */
-    public static final String Port = "COM10";
-    public static final int XDeviceAddress = 1;
-    public static final int XAxisNumber = 1;
-    public static final int YDeviceAddress = 1;
-    public static final int YAxisNumber = 2;
+    public static final String PORT = "COM10";
+    public static final int X_DEVICE_ADDRESS = 1;
+    public static final int X_AXIS_NUMBER = 1;
+    public static final int Y_DEVICE_ADDRESS = 1;
+    public static final int Y_AXIS_NUMBER = 2;
 
-    public static final int XGridPoints = 4;
-    public static final int YGridPoints = 4;
-    public static final int GridSpacing = 5;
-    public static final Units GridSpacingUnits = UnitTable.getUnit("mm");
+    public static final int X_GRID_POINTS = 4;
+    public static final int Y_GRID_POINTS = 4;
+    public static final int GRID_SPACING = 5;
+    public static final Units GRID_SPACING_UNITS = UnitTable.getUnit("mm");
 
     public static void main(String[] args)
         throws InterruptedException, ExecutionException
@@ -49,22 +49,22 @@ public class App {
 
             // There is no async GetDevice because it just instantiates a device object
             // without communicating with anything.
-            Device xDevice = connection.getDevice(XDeviceAddress);
+            Device xDevice = connection.getDevice(X_DEVICE_ADDRESS);
 
             // Everywhere you call .get() on the Future returned by a Zaber async function call, you have
             // the option to do some other processing in parallel. Instead of using .get() immediately, you
             // can call it later after doing something else.
             // You can also use CompletableFuture.allOf(...).get() to wait for multiple async operations to complete.
             xDevice.identifyAsync().get();
-            Axis xAxis = xDevice.getAxis(XAxisNumber);
+            Axis xAxis = xDevice.getAxis(X_AXIS_NUMBER);
 
             Axis yAxis;
-            if (YDeviceAddress == XDeviceAddress) {
-                yAxis = xDevice.getAxis(YAxisNumber);
+            if (Y_DEVICE_ADDRESS == X_DEVICE_ADDRESS) {
+                yAxis = xDevice.getAxis(Y_AXIS_NUMBER);
             } else {
-                Device yDevice = connection.getDevice(YDeviceAddress);
+                Device yDevice = connection.getDevice(Y_DEVICE_ADDRESS);
                 yDevice.identifyAsync().get();
-                yAxis = yDevice.getAxis(YAxisNumber);
+                yAxis = yDevice.getAxis(Y_AXIS_NUMBER);
             }
 
             // Home the devices and wait until done.
@@ -74,7 +74,7 @@ public class App {
             ArrayList<int[]> buffer = new ArrayList<int[]>();
             new Thread(() -> {
                 try {
-                    Grid(XGridPoints, YGridPoints, buffer);
+                    Grid(X_GRID_POINTS, Y_GRID_POINTS, buffer);
                 } catch (InterruptedException e) {
                 }
             }).start();
@@ -99,7 +99,7 @@ public class App {
 
                 // Send each axis its new target position and wait for acknowledgement.
                 for (int index = 0; index < axes.length; index++) {
-                    int position = coords[index] * GridSpacing;
+                    int position = coords[index] * GRID_SPACING;
                     // Avoid the tempation to save the futures in an array and await them as a group in the
                     // case of movement commands, as the device may not be able to consume the commands as
                     // fast as you can send them, and a system error may occur. Two or three should
@@ -107,7 +107,7 @@ public class App {
                     // Again you can move the .get() calls to a later point in this loop if you want to,
                     // but doing so in this case would cause delays between starting the moves on different axes.
                     // It's better to do your extra processing after starting all the moves.
-                    axes[index].moveAbsoluteAsync(position, GridSpacingUnits, false).get();
+                    axes[index].moveAbsoluteAsync(position, GRID_SPACING_UNITS, false).get();
                 }
 
                 // At this point the axes are moving and we may have many milliseconds or seconds to
