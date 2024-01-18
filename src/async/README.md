@@ -44,6 +44,7 @@ Running the example requires the following software setup:
 * C#: DotNet 8.0 or later, or Visual Studio 2022 v17.8.2 or later.
 * Java: Maven 3.6.3 or compatible, and a Java 8 or later runtime (tested with OpenJDK 1.8.0_302).
 * JavaScript: Node 16 or later with a compatible version of npm.
+* Python: Python 3.10.
 
 ## Running the Script
 
@@ -58,15 +59,27 @@ The device addresses can be the same if you have a multi-axis controller.
   > dotnet run
   > ```
   Alternatively, open the `async.csproj` file with Visual Studio 2022 and use the debugger to run the program.
-# Java:
+* Java:
   > ```
   > cd java
   > mvn clean compile assembly:single
   > java -jar target\async-1.0-SNAPSHOT-jar-with-dependencies.jar
   > ```
-# JavaScript:
+* JavaScript:
   > ```
   > cd javscript
   > npm i
   > node index.js
+  > ```
+* Python (Windows):
+  > ```
+  > cd python
+  > py -3 -m pipenv install
+  > py -3 -m pipenv run python async.py
+  > ```
+* Python (non-Windows):
+  > ```
+  > cd python
+  > pipenv install
+  > pipenv run python async.py
   > ```

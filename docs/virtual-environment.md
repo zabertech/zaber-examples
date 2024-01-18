@@ -21,7 +21,7 @@ To install Pipenv:
 
 Windows:
 
-    py -m pip install -U pipenv
+    py -3 -m pip install -U pipenv
 
 Linux / Mac:
 

@@ -23,7 +23,7 @@ var GridSpacingUnits = UnitTable.GetUnit("mm");
 // Connections are disposable because they hold system resources (ie a serial port or network connection).
 // In an asynchronous program we recommend the "await using" statement to automatically close and dispose
 // the Connection's resources when finished with it.
-// However, this is not available .NET Framework programs, so in that case you can use the normal using statement.
+// However, this is not available in .NET Framework programs, so in that case you can use the normal using statement.
 // If you cannot encapsulate all Zaber device use in a single code block like this, you should make sure
 // you manually close and dispose the Connection instance when your program is finished talking to devices.
 //
@@ -95,8 +95,8 @@ await using (var connection = await Connection.OpenSerialPortAsync(Port))
         Console.WriteLine($"At point { string.Join(", ", coords.Select(n => n.ToString())) }");
     }
 
-    // With ZML versions prior to 5.0.0 the program could freeze when disposing the Connection.
-    // The workaround was to await any non-ZML task before disposing the Connection.
+    // With ZML versions prior to 5.0.0 the program could freeze here when disposing the Connection.
+    // The workaround was to await any non-ZML task before disposing the Connection, for example:
     // await Task.Delay(0);
 }
 
