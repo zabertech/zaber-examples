@@ -11,21 +11,36 @@ the code discusses both good and bad usage patterns and things to consider.
 The example generates a two-dimensional grid of points to visit and moves two
 device axes to each point in order, waiting for motion to stop at each point.
 
-There are three forms of asynchrony involved in controlling Zaber motion devices:
-* Many Zaber Motion Library commands have both synchronous and asynchronous versions. For simplicity
-  most of our other example code uses the synchronous versions, but this example uses the asynchronous functions
-  as much as possible.
-* Functions that cause the devices to move default to blocking until the device stops moving but can optionally return
-  before the move is completed, just after receiving the device's acknowledgement of the command.
-  Most of the other example programs use the default blocking behavior but this example does not,
-  and reveals places where CPU time is available while the device moves.
-* Communications lag. Most of the library functions send a command to the device over a serial
-  communication channel and wait for an acknowledging reply, which can take up to a few milliseconds.
-  This delay is inherent in any device control function whether it's synchronous or asynchronous.
-  By calling multiple asynchronous functions and not immediately awaiting the results, it is possible to
-  overload a device's ability to parse and dispatch the commands, resulting in a fatal system error that
-  requires a reset.  You typically can get away with overlapping two or three commands in this way,
-  and the example code demonstrates how to do this, but in general we recommend against it.
+Many Zaber Motion Library commands have both synchronous and asynchronous versions. For simplicity
+most of our other example code uses the synchronous versions, but this example uses the asynchronous functions
+as much as possible.
+
+There are two forms of asynchrony involved in controlling Zaber motion devices:
+1. Asynchronous function calls typically return a Promise, Task or Future to user code almost immediately,
+   and that object can be waited on either immediately or later. When waited on, the object blocks user code
+   execution until the asynchronous function has completed its work. Zaber Motion Library asynchronous functions
+   complete their returned Proise/Task/Future when any message(s) they send to Zaber devices are responded do by the
+   device. The turnaround time for one message and response depends on the communication medium; USB and Ethernet
+   connections will be fastest. RS-232 is slower, with a typically less than 10ms turnaround depending on message length.
+
+   By calling multiple asynchronous functions and not immediately awaiting the results, it is possible to
+   overload a device's ability to parse and dispatch the commands, resulting in a fatal system error that
+   requires a reset.  You typically can get away with overlapping two or three commands in this way,
+   and the example code demonstrates how to do this, but in general we recommend against it.
+
+2. Functions that cause the devices to move default to blocking until the device stops moving but can optionally return
+   before the move is completed, just after receiving the device's acknowledgement of the command.
+   Most of the other example programs use the default blocking behavior but this example does not,
+   and reveals places where CPU time is available while the device moves.
+
+![timing.png](img/timing.png)
+
+This timing diagram illustrates the first two kinds of asynchrony. The communications lag is inherent in any messages
+send to or from the device. Note this is not the same as program flow control; execution can returns to user code almost
+immediately when calling an asynchronous function.
+
+
+
 
 Users new to the Zaber Motion Library or novice programmers should ignore this example and use the synchronous functions
 found in other examples until there is a need for asynchronicity. Asynchronous programs can
