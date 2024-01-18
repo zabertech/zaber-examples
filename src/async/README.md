@@ -88,7 +88,7 @@ The device addresses can be the same if you have a multi-axis controller.
   > ```
   > cd javscript
   > npm i
-  > node index.js
+  > node async.js
   > ```
 * Python (Windows):
   > ```

@@ -8,16 +8,16 @@ using Zaber.Motion;
 using Zaber.Motion.Ascii;
 
 // Edit these constants to match your setup.
-var Port = "COM4";
-var XDeviceAddress = 1;
-var XAxisNumber = 1;
-var YDeviceAddress = 1;
-var YAxisNumber = 2;
+const string PORT = "COM10";
+const int X_DEVICE_ADDRESS = 1;
+const int X_AXIS_NUMBER = 1;
+const int Y_DEVICE_ADDRESS = 1;
+const int Y_AXIS_NUMBER = 2;
 
-var XGridPoints = 4;
-var YGridPoints = 4;
-var GridSpacing = 5;
-var GridSpacingUnits = UnitTable.GetUnit("mm");
+const int X_GRID_POINTS = 4;
+const int Y_GRID_POINTS = 4;
+const int GRID_SPACING = 5;
+var GRID_SPACING_UNITS = UnitTable.GetUnit("mm");
 
 
 // Connections are disposable because they hold system resources (ie a serial port or network connection).
@@ -29,7 +29,7 @@ var GridSpacingUnits = UnitTable.GetUnit("mm");
 //
 // Note "await using" is only supported with ZML 5.0.0 or later under .NET or .NET Standard.
 // For other configurations remove both "await" statements from this line.
-await using (var connection = await Connection.OpenSerialPortAsync(Port))
+await using (var connection = await Connection.OpenSerialPortAsync(PORT))
 {
     // Enabling alerts speeds up detection of the end of device movement, but may cause problems
     // for non-Zaber software communicating with the devices because it leaves them in a state
@@ -39,25 +39,25 @@ await using (var connection = await Connection.OpenSerialPortAsync(Port))
 
     // There is no async GetDevice because it just instantiates a device object
     // without communicating with anything.
-    var xDevice = connection.GetDevice(XDeviceAddress);
+    var xDevice = connection.GetDevice(X_DEVICE_ADDRESS);
 
     // Everywhere you await a Zaber async function call, you have the option to do some other
     // processing in parallel. Instead of using "await" immediately, you can assign the function's
     // return value to a Task variable and then await it later after doing something else. You can
     // also use Task.WhenAll() to wait for multiple async operations to complete.
     await xDevice.IdentifyAsync();
-    var xAxis = xDevice.GetAxis(XAxisNumber);
+    var xAxis = xDevice.GetAxis(X_AXIS_NUMBER);
 
     Axis yAxis;
-    if (YDeviceAddress == XDeviceAddress)
+    if (Y_DEVICE_ADDRESS == X_DEVICE_ADDRESS)
     {
-        yAxis = xDevice.GetAxis(YAxisNumber);
+        yAxis = xDevice.GetAxis(Y_AXIS_NUMBER);
     }
     else
     {
-        var yDevice = connection.GetDevice(YDeviceAddress);
+        var yDevice = connection.GetDevice(Y_DEVICE_ADDRESS);
         await yDevice.IdentifyAsync();
-        yAxis = yDevice.GetAxis(YAxisNumber);
+        yAxis = yDevice.GetAxis(Y_AXIS_NUMBER);
     }
 
     // Home the devices and wait until done.
@@ -65,19 +65,19 @@ await using (var connection = await Connection.OpenSerialPortAsync(Port))
 
     // Grid scan loop
     Axis[] axes = [xAxis, yAxis];
-    await foreach (var coords in Grid(XGridPoints, YGridPoints))
+    await foreach (var coords in Grid(X_GRID_POINTS, Y_GRID_POINTS))
     {
         // Here's one way of controlling the devices in parallel. This loop potentially sends the
         // move commands and waits for the acknowledgements on different threads.
         await Parallel.ForEachAsync(Enumerable.Range(0, axes.Length), async (index, _) =>
         {
-            var position = coords[index] * GridSpacing;
+            var position = coords[index] * GRID_SPACING;
             // Avoid the tempation to save the tasks in an array and await them as a group in the
             // case of movement commands, as the device may not be able to consume the commands as
             // fast as you can send them, and a system error may occur. Two or three should
             // be safe, as in the home command above.
             // Again, you can move the await to a later point in the loop if you want to.
-            await axes[index].MoveAbsoluteAsync(position, GridSpacingUnits, false);
+            await axes[index].MoveAbsoluteAsync(position, GRID_SPACING_UNITS, false);
         });
 
         // At this point the axes are moving and we may have many milliseconds or seconds to
