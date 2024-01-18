@@ -77,7 +77,7 @@ async def main() -> None:
             # At this time the devices have all reached one of the target points and have stopped moving.
             # This is where you could insert some other code to do something like take a picture
             # or sample a well plate cell.
-            print(f"At point { ', '.join([str(n) for n in coords]) } ")
+            print(f"At point { ', '.join([str(n) for n in coords]) }")
 
 
 async def grid(x_points, y_points):

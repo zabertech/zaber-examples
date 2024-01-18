@@ -2,48 +2,54 @@
 
 *By Soleil Lapierre*
 
-This example demonstrates fully asynchronous use of the library in each language.  It's intended as
-a reference for advanced programmers and to help debug async-related problems.  It is not only about
-best practices; some of the comments in the example code discuss usage patterns to avoid.
+This example demonstrates fully asynchronous use of the Zaber Motion Library in each language in which
+it supports asynchronous operations.
 
-The example generates a two-dimensional grid of points to visit, as needed, and moves two
+The example is intended as a reference for advanced programmers. It's not strictly a best-practice guide;
+the code discusses both good and bad usage patterns and things to consider.
+
+The example generates a two-dimensional grid of points to visit and moves two
 device axes to each point in order, waiting for motion to stop at each point.
 
 There are three forms of asynchrony involved in controlling Zaber motion devices:
-# Many Zaber Motion Library commands have both synchronous and asynchronous versions. For simplicity
-  most of our example code uses the synchronous versions, but this example uses the asynchronous functions
+* Many Zaber Motion Library commands have both synchronous and asynchronous versions. For simplicity
+  most of our other example code uses the synchronous versions, but this example uses the asynchronous functions
   as much as possible.
-# Functions that cause the devices to move can return before the move is completed, or can optionally
-  block until the device stops moving. Many of the other examples use the blocking behavior, which is
-  the default; this example does not, and reveals places where CPU time is available while the device moves.
-# Communications lag. Most of the library functions send a command to the device over a serial
+* Functions that cause the devices to move default to blocking until the device stops moving but can optionally return
+  before the move is completed, just after receiving the device's acknowledgement of the command.
+  Most of the other example programs use the default blocking behavior but this example does not,
+  and reveals places where CPU time is available while the device moves.
+* Communications lag. Most of the library functions send a command to the device over a serial
   communication channel and wait for an acknowledging reply, which can take up to a few milliseconds.
-  This delay is inherent in any device control function whether it's synchronous or asynchronous,
-  but using the asynchonous functions as in this example allows you to make use of
-  CPU time while the device command and reply messages are in flight.
+  This delay is inherent in any device control function whether it's synchronous or asynchronous.
+  By calling multiple asynchronous functions and not immediately awaiting the results, it is possible to
+  overload a device's ability to parse and dispatch the commands, resulting in a fatal system error that
+  requires a reset.  You typically can get away with overlapping two or three commands in this way,
+  and the example code demonstrates how to do this, but in general we recommend against it.
 
-Users new to the Zaber Motion Library or novice programmers should use the synchronous functions
+Users new to the Zaber Motion Library or novice programmers should ignore this example and use the synchronous functions
 found in other examples until there is a need for asynchronicity. Asynchronous programs can
 be difficult to understand and debug.
 
-There is no C++ version of this example because the Zaber Motion Library does not support asynchronous
-function calls in that language. The best you can do there is to tell move commands not to wait for idle,
-and do some other processing while the device is moving.
+There are no C++, MATLAB or Octave versions of this example because the Zaber Motion Library does not support asynchronous
+function calls in those languages. The best you can do in those languages is to tell the move commands not to wait for idle,
+and do some other processing while the device is moving. This is, however, still the biggest opportunity for parallelism
+in Zaber Motion Library usage in terms of CPU time availability.
 
 
 ## Hardware Requirements
 
 This example assumes you have either a controller with two linear axes, or two linear devices
-connected together. You can edit the constants in the example source code to set the connection
-information, device address(es) and grid dimensions to work with your particular devices (the
+connected together and on the same daisy chain. You can edit the constants in the example source code to set
+the connection information, device address(es) and grid dimensions to work with your particular devices (the
 default values may not address your devices or may produce out-of-range motion).
 
 ## Dependencies / Software Requirements / Prerequisites
 
 Running the example requires the following software setup:
 * C#: DotNet 8.0 or later, or Visual Studio 2022 v17.8.2 or later.
-* Java: Maven 3.6.3 or compatible, and a Java 8 or later runtime (tested with OpenJDK 1.8.0_302).
-* JavaScript: Node 16 or later with a compatible version of npm.
+* Java: Maven 3.9.6 or compatible, and a Java 8 or later runtime.
+* JavaScript: Node 14 or later with a compatible version of npm.
 * Python: Python 3.10.
 
 ## Running the Script
@@ -58,7 +64,7 @@ The device addresses can be the same if you have a multi-axis controller.
   > dotnet restore
   > dotnet run
   > ```
-  Alternatively, open the `async.csproj` file with Visual Studio 2022 and use the debugger to run the program.
+  (Alternatively, open the `async.csproj` file with Visual Studio 2022 and use the debugger to run the program.)
 * Java:
   > ```
   > cd java
