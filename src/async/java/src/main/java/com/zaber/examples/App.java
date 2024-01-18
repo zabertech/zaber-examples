@@ -3,9 +3,11 @@ package com.zaber.examples;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.IntStream;
 
 import zaber.motion.Units;
+import zaber.motion.UnitTable;
 import zaber.motion.ascii.Axis;
 import zaber.motion.ascii.Connection;
 import zaber.motion.ascii.Device;
@@ -30,9 +32,11 @@ public class App {
     public static final int XGridPoints = 4;
     public static final int YGridPoints = 4;
     public static final int GridSpacing = 5;
-    public static final Units GridSpacingUnits = UnitTable.GetUnit("mm");
+    public static final Units GridSpacingUnits = UnitTable.getUnit("mm");
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+        throws InterruptedException, ExecutionException
+    {
         // If you're using a try-with-resources block, you can't use the async
         // versions of the Connection.open... methods because the connection instance
         // will likely get disposed before the open method returns.
@@ -51,24 +55,29 @@ public class App {
             // the option to do some other processing in parallel. Instead of using .get() immediately, you
             // can call it later after doing something else.
             // You can also use CompletableFuture.allOf(...).get() to wait for multiple async operations to complete.
-            xDevice.IdentifyAsync().get();
-            Axis xAxis = xDevice.GetAxis(XAxisNumber);
+            xDevice.identifyAsync().get();
+            Axis xAxis = xDevice.getAxis(XAxisNumber);
 
             Axis yAxis;
             if (YDeviceAddress == XDeviceAddress) {
-                yAxis = xDevice.GetAxis(YAxisNumber);
+                yAxis = xDevice.getAxis(YAxisNumber);
             } else {
                 Device yDevice = connection.getDevice(YDeviceAddress);
-                yDevice.IdentifyAsync().get();
-                yAxis = yDevice.GetAxis(YAxisNumber);
+                yDevice.identifyAsync().get();
+                yAxis = yDevice.getAxis(YAxisNumber);
             }
 
             // Home the devices and wait until done.
-            CompletableFuture.allOf(xAxis.HomeAsync(), yAxis.HomeAsync()).get();
+            CompletableFuture.allOf(xAxis.homeAsync(), yAxis.homeAsync()).get();
 
             // Start a thread to generate the grid coordinates asynchronously.
             ArrayList<int[]> buffer = new ArrayList<int[]>();
-            new Thread(() -> Grid(XGridPoints, YGridPoints, buffer)).start();
+            new Thread(() -> {
+                try {
+                    Grid(XGridPoints, YGridPoints, buffer);
+                } catch (InterruptedException e) {
+                }
+            }).start();
 
             // Grid scan loop
             Axis[] axes = { xAxis, yAxis };
@@ -89,7 +98,7 @@ public class App {
                 }
 
                 // Send each axis its new target position and wait for acknowledgement.
-                IntStream.range(0, axes.Length).stream().map(index -> {
+                for (int index = 0; index < axes.length; index++) {
                     int position = coords[index] * GridSpacing;
                     // Avoid the tempation to save the futures in an array and await them as a group in the
                     // case of movement commands, as the device may not be able to consume the commands as
@@ -98,22 +107,22 @@ public class App {
                     // Again you can move the .get() calls to a later point in this loop if you want to,
                     // but doing so in this case would cause delays between starting the moves on different axes.
                     // It's better to do your extra processing after starting all the moves.
-                    axes[index].MoveAbsoluteAsync(position, GridSpacingUnits, false).get();
-                });
+                    axes[index].moveAbsoluteAsync(position, GridSpacingUnits, false).get();
+                }
 
                 // At this point the axes are moving and we may have many milliseconds or seconds to
                 // do other work (not shown).
 
                 // Now when we need to be sure the devices have stopped moving, we can wait until they are idle.
-                axes.forEach(axis -> {
+                for (Axis axis: axes) {
                     // Another opportunity to insert more code before the .get().
-                    axis.WaitUntilIdleAsync().get();
-                });
+                    axis.waitUntilIdleAsync().get();
+                }
 
                 // At this time the devices have all reached one of the target points and have stopped moving.
                 // This is where you could insert some other code to do something like take a picture
                 // or sample a well plate cell.
-                System.out.println(String.format("At point %s.", Arrays.toString(coords)));
+                System.out.println(String.format("At point %s", Arrays.toString(coords)));
             }
         }
     }
@@ -123,7 +132,9 @@ public class App {
     // (more commonly) you could generate the coordinates in the device control loop
     // above. This is example is contrived to simulate reading the coordinates from
     // an external source.
-    private static void Grid(int xPoints, int yPoints, ArrayList<int[]> buffer) {
+    private static void Grid(int xPoints, int yPoints, ArrayList<int[]> buffer)
+        throws InterruptedException
+    {
         // Generates points in boustrophedon (serpentine, minimum-movement) order.
         int x = 0, y = 0;
         int xDirection = 1;
