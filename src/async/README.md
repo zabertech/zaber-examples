@@ -28,18 +28,16 @@ There are two forms of asynchrony involved in controlling Zaber motion devices:
    requires a reset.  You typically can get away with overlapping two or three commands in this way,
    and the example code demonstrates how to do this, but in general we recommend against it.
 
-2. Functions that cause the devices to move default to blocking until the device stops moving but can optionally return
+2. Movement functions by default block until the device stops moving but can optionally return
    before the move is completed, just after receiving the device's acknowledgement of the command.
    Most of the other example programs use the default blocking behavior but this example does not,
    and reveals places where CPU time is available while the device moves.
 
 ![timing.png](img/timing.png)
 
-This timing diagram illustrates the first two kinds of asynchrony. The communications lag is inherent in any messages
+This timing diagram illustrates the two kinds of asynchrony. The communications lag is inherent in any messages
 send to or from the device. Note this is not the same as program flow control; execution can returns to user code almost
 immediately when calling an asynchronous function.
-
-
 
 
 Users new to the Zaber Motion Library or novice programmers should ignore this example and use the synchronous functions
