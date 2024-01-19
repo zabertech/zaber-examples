@@ -30,7 +30,6 @@ async def main() -> None:
     # make sure you manually close and dispose the Connection instance when your program is
     # finished talking to devices.
     async with Connection.open_serial_port_async(PORT) as connection:
-
         # Enabling alerts speeds up detection of the end of device movement, but may cause problems
         # for non-Zaber software communicating with the devices because it leaves them in a state
         # where they can generate spontaneous messages. It is recommended if you are only using
@@ -45,9 +44,9 @@ async def main() -> None:
         # processing in parallel. Instead of using "await" immediately, you can assign the
         # function's return value to a variable and then await it later after doing something else.
         # You can also use asyncio.gather(...) to wait for multiple async operations to complete.
-        identifyTask = x_device.identify_async()
+        identify_task = x_device.identify_async()
         # Could do something else here.
-        await identifyTask # Block until the identify_async() call completes.
+        await identify_task  # Block until the identify_async() call completes.
         x_axis = x_device.get_axis(X_AXIS_NUMBER)
 
         if Y_DEVICE_ADDRESS == X_DEVICE_ADDRESS:

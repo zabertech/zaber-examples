@@ -8,6 +8,10 @@ it supports asynchronous operations.
 The example is intended as a reference for advanced programmers. It's not strictly a best-practice guide;
 the code discusses both good and bad usage patterns and things to consider.
 
+Users new to the Zaber Motion Library or novice programmers should ignore this example and use the synchronous functions
+found in other examples until there is a need for asynchronicity. Asynchronous programs can
+be difficult to understand and debug.
+
 The example generates a two-dimensional grid of points to visit and moves two
 device axes to each point in sequence, waiting for motion to stop at each point.
 
@@ -20,21 +24,22 @@ There are two forms of asynchrony involved in controlling Zaber motion devices:
    and that object can be awaited either immediately or later. When awaited, the object blocks user code
    execution until the original asynchronous function has completed its work. Zaber Motion Library
    asynchronous functions complete their returned Promise/Task/Future when any message(s) they send to
-   a Zaber device are responded to by the device. The turnaround time for one message and response depends
-   on the communication medium; USB and Ethernet connections will be fastest. RS-232 is slower, with a
-   typically less than 10ms turnaround depending on message length.
+   a Zaber device are responded to by the device, except for movement commands (see item 2 below).
+   The turnaround time for one message and response depends on the communication medium; USB and
+   Ethernet connections will be fastest. RS-232 is slower, with a typically less than 10ms turnaround
+   depending on message length.
 
-   By calling multiple asynchronous functions and not immediately awaiting the results, it is possible to
-   overload a device's ability to parse and dispatch the commands, resulting in a fatal system error that
-   requires a reset.  You typically can get away with overlapping two or three commands in this way,
-   and the example code demonstrates how to do this, but in general we recommend against it.
-   Also, be aware that when overlapping asynchronous function calls, the order of completion and the
-   order of delivery of commands to the device is not guaranteed.
+   By calling multiple asynchronous functions and not immediately awaiting the results, greater parallelism
+   can be achieved but it is possible to overload a device's ability to parse and dispatch the commands,
+   resulting in a fatal system error that requires a reset. You can typically get away with overlapping
+   two or three commands in this way, and the example code demonstrates how to do this, but in general
+   we recommend against it. Also, be aware that when overlapping asynchronous function calls, the order
+   of execution and the order of delivery of commands to the device are not guaranteed.
 
-2. Movement functions by default block until the device stops moving but can optionally return
-   before the move is completed, just after receiving the device's acknowledgement of the command.
-   Most of the other example programs use the default blocking behavior but this example does not,
-   and reveals places where CPU time is available while the device moves.
+2. Movement functions (both synchronous and asynchronous) by default wait until the device stops moving
+   but can optionally return before the move is completed, just after receiving the device's
+   acknowledgement of the command. Most of Zaber's other example programs use the default blocking behavior
+   but this example does not, and reveals places where CPU time is available while the device moves.
 
    This form of asynchrony offers the most potential benefit in terms reclaimable CPU time.
 
@@ -44,10 +49,6 @@ This timing diagram illustrates the two kinds of asynchrony. Communications lag 
 sent to or from the device. Note this is not the same as program flow control; execution can return to
 user code almost immediately when calling an asynchronous function.
 
-
-Users new to the Zaber Motion Library or novice programmers should ignore this example and use the synchronous functions
-found in other examples until there is a need for asynchronicity. Asynchronous programs can
-be difficult to understand and debug.
 
 There are no C++, MATLAB or Octave versions of this example because the Zaber Motion Library does not support asynchronous
 function calls in those languages. The best you can do in those languages is to tell the move commands not to wait for idle,
