@@ -23,7 +23,7 @@ import zaber.motion.ascii.Device;
  */
 public class App {
     /* Edit these constants to match your setup. */
-    public static final String PORT = "COM10";
+    public static final String PORT = "COM4";
     public static final int X_DEVICE_ADDRESS = 1;
     public static final int X_AXIS_NUMBER = 1;
     public static final int Y_DEVICE_ADDRESS = 1;
@@ -37,10 +37,10 @@ public class App {
     public static void main(String[] args)
         throws InterruptedException, ExecutionException
     {
-        // If you're using a try-with-resources block, you can't use the async
+        // If you're using a try-with-resources block like this, you can't use the async
         // versions of the Connection.open... methods because the connection instance
         // will likely get disposed before the open method returns.
-        try (Connection connection = Connection.openSerialPort("COM10")) {
+        try (Connection connection = Connection.openSerialPort(PORT)) {
             // Enabling alerts speeds up detection of the end of device movement, but may cause problems
             // for non-Zaber software communicating with the devices because it leaves them in a state
             // where they can generate spontaneous messages. It is recommended if you are only using
