@@ -9,35 +9,40 @@ The example is intended as a reference for advanced programmers. It's not strict
 the code discusses both good and bad usage patterns and things to consider.
 
 The example generates a two-dimensional grid of points to visit and moves two
-device axes to each point in order, waiting for motion to stop at each point.
+device axes to each point in sequence, waiting for motion to stop at each point.
 
 Many Zaber Motion Library commands have both synchronous and asynchronous versions. For simplicity
-most of our other example code uses the synchronous versions, but this example uses the asynchronous functions
-as much as possible.
+most of our other example code uses the synchronous versions, but this example uses the asynchronous
+functions as much as possible to demonstrate their use.
 
 There are two forms of asynchrony involved in controlling Zaber motion devices:
-1. Asynchronous function calls typically return a Promise, Task or Future to user code almost immediately,
-   and that object can be waited on either immediately or later. When waited on, the object blocks user code
-   execution until the asynchronous function has completed its work. Zaber Motion Library asynchronous functions
-   complete their returned Proise/Task/Future when any message(s) they send to Zaber devices are responded do by the
-   device. The turnaround time for one message and response depends on the communication medium; USB and Ethernet
-   connections will be fastest. RS-232 is slower, with a typically less than 10ms turnaround depending on message length.
+1. Asynchronous function calls return a Promise, Task or Future to user code almost immediately,
+   and that object can be awaited either immediately or later. When awaited, the object blocks user code
+   execution until the original asynchronous function has completed its work. Zaber Motion Library
+   asynchronous functions complete their returned Promise/Task/Future when any message(s) they send to
+   a Zaber device are responded to by the device. The turnaround time for one message and response depends
+   on the communication medium; USB and Ethernet connections will be fastest. RS-232 is slower, with a
+   typically less than 10ms turnaround depending on message length.
 
    By calling multiple asynchronous functions and not immediately awaiting the results, it is possible to
    overload a device's ability to parse and dispatch the commands, resulting in a fatal system error that
    requires a reset.  You typically can get away with overlapping two or three commands in this way,
    and the example code demonstrates how to do this, but in general we recommend against it.
+   Also, be aware that when overlapping asynchronous function calls, the order of completion and the
+   order of delivery of commands to the device is not guaranteed.
 
 2. Movement functions by default block until the device stops moving but can optionally return
    before the move is completed, just after receiving the device's acknowledgement of the command.
    Most of the other example programs use the default blocking behavior but this example does not,
    and reveals places where CPU time is available while the device moves.
 
+   This form of asynchrony offers the most potential benefit in terms reclaimable CPU time.
+
 ![timing.png](img/timing.png)
 
-This timing diagram illustrates the two kinds of asynchrony. The communications lag is inherent in any messages
-send to or from the device. Note this is not the same as program flow control; execution can returns to user code almost
-immediately when calling an asynchronous function.
+This timing diagram illustrates the two kinds of asynchrony. Communications lag is inherent in any messages
+sent to or from the device. Note this is not the same as program flow control; execution can return to
+user code almost immediately when calling an asynchronous function.
 
 
 Users new to the Zaber Motion Library or novice programmers should ignore this example and use the synchronous functions
@@ -52,10 +57,11 @@ in Zaber Motion Library usage in terms of CPU time availability.
 
 ## Hardware Requirements
 
-This example assumes you have either a controller with two linear axes, or two linear devices
-connected together and on the same daisy chain. You can edit the constants in the example source code to set
+This example assumes you have either a controller with two linear peripherals, or two linear devices
+connected together on the same daisy chain. You can edit the constants in the example source code to set
 the connection information, device address(es) and grid dimensions to work with your particular devices (the
 default values may not address your devices or may produce out-of-range motion).
+
 
 ## Dependencies / Software Requirements / Prerequisites
 
@@ -63,7 +69,8 @@ Running the example requires the following software setup:
 * C#: DotNet 8.0 or later, or Visual Studio 2022 v17.8.2 or later.
 * Java: Maven 3.9.6 or compatible, and a Java 8 or later runtime.
 * JavaScript: Node 14 or later with a compatible version of npm.
-* Python: Python 3.10.
+* Python: Python 3.10 with Pipenv installed.
+
 
 ## Running the Script
 

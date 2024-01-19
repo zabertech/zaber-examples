@@ -1,4 +1,7 @@
-const { UnitTable, ascii: { Connection }} = require('@zaber/motion');
+// Zaber Motion Library advanced async usage example for JavaScript.
+// See ../README.md for more information.
+
+const { UnitTable, ascii: { Connection } } = require('@zaber/motion');
 
 // Edit these constants to match your setup.
 const PORT = "COM4";
@@ -20,6 +23,7 @@ async function main() {
   // is only useful in a small program like this where all usage of the resource is in one place.
   // In a larger program you might store the connection in an object and explicitly close it
   // when your program shuts down.
+  //
   // Note the call to open the connection in this example is not inside the try block because
   // it would not make sense to close it in the finally block if it failed to open. Therefore
   // this example will throw an unhandled exception if the port cannot be opened. (It will also
@@ -41,7 +45,9 @@ async function main() {
     // processing in parallel. Instead of using "await" immediately, you can assign the function's
     // returned Promise to a variable and then await it later after doing something else. You can
     // also use await Promise.All() to wait for multiple async operations to complete.
-    await xDevice.identify();
+    const identPromise = xDevice.identify();
+    // Coudl do something else here.
+    await identPromise; // Block until identify() completes.
     const xAxis = xDevice.getAxis(X_AXIS_NUMBER);
 
     let yAxis;
@@ -57,6 +63,8 @@ async function main() {
     }
 
     // Home the devices and wait until done.
+    // This is an example of overlapping async commands. Order of execution is not
+    // guaranteed and with more than two or three there is a risk of a device error.
     await Promise.all([xAxis.home(), yAxis.home()]);
 
     // Grid scan loop
@@ -66,7 +74,7 @@ async function main() {
       // move commands and waits for the acknowledgements for each axis independently.
       for (let index of axes.keys()) {
         var position = coords[index] * GRID_SPACING;
-        // Avoid the tempation to save the tasks in an array and await them as a group in the
+        // Avoid the tempation to save the promises in an array and await them as a group in the
         // case of movement commands, as the device may not be able to consume the commands as
         // fast as you can send them, and a system error may occur. Two or three should
         // be safe, as in the home command above.
@@ -89,7 +97,7 @@ async function main() {
     }
 
   } finally {
-    // close the port to allow Node.js to exit
+    // Close the connection in a finally block to ensure it is closed even if an exception is thrown.
     await connection.close();
   }
 }

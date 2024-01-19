@@ -11,6 +11,7 @@ import zaber.motion.UnitTable;
 import zaber.motion.ascii.Axis;
 import zaber.motion.ascii.Connection;
 import zaber.motion.ascii.Device;
+import zaber.motion.ascii.DeviceIdentity;
 
 /**
  * Zaber Motion Library async usage example for Java.
@@ -41,6 +42,7 @@ public class App {
         // versions of the Connection.open... methods because the connection instance
         // will likely get disposed before the open method returns.
         try (Connection connection = Connection.openSerialPort(PORT)) {
+
             // Enabling alerts speeds up detection of the end of device movement, but may cause problems
             // for non-Zaber software communicating with the devices because it leaves them in a state
             // where they can generate spontaneous messages. It is recommended if you are only using
@@ -55,7 +57,9 @@ public class App {
             // the option to do some other processing in parallel. Instead of using .get() immediately, you
             // can call it later after doing something else.
             // You can also use CompletableFuture.allOf(...).get() to wait for multiple async operations to complete.
-            xDevice.identifyAsync().get();
+            CompletableFuture<DeviceIdentity> identFuture = xDevice.identifyAsync();
+            // Could do something else here.
+            identFuture.get(); // Block until identifyAsync() completes.
             Axis xAxis = xDevice.getAxis(X_AXIS_NUMBER);
 
             Axis yAxis;
@@ -68,6 +72,8 @@ public class App {
             }
 
             // Home the devices and wait until done.
+            // This is an example of overlapping async commands. Order of execution is not
+            // guaranteed and with more than two or three there is a risk of a device error.
             CompletableFuture.allOf(xAxis.homeAsync(), yAxis.homeAsync()).get();
 
             // Start a thread to generate the grid coordinates asynchronously.
@@ -105,7 +111,8 @@ public class App {
                     // fast as you can send them, and a system error may occur. Two or three should
                     // be safe, as in the home command above.
                     // Again you can move the .get() calls to a later point in this loop if you want to,
-                    // but doing so in this case would cause delays between starting the moves on different axes.
+                    // but doing so in this case would cause delays between starting the moves on different
+                    // axes because the for loop is not parallelized.
                     // It's better to do your extra processing after starting all the moves.
                     axes[index].moveAbsoluteAsync(position, GRID_SPACING_UNITS, false).get();
                 }
@@ -114,7 +121,7 @@ public class App {
                 // do other work (not shown).
 
                 // Now when we need to be sure the devices have stopped moving, we can wait until they are idle.
-                for (Axis axis: axes) {
+                for (Axis axis : axes) {
                     // Another opportunity to insert more code before the .get().
                     axis.waitUntilIdleAsync().get();
                 }
@@ -124,14 +131,15 @@ public class App {
                 // or sample a well plate cell.
                 System.out.println(String.format("At point %s", Arrays.toString(coords)));
             }
-        }
+
+        } // The connection will automatically be closed at the end of the try-with-resources block.
     }
 
 
-    // This function could be synchronous and return just an array of coordinates, or
-    // (more commonly) you could generate the coordinates in the device control loop
-    // above. This is example is contrived to simulate reading the coordinates from
-    // an external source.
+    // This function could be synchronous in the main thread and return just an array of
+    // coordinates, or/ (more commonly) you could generate the coordinates in the device
+    // control loop above. This is example is contrived to simulate reading the coordinates
+    // from an external source.
     private static void Grid(int xPoints, int yPoints, ArrayList<int[]> buffer)
         throws InterruptedException
     {

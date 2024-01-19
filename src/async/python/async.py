@@ -1,4 +1,4 @@
-"""Zaber Motion Library advanced async usage example for C#."""
+"""Zaber Motion Library advanced async usage example for Python."""
 import asyncio
 from typing import AsyncIterator, List
 
@@ -23,12 +23,14 @@ GRID_SPACING_UNITS = UnitTable.get_unit("mm")
 async def main() -> None:
     """Demonstrate async iteration and Zaber Motion Library usage."""
     # Connections are disposable because they hold system resources (ie a serial port or network
-    # connection). In an asynchronous program we recommend the "await with" statement to
-    # automatically close and dispose the Connection's resources when finished with it.
+    # connection). In an asynchronous program we recommend the "async with" statement to
+    # automatically close and dispose the Connection when finished with it.
+    #
     # If you cannot encapsulate all Zaber device use in a single code block like this, you should
     # make sure you manually close and dispose the Connection instance when your program is
     # finished talking to devices.
     async with Connection.open_serial_port_async(PORT) as connection:
+
         # Enabling alerts speeds up detection of the end of device movement, but may cause problems
         # for non-Zaber software communicating with the devices because it leaves them in a state
         # where they can generate spontaneous messages. It is recommended if you are only using
@@ -43,7 +45,9 @@ async def main() -> None:
         # processing in parallel. Instead of using "await" immediately, you can assign the
         # function's return value to a variable and then await it later after doing something else.
         # You can also use asyncio.gather(...) to wait for multiple async operations to complete.
-        await x_device.identify_async()
+        identifyTask = x_device.identify_async()
+        # Could do something else here.
+        await identifyTask # Block until the identify_async() call completes.
         x_axis = x_device.get_axis(X_AXIS_NUMBER)
 
         if Y_DEVICE_ADDRESS == X_DEVICE_ADDRESS:
@@ -54,6 +58,8 @@ async def main() -> None:
             y_axis = y_device.get_axis(Y_AXIS_NUMBER)
 
         # Home the devices and wait until done.
+        # This is an example of overlapping async commands. Order of execution is not
+        # guaranteed and with more than two or three there is a risk of a device error.
         await asyncio.gather(x_axis.home_async(), y_axis.home_async())
 
         # Grid scan loop
@@ -83,7 +89,13 @@ async def main() -> None:
             # picture or sample a well plate cell.
             print(f"At point { ', '.join([str(n) for n in coords]) }")
 
+    # The connection will automatically be closed at the end of the "with" block.
 
+
+# This function could be synchronous and return just an array of coordinates, or
+# (more commonly) you could generate the coordinates in the device control loop
+# above. This is example is contrived to simulate reading the coordinates from
+# an external source.
 async def grid(x_points: int, y_points: int) -> AsyncIterator[List[int]]:
     """Generate points in boustrophedon (serpentine, minimum-movement) order."""
     x = 0
@@ -95,9 +107,9 @@ async def grid(x_points: int, y_points: int) -> AsyncIterator[List[int]]:
 
             # Generating the points independently of sending the move commands like this
             # potentially causes extra device communication for unnecessary moves to the
-            # same position, but it allows for a different program structure and the unnecessary
-            # move commands could be filtered out later.  You could instead send the move
-            # commands in the same double loop as the coordinate generation.
+            # same position, but it allows for a different program structure and the
+            # unnecessary move commands could be filtered out later.  You could instead
+            # send the move commands in the same double loop as the coordinate generation.
             yield [x, y]
             x += x_direction
 

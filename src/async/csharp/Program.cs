@@ -8,7 +8,7 @@ using Zaber.Motion;
 using Zaber.Motion.Ascii;
 
 // Edit these constants to match your setup.
-const string PORT = "COM10";
+const string PORT = "COM4";
 const int X_DEVICE_ADDRESS = 1;
 const int X_AXIS_NUMBER = 1;
 const int Y_DEVICE_ADDRESS = 1;
@@ -23,7 +23,8 @@ var GRID_SPACING_UNITS = UnitTable.GetUnit("mm");
 // Connections are disposable because they hold system resources (ie a serial port or network connection).
 // In an asynchronous program we recommend the "await using" statement to automatically close and dispose
 // the Connection's resources when finished with it.
-// However, this is not available in .NET Framework programs, so in that case you can use the normal using statement.
+// However, this is not available in .NET Framework programs, so in that case you can use the normal using
+// statement with a non-async connection open function.
 // If you cannot encapsulate all Zaber device use in a single code block like this, you should make sure
 // you manually close and dispose the Connection instance when your program is finished talking to devices.
 //
@@ -45,7 +46,9 @@ await using (var connection = await Connection.OpenSerialPortAsync(PORT))
     // processing in parallel. Instead of using "await" immediately, you can assign the function's
     // return value to a Task variable and then await it later after doing something else. You can
     // also use Task.WhenAll() to wait for multiple async operations to complete.
-    await xDevice.IdentifyAsync();
+    var identifyTask = xDevice.IdentifyAsync();
+    // Could do something else here.
+    await identifyTask; // Block until IdentifyAsync() completes.
     var xAxis = xDevice.GetAxis(X_AXIS_NUMBER);
 
     Axis yAxis;
@@ -61,6 +64,8 @@ await using (var connection = await Connection.OpenSerialPortAsync(PORT))
     }
 
     // Home the devices and wait until done.
+    // This is an example of overlapping async commands. Order of execution is not
+    // guaranteed and with more than two or three there is a risk of a device error.
     await Task.WhenAll(xAxis.HomeAsync(), yAxis.HomeAsync());
 
     // Grid scan loop
@@ -95,6 +100,7 @@ await using (var connection = await Connection.OpenSerialPortAsync(PORT))
         Console.WriteLine($"At point { string.Join(", ", coords.Select(n => n.ToString())) }");
     }
 
+    // The connection will automatically be closed and disposed at the end of the "using" block.
     // With ZML versions prior to 5.0.0 the program could freeze here when disposing the Connection.
     // The workaround was to await any non-ZML task before disposing the Connection, for example:
     // await Task.Delay(0);
@@ -102,7 +108,7 @@ await using (var connection = await Connection.OpenSerialPortAsync(PORT))
 
 
 // This function could be synchronous and return IEnumerable instead, in which case you would have
-// to use the result with the normal "foreach" keyword above. This example has been made artificially
+// to use the result with the non-async "foreach" keyword above. This example has been made artificially
 // asynchronous to demonstrate the usage; a real-world example would be streaming the coordinates
 // from a file or network connection.
 static async IAsyncEnumerable<int[]> Grid(int xPoints, int yPoints)
@@ -119,7 +125,7 @@ static async IAsyncEnumerable<int[]> Grid(int xPoints, int yPoints)
             // Generating the points independently of sending the move commands like this
             // potentially causes extra device communication for unnecessary moves to the
             // same position, but it allows for a different program structure and the unnecessary
-            // move commands could be filtered out later.  You could instead send the move
+            // move commands could be filtered out later. You could instead send the move
             // commands in the same double loop as the coordinate generation.
             yield return new int[] { x, y };
             x += xDirection;
