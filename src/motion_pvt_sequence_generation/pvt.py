@@ -909,7 +909,7 @@ class Sequence:
                 return Sequence.generate_velocities(
                     data.time_sequence,
                     data.position_sequences,
-                    data.velocity_sequences,
+                    data.velocity_sequences if data.contains_velocity_data else None,
                 )
 
     @staticmethod
