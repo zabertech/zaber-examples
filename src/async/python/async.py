@@ -44,8 +44,13 @@ async def main() -> None:
         # processing in parallel. Instead of using "await" immediately, you can assign the
         # function's return value to a variable and then await it later after doing something else.
         # You can also use asyncio.gather(...) to wait for multiple async operations to complete.
-        identify_task = x_device.identify_async()
+        # Note Python will continue executing the current task until it hits an await, so if you want
+        # the async function to start executing immediately, you must wrap it in a task or
+        # run it in another event loop - note that using the current event loop will block
+        # current task, gaining nothing.
+        identify_task = asyncio.create_task(x_device.identify_async())
         # Could do something else here.
+        await asyncio.sleep(0)
         await identify_task  # Block until the identify_async() call completes.
         x_axis = x_device.get_axis(X_AXIS_NUMBER)
 

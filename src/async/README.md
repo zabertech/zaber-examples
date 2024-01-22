@@ -25,9 +25,11 @@ There are two forms of asynchrony involved in controlling Zaber motion devices:
    execution until the original asynchronous function has completed its work. Zaber Motion Library
    asynchronous functions complete their returned Promise/Task/Future when any message(s) they send to
    a Zaber device are responded to by the device, except for movement commands (see item 2 below).
+
    The turnaround time for one message and response depends on the communication medium; USB and
    Ethernet connections will be fastest. RS-232 is slower, with a typically less than 10ms turnaround
-   depending on message length.
+   depending on message length. Some Zaber Motion Library functions exchange multiple messages with
+   devices, resulting in more communication time overhead.
 
    By calling multiple asynchronous functions and not immediately awaiting the results, greater parallelism
    can be achieved but it is possible to overload a device's ability to parse and dispatch the commands,
@@ -39,16 +41,32 @@ There are two forms of asynchrony involved in controlling Zaber motion devices:
 2. Movement functions (both synchronous and asynchronous) by default wait until the device stops moving
    but can optionally return before the move is completed, just after receiving the device's
    acknowledgement of the command. Most of Zaber's other example programs use the default blocking behavior
-   but this example does not, and reveals places where CPU time is available while the device moves.
+   but this example demonstrates both and reveals places where CPU time is available while the device moves.
 
-   This form of asynchrony offers the most potential benefit in terms reclaimable CPU time.
+   Movement functions have a "wait until idle" parameter that controls this behavior and defaults to true.
 
 ![timing.png](img/timing.png)
 
-This timing diagram illustrates the two kinds of asynchrony. Communications lag is inherent in any messages
-sent to or from the device. Note this is not the same as program flow control; execution can return to
-user code almost immediately when calling an asynchronous function.
+The above timing diagram illustrates the two kinds of asynchrony in the case where you tell a movement function
+not to wait for idle. Here you have the opportunity to do your own processing in three places: Before awaiting
+the initial move command response (short), while the device is moving (long) and while waiting for the device
+to stop (variable).
 
+![timing2.png](img/timing2.png)
+
+The second diagram illustrates the timing in the default case where movement functions will wait for the device to
+become idle. Here you have one combined block of time in which to do parallel processing, but when you decide
+to await the task your code will block for potentially a long time until the physical move is done.
+
+In both cases you can always use `Axis.isBusy()` to check if the device is still moving without blocking for long.
+
+
+The communications lag mentioned in (1) above is inherent in any messages sent to or from the device - the horizontal
+arrows on the right side of the above diagrams. Note the timing diagrams above
+do not show program flow control; execution can return to user code almost immediately when calling an
+asynchronous function.
+
+This example has slight variations between languages; if you're interested, it's worth looking at them all.
 
 There are no C++, MATLAB or Octave versions of this example because the Zaber Motion Library does not support asynchronous
 function calls in those languages. The best you can do in those languages is to tell the move commands not to wait for idle,

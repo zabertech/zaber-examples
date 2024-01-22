@@ -73,7 +73,10 @@ await using (var connection = await Connection.OpenSerialPortAsync(PORT))
     await foreach (var coords in Grid(X_GRID_POINTS, Y_GRID_POINTS))
     {
         // Here's one way of controlling the devices in parallel. This loop potentially sends the
-        // move commands and waits for the acknowledgements on different threads.
+        // move commands and waits for the acknowledgements on different threads. There is a
+        // risk of overlapping too many commands this way; it's only safe here because this
+        // example only controls two axes. This pattern is not appropriate for more than three;
+        // use a non-parallel loop in such cases.
         await Parallel.ForEachAsync(Enumerable.Range(0, axes.Length), async (index, _) =>
         {
             var position = coords[index] * GRID_SPACING;

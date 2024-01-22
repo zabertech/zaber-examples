@@ -38,9 +38,15 @@ public class App {
     public static void main(String[] args)
         throws InterruptedException, ExecutionException
     {
-        // If you're using a try-with-resources block like this, you can't use the async
-        // versions of the Connection.open... methods because the connection instance
-        // will likely get disposed before the open method returns.
+        // If you're using a try-with-resources block like this, we recommend using the synchronous
+        // port open functions. Using try-with-resources with a Future is an anti-pattern because
+        // the connection could potentially get closed before async function calls inside the try
+        // block complete, for example if you're just opening the connection to send some commands
+        // and then not waiting for them to finish. To make such a case work correctly you would
+        // have to explicitly call .get() on the Future inside the try block, await every operation
+        // inside the try block and then also explicitly call .close() on the connection
+        // at the end, which creates the possibilty of the connection not being closed if an
+        // exception occurs.
         try (Connection connection = Connection.openSerialPort(PORT)) {
 
             // Enabling alerts speeds up detection of the end of device movement, but may cause problems
