@@ -737,7 +737,7 @@ class Sequence:
         # Generate names for each axis
         axis_names = [f"Axis {i + 1}" for i in range(self.dim)]
         # Write the data to the file
-        with open(filename, "w", encoding="utf-8") as file:
+        with open(filename, "w", encoding="utf-8", newline="") as file:
             file_writer = csv.writer(file)
             # Construct header, alternating position and velocity values
             header = ["Time"]
