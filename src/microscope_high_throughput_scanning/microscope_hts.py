@@ -95,15 +95,15 @@ def main() -> None:  # pylint: disable=too-many-statements
             """
             # pylint: disable=too-many-locals
             # Prepare stage stream buffers
-            stream = stage.get_stream(1)
-            buf = stage.get_stream_buffer(1)
+            stream = stage.streams.get_stream(1)
+            buf = stage.streams.get_buffer(1)
             stream.disable()
             buf.erase()
             stream.setup_store(buf, 1, 2)
             if focus_map is not None:
-                focus_stream = lda.get_stream(1)
+                focus_stream = lda.streams.get_stream(1)
                 focus_stream.disable()
-                buf = lda.get_stream_buffer(1)
+                buf = lda.streams.get_buffer(1)
                 buf.erase()
                 focus_stream.setup_store(buf, 1)
 
@@ -178,17 +178,17 @@ def main() -> None:  # pylint: disable=too-many-statements
                 stage.generic_command("trigger 1 enable")  # Camera trigger
                 stage.generic_command("trigger 2 enable")  # Fwd scan direction
                 stage.generic_command("trigger 3 enable")  # Reverse scan direction
-            live = stage.get_stream(2)
+            live = stage.streams.get_stream(2)
             live.setup_live(1, 2)
             if use_focus_map:
                 lda.io.set_digital_output(1, True)  # Used as a power supply for camera IO
                 focus.move_absolute(20000, UM)  # Focus starting position. See autofocus example
-                focus_stream = lda.get_stream(2)
+                focus_stream = lda.streams.get_stream(2)
                 focus_stream.setup_live(1)
-                focus_stream.call(lda.get_stream_buffer(1))
+                focus_stream.call(lda.streams.get_buffer(1))
 
             start_time = time.time()
-            live.call(stage.get_stream_buffer(1))
+            live.call(stage.streams.get_buffer(1))
             x_axis.wait_until_idle()
             y_axis.wait_until_idle()
             delta_t = time.time() - start_time
