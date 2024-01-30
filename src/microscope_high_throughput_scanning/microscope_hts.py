@@ -8,7 +8,7 @@ import re
 import time
 
 from zaber_motion import Units, Measurement
-from zaber_motion.ascii import Connection, Axis, Stream
+from zaber_motion.ascii import Connection, Axis, Stream, DigitalOutputAction
 from numpy.typing import NDArray
 import numpy as np
 
@@ -58,9 +58,9 @@ def main() -> None:  # pylint: disable=too-many-statements
         def area_mode(stream: Stream, scan_axis: Axis, direction: int, trigger_dist: float) -> None:
             """Add stream segments required for stop-and-shoot imaging."""
             stream.wait(1)  # Force stage to stop
-            stream.set_digital_output(1, True)  # Trigger the camera
+            stream.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera
             stream.wait(max(PROTOCOL["exposure"] / 1000, 1))  # Wait for exposure to complete
-            stream.set_digital_output(1, False)  # Turn off trigger
+            stream.set_digital_output(1, DigitalOutputAction.OFF)  # Turn off trigger
             stream.line_relative_on(
                 [scan_axis.axis_number - 1], [Measurement(direction * trigger_dist, MM)]
             )
@@ -69,12 +69,12 @@ def main() -> None:  # pylint: disable=too-many-statements
             stream: Stream, scan_axis: Axis, direction: int, trigger_dist: float
         ) -> None:
             """Add stream segments required for continuous scan imaging."""
-            stream.set_digital_output(1, True)  # Trigger the camera
+            stream.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera
             stream.line_relative_on(
                 [scan_axis.axis_number - 1],  # Move half distance to next point
                 [Measurement(direction * trigger_dist / 2, MM)],
             )
-            stream.set_digital_output(1, False)  # Turn off trigger
+            stream.set_digital_output(1, DigitalOutputAction.OFF)  # Turn off trigger
             stream.line_relative_on(
                 [scan_axis.axis_number - 1],
                 [Measurement(direction * trigger_dist / 2, MM)],
@@ -154,7 +154,7 @@ def main() -> None:  # pylint: disable=too-many-statements
                 # Arcs are generally slower due to the centrip_accel constraint
                 # Arcs add extra travel to the scan which must fit within the stage limits
                 if mode != "TDI":
-                    stream.set_digital_output(1, True)  # Trigger the camera at the last position
+                    stream.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera at the last position
 
                 # Remove the speed limit for the stepover
                 stream.set_max_speed(x_axis.settings.get("maxspeed"))
@@ -181,7 +181,7 @@ def main() -> None:  # pylint: disable=too-many-statements
             live = stage.streams.get_stream(2)
             live.setup_live(1, 2)
             if use_focus_map:
-                lda.io.set_digital_output(1, True)  # Used as a power supply for camera IO
+                lda.io.set_digital_output(1, DigitalOutputAction.ON)  # Used as a power supply for camera IO
                 focus.move_absolute(20000, UM)  # Focus starting position. See autofocus example
                 focus_stream = lda.streams.get_stream(2)
                 focus_stream.setup_live(1)
