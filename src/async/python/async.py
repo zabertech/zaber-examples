@@ -1,6 +1,6 @@
 """Zaber Motion Library advanced async usage example for Python."""
 import asyncio
-from typing import AsyncIterator, List
+from typing import AsyncIterator
 
 from zaber_motion import Units, UnitTable
 from zaber_motion.ascii import Connection
@@ -100,7 +100,7 @@ async def main() -> None:
 # (more commonly) you could generate the coordinates in the device control loop
 # above. This is example is contrived to simulate reading the coordinates from
 # an external source.
-async def grid(x_points: int, y_points: int) -> AsyncIterator[List[int]]:
+async def grid(x_points: int, y_points: int) -> AsyncIterator[list[int]]:
     """Generate points in boustrophedon (serpentine, minimum-movement) order."""
     x = 0
     y = 0
