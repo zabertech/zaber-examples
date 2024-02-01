@@ -36,7 +36,7 @@ await using (var connection = await Connection.OpenSerialPortAsync(PORT))
     // for non-Zaber software communicating with the devices because it leaves them in a state
     // where they can generate spontaneous messages. It is recommended if you are only using
     // Zaber software (including the Zaber Motion Library).
-    connection.EnableAlerts();
+    await connection.EnableAlertsAsync();
 
     // There is no async GetDevice because it just instantiates a device object
     // without communicating with anything.
