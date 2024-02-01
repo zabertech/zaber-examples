@@ -65,7 +65,7 @@ await using (var connection = await Connection.OpenSerialPortAsync(PORT))
 
     // Home the devices and wait until done.
     // This is an example of overlapping async commands. Order of execution is not
-    // guaranteed and with more than two or three there is a risk of a device error.
+    // guaranteed. With more than two or three tasks there is a risk of exceeding devices communication capacity.
     await Task.WhenAll(xAxis.HomeAsync(), yAxis.HomeAsync());
 
     // Grid scan loop
