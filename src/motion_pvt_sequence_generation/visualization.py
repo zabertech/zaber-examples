@@ -197,6 +197,7 @@ def plot_pvt_path(
             axis = plt.figure().add_subplot(projection="3d")
         else:
             axis = plt.figure().add_subplot()
+
     if sequence.dim == 2:
         axis.axhline(0, linewidth=0.5, color="black")
         axis.axis("equal")
