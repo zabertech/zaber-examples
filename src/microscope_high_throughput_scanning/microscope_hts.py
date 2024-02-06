@@ -154,7 +154,8 @@ def main() -> None:  # pylint: disable=too-many-statements
                 # Arcs are generally slower due to the centrip_accel constraint
                 # Arcs add extra travel to the scan which must fit within the stage limits
                 if mode != "TDI":
-                    stream.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera at the last position
+                    # Trigger the camera at the last position
+                    stream.set_digital_output(1, DigitalOutputAction.ON)
 
                 # Remove the speed limit for the stepover
                 stream.set_max_speed(x_axis.settings.get("maxspeed"))
@@ -181,7 +182,8 @@ def main() -> None:  # pylint: disable=too-many-statements
             live = stage.streams.get_stream(2)
             live.setup_live(1, 2)
             if use_focus_map:
-                lda.io.set_digital_output(1, DigitalOutputAction.ON)  # Used as a power supply for camera IO
+                # Used as a power supply for camera IO
+                lda.io.set_digital_output(1, DigitalOutputAction.ON)
                 focus.move_absolute(20000, UM)  # Focus starting position. See autofocus example
                 focus_stream = lda.streams.get_stream(2)
                 focus_stream.setup_live(1)
