@@ -1,4 +1,5 @@
 """This file contains the StepResponseData class for re-use in other code."""
+
 from typing import Callable, Any
 from zaber_motion import Units
 from zaber_motion.ascii import Axis, Lockstep

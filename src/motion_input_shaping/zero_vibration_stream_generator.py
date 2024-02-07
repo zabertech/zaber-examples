@@ -4,7 +4,6 @@ Contains the ZeroVibrationShaper class for re-use in other code.
 Run the file directly to test the class functionality.
 """
 
-
 import math
 from enum import Enum
 from dataclasses import dataclass

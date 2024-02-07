@@ -43,7 +43,7 @@ def calculate_focus_score(image: Any, blur: int, position: float) -> float:
     :param position: The position in mm the image was captured at.
     """
     image_filtered = cv2.medianBlur(image, blur)
-    laplacian = cv2.Laplacian(image_filtered, cv2.CV_64F)  # type: ignore
+    laplacian = cv2.Laplacian(image_filtered, cv2.CV_64F)
     focus_score: float = laplacian.var()
 
     if SHOW_STEP_IMAGES:

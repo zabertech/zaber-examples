@@ -1,4 +1,5 @@
 """Example script for turning lamp on and off."""
+
 import sys
 import time
 
