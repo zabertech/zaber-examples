@@ -57,7 +57,7 @@ class ShapedAxisStream:
             self._primary_axis = self.axis
 
         self.shaper = ZeroVibrationStreamGenerator(plant, shaper_type)
-        self.stream = zaber_axis.device.get_stream(stream_id)
+        self.stream = zaber_axis.device.streams.get_stream(stream_id)
 
         self._max_speed_limit = -1.0
 

@@ -1,4 +1,5 @@
 """Example script for selecting a filter cube."""
+
 import sys
 import time
 

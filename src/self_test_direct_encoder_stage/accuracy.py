@@ -110,9 +110,7 @@ def run_test(
             for target_pos_real in (
                 reversed(test_points_mm_deg[:-1])
                 if direction == "reverse"
-                else test_points_mm_deg
-                if rep == 0 or REP_SETTINGS.test
-                else test_points_mm_deg[1:]
+                else test_points_mm_deg if rep == 0 or REP_SETTINGS.test else test_points_mm_deg[1:]
             ):
                 # Only take measurement at '0' on the 1st pass to avoid 0 backlash results.
 
@@ -144,12 +142,12 @@ def run_test(
                         "Target Angle [deg]" if rotary else "Target Position [mm]": target_pos_real,
                         "Target Pos [ustep]": pos_z,
                         "Encoder Pos [ustep]": encoder_pos_z,
-                        "Measured Angle [deg]"
-                        if rotary
-                        else "Measured Position [mm]": encoder_pos_real,
-                        "Angular Error [deg]"
-                        if rotary
-                        else "Position Error [um]": position_error_real,
+                        (
+                            "Measured Angle [deg]" if rotary else "Measured Position [mm]"
+                        ): encoder_pos_real,
+                        (
+                            "Angular Error [deg]" if rotary else "Position Error [um]"
+                        ): position_error_real,
                         f'Backlash {"[deg]" if rotary else "[um]"}': backlash,
                     }
                 )
