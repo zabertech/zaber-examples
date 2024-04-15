@@ -1,0 +1,35 @@
+[project]
+name = "microscope_tiling_basler_camera"
+version = "0.1.0"
+description = "Zaber Examples -- Microscope Tiling with Basler Camera"
+authors = [
+    {name = "Colby Sparks", email = "software@zaber.com"},
+]
+dependencies = [
+    "numpy==1.26.*",
+    "pypylon==3.0.*",
+    "opencv-python==4.9.0.*",
+    "zaber-motion==5.2.*",
+    "imutils==0.5.*",
+]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+example = {call = "src.microscope_tiling_basler_camera.main:main"}
+stitching-example = {call = "src.microscope_tiling_basler_camera.main:stitching_example"}
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "mypy>=1.9.0",
+    "pylint>=3.1.0",
+    "black>=24.4.0",
+    "pydocstyle>=6.3.0",
+]
+
+[tool.pylint."messages control"]
+disable = ["no-member", "too-many-arguments", "too-many-locals"]
