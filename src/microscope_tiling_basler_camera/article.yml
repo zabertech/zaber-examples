@@ -1,0 +1,11 @@
+authors:
+  - Colby Sparks
+date: 2024-04-29
+category: Microscopy
+tags:
+  - Tiling Automation
+  - Basler Pylon Software
+  - Basler pyPylon API
+  - OpenCV
+  - Python
+picture: img/naive_tiling_example.png
