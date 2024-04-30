@@ -1,7 +1,8 @@
 """Check for basic requirements of example repositories."""
 
 from pathlib import Path
-from common import file_exists, iprint_fail, iprint_pass
+from common import file_exists
+from terminal_utils import iprint_fail, iprint_pass
 
 
 def check_basic(directory: Path, indent: int) -> int:

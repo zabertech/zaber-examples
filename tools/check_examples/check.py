@@ -7,7 +7,7 @@ Usage:
     check all
     check changed
     check list
-    check search <examples>...
+    check search <example>
     check -h | --help
 
 Options:
@@ -22,13 +22,16 @@ import subprocess
 from pathlib import Path
 from docopt import docopt
 from common import (
+    filter_not_ignored,
+    load_ignore,
+    get_git_root_directory
+)
+from terminal_utils import (
     iprint,
     iprint_pass,
     iprint_fail,
     iprint_info,
-    filter_not_ignored,
-    load_ignore,
-    get_git_root_directory,
+    match_string
 )
 from check_python import check_python
 from check_basic import check_basic
@@ -49,7 +52,7 @@ def main() -> None:
         exit_code = cmd_check_changed(args)
     elif args["list"]:
         exit_code = cmd_check_list(args)
-    elif args["<examples>"]:
+    elif args["<example>"]:
         exit_code = cmd_check_examples(args)
     else:
         exit_code = 1  # should never get here.
@@ -115,30 +118,19 @@ def cmd_check_examples(args: Args) -> int:
     """Check specific example(s)."""
     print("=== Check specific example(s) ===")
     return_code = 0
-    search_examples = args["<examples>"]
+    search_term = args["<example>"]
     load_ignore()
     list_examples = list_example_directories()
     example_names = [str(x.relative_to(x.parent)) for x in list_examples]
-    match_examples = []
-    for example in search_examples:
-        if example in example_names:
-            iprint_pass(f"Found exact match '{example}'", 0)
-            match_examples.append(example)
-        elif any(example in x for x in example_names):
-            for name in example_names:
-                if example in name:
-                    iprint_pass(f"Found partial match '{name}'", 0)
-                    match_examples.append(name)
-        else:
-            iprint_fail(f"Unable to find example '{example}'", 0)
-            return_code = 1
-
+    match_example, message = match_string(search_term, example_names)
+    print(message)
+    if not match_example:
+        for name in example_names:
+            iprint(name, 1)
+        return 1
     git_root = get_git_root_directory()
-    example_directories = [git_root / "src" / x for x in match_examples]
-    print(f"Found {len(example_directories)} example(s) to check.")
-    for example in example_directories:
-        return_code |= check_example(example, indent=1)
-
+    example_to_check = git_root / "src" / match_example
+    return_code |= check_example(example_to_check, indent=1)
     return return_code
 
 

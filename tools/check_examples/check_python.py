@@ -4,13 +4,14 @@ from typing import Generator
 from pathlib import Path
 from common import (
     execute,
-    iprint_pass,
-    iprint_fail,
     file_exists,
     subdirectory_exists,
     filter_not_ignored,
 )
-
+from terminal_utils import (
+    iprint_pass,
+    iprint_fail
+)
 
 def check_python(directory: Path, indent: int) -> int:
     """Check python code."""

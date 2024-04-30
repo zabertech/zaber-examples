@@ -3,44 +3,11 @@
 import sys
 import subprocess
 from pathlib import Path
+from terminal_utils import iprint, iprint_pass, iprint_fail, iprint_warn
 
-PASS = "✅"
-FAIL = "❌"
-WARN = "⚠️ "
-INFO = "ℹ️ "
-INDENT = 4
 IGNORE_FILE = "ignore.txt"
 
 ignore_list: list[Path] = []
-
-
-def iprint(message: str, indent: int) -> None:
-    """Print with indent level."""
-    lines = message.splitlines(True)
-    indented_lines = [" " * INDENT * indent + line for line in lines if line.strip()]
-    block = "".join(indented_lines)
-    if block.strip():
-        print(block)
-
-
-def iprint_pass(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + PASS + " " + message)
-
-
-def iprint_fail(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + FAIL + " " + message)
-
-
-def iprint_warn(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + WARN + " " + message)
-
-
-def iprint_info(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + INFO + " " + message)
 
 
 def execute(command: list[str], cwd: Path, indent: int) -> int:
