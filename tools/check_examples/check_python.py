@@ -61,12 +61,12 @@ def check_python_pipenv(directory: Path, indent: int) -> int:
     """Check python using pipenv if example provides Pipfile."""
     return_code = 0
     return_code |= execute(
-        ["pipenv", "clean"],
+        ["pipenv", "--rm"],
         directory,
         indent,
     )
     return_code |= execute(
-        ["pipenv", "install", "-d"],
+        ["pipenv", "install", "--dev"],
         directory,
         indent,
     )
@@ -98,6 +98,13 @@ def check_python_requirements(directory: Path, indent: int) -> int:
     )
     if return_code:
         return return_code
+    
+    return_code |= execute(
+        [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "pip"],
+        directory,
+        indent,
+    )
+
     return_code |= execute(
         [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "-r", "requirements.txt"],
         directory,
