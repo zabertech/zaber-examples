@@ -7,7 +7,7 @@ Usage:
     check all
     check changed
     check list
-    check search <example>
+    check <example>
     check -h | --help
 
 Options:

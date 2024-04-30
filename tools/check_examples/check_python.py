@@ -49,7 +49,7 @@ def check_python_pdm(directory: Path, indent: int) -> int:
     python_files = list_python_files(directory)
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
     
-    return_code = run_linters(
+    return_code |= run_linters(
         ["pdm", "run"],
         python_filenames,
         directory,
@@ -62,7 +62,7 @@ def check_python_pipenv(directory: Path, indent: int) -> int:
     """Check python using pipenv if example provides Pipfile."""
     return_code = 0
     return_code |= execute(
-        ["pipenv", "--rm"],
+        ["pipenv", "clean"],
         directory,
         indent,
     )
@@ -75,7 +75,7 @@ def check_python_pipenv(directory: Path, indent: int) -> int:
     python_files = list_python_files(directory)
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
-    return_code = run_linters(
+    return_code |= run_linters(
         ["pipenv", "run"],
         python_filenames,
         directory,
@@ -130,7 +130,7 @@ def check_python_requirements(directory: Path, indent: int) -> int:
     python_files = list_python_files(directory)
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
-    return_code = run_linters(
+    return_code |= run_linters(
         [".venv/bin/python3", "-m"],
         python_filenames,
         directory,
