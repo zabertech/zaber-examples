@@ -1,2 +1,4 @@
+# https://github.com/jackdewinter/pymarkdown/blob/main/docs/rules/rule_md013.md
 [plugins.md013]
+enabled = false
 line_length = 100

@@ -1,7 +1,7 @@
 """Check for basic requirements of example repositories."""
 
 from pathlib import Path
-from common import file_exists, list_files_of_suffix, execute
+from common import file_exists, list_files_of_suffix, execute, get_git_root_directory
 from terminal_utils import iprint_fail, iprint_pass
 
 
@@ -25,11 +25,13 @@ def check_markdown(directory: Path, indent: int) -> int:
     """Check markdown files."""
     return_code = 0
     markdown_files = list_files_of_suffix(directory, ".md")
+    check_example_directory = get_git_root_directory() / "tools/check_examples"
+    config_file = check_example_directory / "pymarkdownlnt.toml"
     for file in markdown_files:
-        filename = str(file.relative_to(directory))
+        filename = str(file)
         return_code |= execute(
-            ["pipenv", "run", "pymarkdownlnt", "--config", "pymarkdownlnt.toml", "scan", filename],
-            directory,
+            ["pipenv", "run", "pymarkdownlnt", "--config", str(config_file), "scan", filename],
+            check_example_directory,
             indent,
         )
     return return_code
