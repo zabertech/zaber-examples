@@ -5,7 +5,7 @@ from common import execute, file_exists, subdirectory_exists, list_files_of_suff
 from terminal_utils import iprint_pass, iprint_fail
 
 
-def check_python(directory: Path, indent: int) -> int:
+def check_python(directory: Path, fix: bool, indent: int) -> int:
     """Check python code."""
     # List python files
     python_files = list_files_of_suffix(directory, ".py")
@@ -19,21 +19,21 @@ def check_python(directory: Path, indent: int) -> int:
 
     if file_exists(python_directory, "pdm.lock"):
         iprint_pass("pdm.lock found: use PDM", indent)
-        return check_python_pdm(python_directory, indent)
+        return check_python_pdm(python_directory, fix, indent)
 
     if file_exists(python_directory, "Pipfile"):
         iprint_pass("Pipfile found: use pipenv.", indent)
-        return check_python_pipenv(python_directory, indent)
+        return check_python_pipenv(python_directory, fix, indent)
 
     if file_exists(python_directory, "requirements.txt"):
         iprint_pass("requirements.txt found: use venv and pip.", indent)
-        return check_python_requirements(python_directory, indent)
+        return check_python_requirements(python_directory, fix, indent)
 
     iprint_fail("Missing Pipfile or requirements.txt", indent)
     return 1
 
 
-def check_python_pdm(directory: Path, indent: int) -> int:
+def check_python_pdm(directory: Path, fix: bool, indent: int) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
     return_code |= execute(["pdm", "install", "-d"], directory, indent)
@@ -45,12 +45,13 @@ def check_python_pdm(directory: Path, indent: int) -> int:
         ["pdm", "run"],
         python_filenames,
         directory,
+        fix,
         indent,
     )
     return return_code
 
 
-def check_python_pipenv(directory: Path, indent: int) -> int:
+def check_python_pipenv(directory: Path, fix: bool, indent: int) -> int:
     """Check python using pipenv if example provides Pipfile."""
     return_code = 0
     return_code |= execute(
@@ -71,12 +72,13 @@ def check_python_pipenv(directory: Path, indent: int) -> int:
         ["pipenv", "run"],
         python_filenames,
         directory,
+        fix,
         indent,
     )
     return return_code
 
 
-def check_python_requirements(directory: Path, indent: int) -> int:
+def check_python_requirements(directory: Path, fix: bool, indent: int) -> int:
     """Check python using pip and venv if example provides requirements.txt."""
     return_code = 0
     return_code |= execute(
@@ -126,6 +128,7 @@ def check_python_requirements(directory: Path, indent: int) -> int:
         [".venv/bin/python3", "-m"],
         python_filenames,
         directory,
+        fix,
         indent,
     )
 
@@ -133,7 +136,7 @@ def check_python_requirements(directory: Path, indent: int) -> int:
 
 
 def run_linters(
-    command_prefix: list[str], python_filenames: list[str], directory: Path, indent: int
+    command_prefix: list[str], python_filenames: list[str], directory: Path, fix: bool, indent: int
 ) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
@@ -146,7 +149,10 @@ def run_linters(
             indent,
         )
 
-    return_code |= lint_files(["black", "-l100", "--check"])
+    if fix:
+        return_code |= lint_files(["black", "-l100"])
+    else:
+        return_code |= lint_files(["black", "-l100", "--check"])
     return_code |= lint_files(["pylint", "--score=n"])
     return_code |= lint_files(["pydocstyle"])
     return_code |= lint_files(["mypy", "--strict"])

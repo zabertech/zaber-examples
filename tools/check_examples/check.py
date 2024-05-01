@@ -4,15 +4,16 @@ Check example directories.
 This script may also be called by .github/workflows/check_examples.yml
 
 Usage:
-    check all
+    check all [-f]
     check changed
     check list
-    check self
-    check <example>
+    check self [-f]
+    check <example> [-f]
     check -h | --help
 
 Options:
     -h --help           Show help screen.
+    -f --fix            Fix fixable issues (i.e. black)
 
 For more information see README.md
 """
@@ -62,24 +63,26 @@ def main() -> None:
     sys.exit(exit_code)
 
 
-def cmd_check_all(_: Args) -> int:
+def cmd_check_all(args: Args) -> int:
     """Check all examples."""
     print("=== Check all examples ===")
     return_code = 0
+    fix = args["--fix"]
     load_ignore()
     example_directories = list_example_directories()
     for example in example_directories:
         iprint_pass(f"Found '{example}'", 0)
     print(f"Found {len(example_directories)} example subdirectories in 'src':")
     for example in example_directories:
-        return_code |= check_example(example, indent=1)
+        return_code |= check_example(example, fix, indent=1)
     return return_code
 
 
-def cmd_check_changed(_: Args) -> int:
+def cmd_check_changed(args: Args) -> int:
     """Check changed examples."""
     print("=== Check all changed examples ===")
     return_code = 0
+    fix = args["--fix"]
     load_ignore()
     list_examples = list_example_directories()
     list_changed = list_changed_files()
@@ -94,7 +97,7 @@ def cmd_check_changed(_: Args) -> int:
         iprint_pass(f"Found changed example '{example}'", 0)
     print(f"Found {len(changed_examples)} changed example subdirectories in 'src':")
     for example in changed_examples:
-        return_code |= check_example(example, indent=1)
+        return_code |= check_example(example, fix, indent=1)
     return return_code
 
 
@@ -109,15 +112,16 @@ def cmd_check_list(_: Args) -> int:
     return 0
 
 
-def cmd_check_self(_: Args) -> int:
+def cmd_check_self(args: Args) -> int:
     """Check this code itself."""
     print("=== Self check ===")
     return_code = 0
+    fix = args["--fix"]
     self_directory = get_git_root_directory() / "tools" / "check_examples"
     print()
     print(f"--- Self-check: {self_directory} ---")
     return_code |= check_markdown(self_directory, 1)
-    return_code |= check_python(self_directory, 1)
+    return_code |= check_python(self_directory, fix, 1)
     print()
     return return_code
 
@@ -126,6 +130,7 @@ def cmd_check_examples(args: Args) -> int:
     """Check specific example(s)."""
     print("=== Check specific example(s) ===")
     return_code = 0
+    fix = args["--fix"]
     search_term = args["<example>"]
     load_ignore()
     list_examples = list_example_directories()
@@ -138,7 +143,7 @@ def cmd_check_examples(args: Args) -> int:
         return 1
     git_root = get_git_root_directory()
     example_to_check = git_root / "src" / match_example
-    return_code |= check_example(example_to_check, indent=1)
+    return_code |= check_example(example_to_check, fix, indent=1)
     return return_code
 
 
@@ -163,14 +168,14 @@ def list_changed_files() -> list[Path]:
     return filepaths_changed
 
 
-def check_example(directory: Path, indent: int) -> int:
+def check_example(directory: Path, fix: bool, indent: int) -> int:
     """Perform check on each example."""
     print()
     print(f"--- Checking: {directory.relative_to(directory.parent)} ---")
 
     return_code = 0
     return_code |= check_basic(directory, indent)
-    return_code |= check_python(directory, indent)
+    return_code |= check_python(directory, fix, indent)
     # Can add other languages here such as check_csharp(), check_html(), etc.
     return return_code
 
