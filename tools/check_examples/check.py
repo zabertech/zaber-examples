@@ -7,6 +7,7 @@ Usage:
     check all
     check changed
     check list
+    check self
     check <example>
     check -h | --help
 
@@ -21,18 +22,8 @@ import sys
 import subprocess
 from pathlib import Path
 from docopt import docopt
-from common import (
-    filter_not_ignored,
-    load_ignore,
-    get_git_root_directory
-)
-from terminal_utils import (
-    iprint,
-    iprint_pass,
-    iprint_fail,
-    iprint_info,
-    match_string
-)
+from common import filter_not_ignored, load_ignore, get_git_root_directory
+from terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match_string
 from check_python import check_python
 from check_basic import check_basic
 
@@ -46,14 +37,18 @@ def main() -> None:
     arguments = sys.argv[1:]
     args = docopt(__doc__, argv=arguments)
 
+    exit_code = 0
     if args["all"]:
-        exit_code = cmd_check_all(args)
+        exit_code |= cmd_check_self(args)
+        exit_code |= cmd_check_all(args)
     elif args["changed"]:
-        exit_code = cmd_check_changed(args)
+        exit_code |= cmd_check_changed(args)
     elif args["list"]:
-        exit_code = cmd_check_list(args)
+        exit_code |= cmd_check_list(args)
+    elif args["self"]:
+        exit_code |= cmd_check_self(args)
     elif args["<example>"]:
-        exit_code = cmd_check_examples(args)
+        exit_code |= cmd_check_examples(args)
     else:
         exit_code = 1  # should never get here.
 
@@ -112,6 +107,18 @@ def cmd_check_list(_: Args) -> int:
     for example in list_examples:
         iprint(str(example.relative_to(example.parent)), 1)
     return 0
+
+
+def cmd_check_self(_: Args) -> int:
+    """Check this code itself."""
+    print("=== Self check ===")
+    return_code = 0
+    self_directory = get_git_root_directory() / "tools" / "check_examples"
+    print()
+    print(f"--- Self-check: {self_directory} ---")
+    return_code |= check_python(self_directory, 1)
+    print()
+    return return_code
 
 
 def cmd_check_examples(args: Args) -> int:

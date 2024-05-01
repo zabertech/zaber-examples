@@ -70,11 +70,12 @@ def load_ignore() -> None:
                     continue
                 ignore_filepath = git_root / line
                 if ignore_filepath.exists():
-                    ignore_list.append(ignore_filepath)
-                    if ignore_filepath.is_dir():
-                        iprint_warn(f"Ignoring directory: '{ignore_filepath}'")
-                    if ignore_filepath.is_file():
-                        iprint_warn(f"Ignoring file: '{ignore_filepath}'")
+                    if ignore_filepath not in ignore_list:
+                        ignore_list.append(ignore_filepath)
+                        if ignore_filepath.is_dir():
+                            iprint_warn(f"Ignoring directory: '{ignore_filepath}'")
+                        if ignore_filepath.is_file():
+                            iprint_warn(f"Ignoring file: '{ignore_filepath}'")
                 else:
                     iprint_fail(
                         f"Ignoring '{line.rstrip()}' in {IGNORE_FILE} not found, unable to ignore."

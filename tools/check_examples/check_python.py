@@ -8,10 +8,8 @@ from common import (
     subdirectory_exists,
     filter_not_ignored,
 )
-from terminal_utils import (
-    iprint_pass,
-    iprint_fail
-)
+from terminal_utils import iprint_pass, iprint_fail
+
 
 def check_python(directory: Path, indent: int) -> int:
     """Check python code."""
@@ -32,11 +30,11 @@ def check_python(directory: Path, indent: int) -> int:
     if file_exists(python_directory, "Pipfile"):
         iprint_pass("Pipfile found: use pipenv.", indent)
         return check_python_pipenv(python_directory, indent)
-    
+
     if file_exists(python_directory, "requirements.txt"):
         iprint_pass("requirements.txt found: use venv and pip.", indent)
         return check_python_requirements(python_directory, indent)
-    
+
     iprint_fail("Missing Pipfile or requirements.txt", indent)
     return 1
 
@@ -48,7 +46,7 @@ def check_python_pdm(directory: Path, indent: int) -> int:
 
     python_files = list_python_files(directory)
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
-    
+
     return_code |= run_linters(
         ["pdm", "run"],
         python_filenames,
@@ -99,7 +97,7 @@ def check_python_requirements(directory: Path, indent: int) -> int:
     )
     if return_code:
         return return_code
-    
+
     return_code |= execute(
         [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "pip"],
         directory,

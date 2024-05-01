@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 docopt = "*"
+types-docopt = "*"
 
 [requires]
 python_version = "3.10"
