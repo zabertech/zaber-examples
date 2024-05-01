@@ -1,5 +1,6 @@
 """Common helper functions."""
 
+from typing import Generator
 import sys
 import subprocess
 from pathlib import Path
@@ -57,6 +58,24 @@ def get_git_root_directory() -> Path:
         iprint_fail("Unable to find git root directory.", 0)
         sys.exit(1)
     return directory
+
+
+def list_files_of_suffix(directory: Path, file_suffix: str) -> list[Path]:
+    """Return a list of python files in a directory."""
+
+    def get_python_files(currdir: Path) -> Generator[Path, None, None]:
+        """Yield all .py files recursively, excluding directories that start with a period."""
+        for item in currdir.iterdir():
+            if item.name[0] == ".":  # ignore files starting with a "."
+                continue
+            if item.suffix == file_suffix:
+                yield item
+            if item.is_dir() and filter_not_ignored(item):
+                yield from get_python_files(item)
+
+    list_filepaths = list(get_python_files(directory))
+    list_filepaths = list(filter(filter_not_ignored, list_filepaths))
+    return sorted(list_filepaths)
 
 
 def load_ignore() -> None:

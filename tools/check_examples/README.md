@@ -1,4 +1,5 @@
 # Check Examples
+
 This script checks that all the example directories have the required files,
 and performs linting as required for various languages.
 
@@ -9,9 +10,11 @@ This script is also used by GitHub Actions,
 and called from `.github/workflows/check_examples.yml`
 
 ## Dependency
+
 The script uses `pipenv` and the dependencies are listed in `Pipfile`
 
 ## Installing the script
+
 To install the script:
 
     pip install --user --upgrade pipenv
@@ -20,6 +23,7 @@ To install the script:
     alias check='pipenv run python check.py'
 
 ## Commands
+
 Examples of how to use the script:
 
 - `check --help`: list usage options

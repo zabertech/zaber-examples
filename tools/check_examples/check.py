@@ -25,7 +25,7 @@ from docopt import docopt
 from common import filter_not_ignored, load_ignore, get_git_root_directory
 from terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match_string
 from check_python import check_python
-from check_basic import check_basic
+from check_basic import check_basic, check_markdown
 
 Args = dict[str, Any]
 
@@ -116,6 +116,7 @@ def cmd_check_self(_: Args) -> int:
     self_directory = get_git_root_directory() / "tools" / "check_examples"
     print()
     print(f"--- Self-check: {self_directory} ---")
+    return_code |= check_markdown(self_directory, 1)
     return_code |= check_python(self_directory, 1)
     print()
     return return_code

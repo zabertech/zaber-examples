@@ -1,20 +1,14 @@
 """Check and lint Python files."""
 
-from typing import Generator
 from pathlib import Path
-from common import (
-    execute,
-    file_exists,
-    subdirectory_exists,
-    filter_not_ignored,
-)
+from common import execute, file_exists, subdirectory_exists, list_files_of_suffix
 from terminal_utils import iprint_pass, iprint_fail
 
 
 def check_python(directory: Path, indent: int) -> int:
     """Check python code."""
     # List python files
-    python_files = list_python_files(directory)
+    python_files = list_files_of_suffix(directory, ".py")
     if not python_files:
         return 0
 
@@ -44,7 +38,7 @@ def check_python_pdm(directory: Path, indent: int) -> int:
     return_code = 0
     return_code |= execute(["pdm", "install", "-d"], directory, indent)
 
-    python_files = list_python_files(directory)
+    python_files = list_files_of_suffix(directory, ".py")
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
     return_code |= run_linters(
@@ -70,7 +64,7 @@ def check_python_pipenv(directory: Path, indent: int) -> int:
         indent,
     )
 
-    python_files = list_python_files(directory)
+    python_files = list_files_of_suffix(directory, ".py")
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
     return_code |= run_linters(
@@ -125,7 +119,7 @@ def check_python_requirements(directory: Path, indent: int) -> int:
         indent,
     )
 
-    python_files = list_python_files(directory)
+    python_files = list_files_of_suffix(directory, ".py")
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
     return_code |= run_linters(
@@ -136,24 +130,6 @@ def check_python_requirements(directory: Path, indent: int) -> int:
     )
 
     return return_code
-
-
-def list_python_files(directory: Path) -> list[Path]:
-    """Return a list of python files in a directory."""
-
-    def get_python_files(currdir: Path) -> Generator[Path, None, None]:
-        """Yield all .py files recursively, excluding directories that start with a period."""
-        for item in currdir.iterdir():
-            if item.name[0] == ".":  # ignore files starting with a "."
-                continue
-            if item.suffix == ".py":
-                yield item
-            if item.is_dir() and filter_not_ignored(item):
-                yield from get_python_files(item)
-
-    list_filepaths = list(get_python_files(directory))
-    list_filepaths = list(filter(filter_not_ignored, list_filepaths))
-    return sorted(list_filepaths)
 
 
 def run_linters(
