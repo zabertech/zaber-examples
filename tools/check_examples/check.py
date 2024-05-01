@@ -113,6 +113,8 @@ def cmd_check_docs(_: Args) -> int:
     """Check markdowns in documentation folder."""
     print("=== Check docs ===")
     return_code = 0
+    docs_directory = get_git_root_directory()
+    return_code |= check_markdown(docs_directory, 1, recurse=False)
     docs_directory = get_git_root_directory() / "docs"
     return_code |= check_markdown(docs_directory, 1)
     return return_code

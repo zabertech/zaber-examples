@@ -1,4 +1,5 @@
 # Python Checklist
+
 This is a checklist for contributing Python example code to this repository.
 
 - [ ] Ideally examples are compatible with Python 3.10 and above.
@@ -29,4 +30,3 @@ If you are using `pipenv`, make sure you are in `/src/<example_directory>/python
 
     pipenv install --dev black pylint mypy pydocstyle
     pipenv shell
-

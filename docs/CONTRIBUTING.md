@@ -25,6 +25,7 @@ in `/src/<example_directory>/`:
 4. Do a Pull Request
 
 ## Adding a new Example
+
 If you want to contribute a new example:
 1. Take a look at all the examples under [`src/`](../src/) directory and make sure the new example
 is not a duplicate or closely related to another example already in the repository.
@@ -47,6 +48,7 @@ You can start with our [example template](../src/_template/).
 9. Do a Pull Request
 
 ## Language Checklist
+
 Here are the checklists for the various languages:
 - [Python](python.md)
 - [MATLAB](matlab.md)

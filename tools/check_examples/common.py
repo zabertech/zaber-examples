@@ -60,7 +60,7 @@ def get_git_root_directory() -> Path:
     return directory
 
 
-def list_files_of_suffix(directory: Path, file_suffix: str) -> list[Path]:
+def list_files_of_suffix(directory: Path, file_suffix: str, recurse: bool = True) -> list[Path]:
     """Return a list of python files in a directory."""
 
     def get_python_files(currdir: Path) -> Generator[Path, None, None]:
@@ -70,7 +70,7 @@ def list_files_of_suffix(directory: Path, file_suffix: str) -> list[Path]:
                 continue
             if item.suffix == file_suffix:
                 yield item
-            if item.is_dir() and filter_not_ignored(item):
+            if item.is_dir() and filter_not_ignored(item) and recurse:
                 yield from get_python_files(item)
 
     list_filepaths = list(get_python_files(directory))

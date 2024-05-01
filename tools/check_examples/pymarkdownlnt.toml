@@ -1,4 +1,11 @@
 # https://github.com/jackdewinter/pymarkdown/blob/main/docs/rules/rule_md013.md
+
+[plugins.md007]
+enabled = false
+
 [plugins.md013]
 enabled = false
 line_length = 100
+
+[plugins.md034]
+enabled = false

@@ -1,4 +1,5 @@
 # Example Subdirectory Naming Conventions
+
 Please follow this guideline when naming example subdirectories under [`src/`](../src/).
 This will help make the repository more consistent and easier to browse on GitHub.
 
