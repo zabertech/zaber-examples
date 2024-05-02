@@ -77,17 +77,17 @@ def cmd_check_all(args: Args) -> int:
     load_ignore()
     example_directories = list_example_directories()
     for example in example_directories:
-        iprint_pass(f"Found '{example}'", 0)
-    print(f"Found {len(example_directories)} example subdirectories in 'src':")
+        iprint_info(f"Found '{example}'", 1)
+    iprint(f"Found {len(example_directories)} example subdirectories in 'src':", 1)
     for example in example_directories:
-        return_code |= check_example(example, fix, markdown, indent=1)
+        return_code |= check_example(example, fix, markdown)
     return return_code
 
 
 def cmd_check_changed(args: Args) -> int:
-    """Check changed examples."""
+    """Check changed files."""
     # Note: this is a placeholder function.  Doesn't work yet.
-    print("=== Check all changed examples ===")
+    print("=== Check all changed files ===")
     return_code = 0
     fix = args["--fix"]
     markdown = args["--markdown"]
@@ -95,28 +95,53 @@ def cmd_check_changed(args: Args) -> int:
     list_examples = list_example_directories()
     list_changed = list_changed_files()
     for item in list_changed:
-        iprint_info(f"Found changed file '{item}'")
+        iprint(f"Found changed file '{item}'", 1)
+
+    # Determine which directories to run checks on
     changed_examples: list[Path] = []
-    for example in list_examples:
-        for changed_file in list_changed:
+    changed_self: bool = False
+    changed_docs: bool = False
+    self_directory = get_git_root_directory() / "tools" / "check_examples"
+    docs_dierctory = get_git_root_directory() / "docs"
+    for changed_file in list_changed:
+        if changed_file.is_relative_to(self_directory):
+            changed_self = True
+        if changed_file.is_relative_to(docs_dierctory):
+            changed_docs = True
+        for example in list_examples:
             if changed_file.is_relative_to(example) and example not in changed_examples:
                 changed_examples.append(example)
+
+    # Indicate which directories to run checks on
+    if changed_self:
+        iprint_info("Found changed files in check_examples script.", 1)
+    if changed_docs:
+        iprint_info("Found changed files in docs/ subdirectory.", 1)
+    iprint_info(f"Found {len(changed_examples)} changed example subdirectories in 'src':", 1)
     for example in changed_examples:
-        iprint_pass(f"Found changed example '{example}'", 0)
-    print(f"Found {len(changed_examples)} changed example subdirectories in 'src':")
+        iprint(f"Found changed example '{example}'", 2)
+    print()
+
+    # Run checks
+    if changed_self:
+        cmd_check_self(args)
+    if changed_docs:
+        cmd_check_docs(args)
+    print("=== Check changed examples ===")
     for example in changed_examples:
-        return_code |= check_example(example, fix, markdown, indent=1)
+        return_code |= check_example(example, fix, markdown)
     return return_code
 
 
 def cmd_check_docs(_: Args) -> int:
     """Check markdowns in documentation folder."""
-    print("=== Check docs ===")
+    print("=== Check docs subdirecotry ===")
     return_code = 0
     docs_directory = get_git_root_directory()
-    return_code |= check_markdown(docs_directory, 1, recurse=False)
+    return_code |= check_markdown(docs_directory, recurse=False)
     docs_directory = get_git_root_directory() / "docs"
-    return_code |= check_markdown(docs_directory, 1)
+    return_code |= check_markdown(docs_directory)
+    print()
     return return_code
 
 
@@ -139,8 +164,8 @@ def cmd_check_self(args: Args) -> int:
     self_directory = get_git_root_directory() / "tools" / "check_examples"
     print()
     print(f"--- Self-check: {self_directory} ---")
-    return_code |= check_markdown(self_directory, 1)
-    return_code |= check_python(self_directory, fix, 1)
+    return_code |= check_markdown(self_directory)
+    return_code |= check_python(self_directory, fix)
     print()
     return return_code
 
@@ -163,7 +188,7 @@ def cmd_check_examples(args: Args) -> int:
         return 1
     git_root = get_git_root_directory()
     example_to_check = git_root / "src" / match_example
-    return_code |= check_example(example_to_check, fix, markdown, indent=1)
+    return_code |= check_example(example_to_check, fix, markdown)
     return return_code
 
 
@@ -188,16 +213,16 @@ def list_changed_files() -> list[Path]:
     return filepaths_changed
 
 
-def check_example(directory: Path, fix: bool, markdown: bool, indent: int) -> int:
+def check_example(directory: Path, fix: bool, markdown: bool) -> int:
     """Perform check on each example."""
     print()
     print(f"--- Checking: {directory.relative_to(directory.parent)} ---")
 
     return_code = 0
-    return_code |= check_basic(directory, indent)
+    return_code |= check_basic(directory)
     if markdown:
-        return_code |= check_markdown(directory, indent)
-    return_code |= check_python(directory, fix, indent)
+        return_code |= check_markdown(directory)
+    return_code |= check_python(directory, fix)
     # Can add other languages here such as check_csharp(), check_html(), etc.
     return return_code
 

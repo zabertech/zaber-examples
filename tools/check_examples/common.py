@@ -11,7 +11,7 @@ IGNORE_FILE = "ignore.txt"
 ignore_list: list[Path] = []
 
 
-def execute(command: list[str], cwd: Path, indent: int) -> int:
+def execute(command: list[str], cwd: Path) -> int:
     """Execute subprocess.run and print appropriate message."""
     result = subprocess.run(
         command,
@@ -22,10 +22,10 @@ def execute(command: list[str], cwd: Path, indent: int) -> int:
         check=False,
     )
     if result.returncode:
-        iprint_fail(" ".join(command), indent)
-        iprint(result.stdout, indent)
+        iprint_fail(" ".join(command), 1)
+        iprint(result.stdout, 1)
     else:
-        iprint_pass(" ".join(command), indent)
+        iprint_pass(" ".join(command), 1)
     return result.returncode
 
 
@@ -92,9 +92,9 @@ def load_ignore() -> None:
                     if ignore_filepath not in ignore_list:
                         ignore_list.append(ignore_filepath)
                         if ignore_filepath.is_dir():
-                            iprint_warn(f"Ignoring directory: '{ignore_filepath}'")
+                            iprint_warn(f"Ignoring directory: '{ignore_filepath}'", 1)
                         if ignore_filepath.is_file():
-                            iprint_warn(f"Ignoring file: '{ignore_filepath}'")
+                            iprint_warn(f"Ignoring file: '{ignore_filepath}'", 1)
                 else:
                     iprint_fail(
                         f"Ignoring '{line.rstrip()}' in {IGNORE_FILE} not found, unable to ignore."
