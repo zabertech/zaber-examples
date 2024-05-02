@@ -30,6 +30,10 @@ from terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match_
 from check_python import check_python
 from check_basic import check_basic, check_markdown
 
+EXAMPLE_DIR = "src"
+TOOLS_DIR = "tools"
+DOCS_DIR = "docs"
+
 Args = dict[str, Any]
 
 
@@ -77,7 +81,7 @@ def cmd_check_all(args: Args) -> int:
     fix = args["--fix"]
     markdown = args["--markdown"]
     example_directories = list_example_directories()
-    iprint(f"Found {len(example_directories)} example subdirectories in 'src':", 1)
+    iprint(f"Found {len(example_directories)} example subdirectories in '{EXAMPLE_DIR}':", 1)
     for example in example_directories:
         iprint(f"Found '{example}'", 2)
 
@@ -102,8 +106,8 @@ def cmd_check_changed(args: Args) -> int:
     changed_examples: list[Path] = []
     changed_self: bool = False
     changed_docs: bool = False
-    self_directory = get_git_root_directory() / "tools" / "check_examples"
-    docs_dierctory = get_git_root_directory() / "docs"
+    self_directory = get_git_root_directory() / TOOLS_DIR / "check_examples"
+    docs_dierctory = get_git_root_directory() / DOCS_DIR
     for changed_file in list_changed:
         changed_self |= changed_file.is_relative_to(self_directory)
         changed_docs |= changed_file.is_relative_to(docs_dierctory)
@@ -115,8 +119,10 @@ def cmd_check_changed(args: Args) -> int:
     if changed_self:
         iprint_info("Found changed file(s) in check_examples script.", 1)
     if changed_docs:
-        iprint_info("Found changed file(s) in docs/ subdirectory.", 1)
-    iprint_info(f"Found {len(changed_examples)} changed example subdirectories in 'src':", 1)
+        iprint_info(f"Found changed file(s) in '{DOCS_DIR}' subdirectory.", 1)
+    iprint_info(
+        f"Found {len(changed_examples)} changed example subdirectories in '{EXAMPLE_DIR}':", 1
+    )
     for example in changed_examples:
         iprint(f"Found changed example '{example}'", 2)
     print()
@@ -139,7 +145,7 @@ def cmd_check_docs(_: Args) -> int:
     return_code = 0
     docs_directory = get_git_root_directory()
     return_code |= check_markdown(docs_directory, recurse=False)
-    docs_directory = get_git_root_directory() / "docs"
+    docs_directory = get_git_root_directory() / DOCS_DIR
     return_code |= check_markdown(docs_directory)
     print()
     return return_code
@@ -149,7 +155,7 @@ def cmd_check_list(_: Args) -> int:
     """List examples."""
     print("=== List examples ===")
     list_examples = list_example_directories()
-    print(f"Found {len(list_examples)} example subdirectories in 'src':")
+    print(f"Found {len(list_examples)} example subdirectories in '{EXAMPLE_DIR}':")
     for example in list_examples:
         iprint(str(example.relative_to(example.parent)), 1)
     return 0
@@ -160,7 +166,7 @@ def cmd_check_self(args: Args) -> int:
     print("=== Self check ===")
     return_code = 0
     fix = args["--fix"]
-    self_directory = get_git_root_directory() / "tools" / "check_examples"
+    self_directory = get_git_root_directory() / TOOLS_DIR / "check_examples"
     print()
     print(f"--- Self-check: {self_directory} ---")
     return_code |= check_markdown(self_directory)
@@ -185,7 +191,7 @@ def cmd_check_examples(args: Args) -> int:
             iprint(name, 1)
         return 1
     git_root = get_git_root_directory()
-    example_to_check = git_root / "src" / match_example
+    example_to_check = git_root / EXAMPLE_DIR / match_example
     return_code |= check_example(example_to_check, fix, markdown)
     return return_code
 
@@ -193,7 +199,7 @@ def cmd_check_examples(args: Args) -> int:
 def list_example_directories() -> list[Path]:
     """Return a list of example directories."""
     git_root_directory = get_git_root_directory()
-    list_filepaths = list(git_root_directory.joinpath("src").iterdir())
+    list_filepaths = list(git_root_directory.joinpath(EXAMPLE_DIR).iterdir())
     list_directories = [x for x in list_filepaths if x.is_dir()]
     if not list_directories:
         iprint_fail("Unable to list example directories.", 0)
