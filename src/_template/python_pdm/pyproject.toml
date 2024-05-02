@@ -1,0 +1,28 @@
+[project]
+name = "python_pdm"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Andrew Bruce Lau", email = "andrew@zaber.com"},
+]
+dependencies = [
+    "zaber-motion>=5.2.1",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "black>=24.4.2",
+    "pylint>=3.1.0",
+    "pydocstyle>=6.3.0",
+    "mypy>=1.10.0",
+]
+
+[tool.pdm.scripts]
+hello = {call = "src.python_pdm.hello:main"}

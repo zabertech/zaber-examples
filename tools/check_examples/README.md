@@ -29,5 +29,7 @@ Examples of how to use the script:
 - `check --help`: list usage options
 - `check all`: check all files
 - `check changed`: check all changed examples
+- `check docs`: lint all markdown files in the /docs/ subdirectory
 - `check list`: list example directories that would be checked
-- `check search <examples>...`: check specific examples
+- `check self`: lint the check_example script itself.
+- `check <example>`: check specific examples

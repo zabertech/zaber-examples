@@ -26,3 +26,13 @@ directly in the document.
 There is a [`README.md` template](../src/_template/README.md) with suggested headings.
 You can make a copy of this template and edit as you see fit,
 or browse some of the other examples for inspiration.
+
+## Linting Markdown Files
+
+The [`check_examples` script](../tools/check_examples/) can lint markdown files.
+By default, the main [`README.md`](../README.md) and all markdown files in [`/docs/`](../docs/)
+subdirectory are automatically linted using [`pymarkdownlnt`](https://github.com/jackdewinter/pymarkdown).
+Optionally, markdown files in each example can be linted by passing `-m` option to certain commands:
+
+- `check all -m`
+- `check <example> -m`

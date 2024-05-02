@@ -5,11 +5,20 @@
 This is a template for example code and documentation in this repository.
 Replace this paragraph with a succinct description of the purpose of this example.
 
+Note that this template has two Python examples using different package managers:
+
+- [`python_pdm`](./python_pdm/)
+- [`python_pipenv`](./python_pipenv/)
+
+If you are using Python, we recommend using [PDM](https://pdm-project.org/en/stable/).
+
 ## Hardware Requirements
+
 Describe the hardware required to demonstrate the script, including instructions on how to
 setup the hardware.
 
 ## Dependencies / Software Requirements / Prerequisites
+
 Describe the software dependencies and programs required to demonstrate the script, including
 instructions on how to install packages or programs.
 
@@ -18,18 +27,19 @@ each language.
 
 Note that this is only required for dependencies and installation instructions
 that are not included as part of the ordinary package manager.  For example, if you are using
-`pipenv` to manage your virtual environment and packages in Python, then there is no need
-to list all the dependencies that are already in `Pipfile`.`
+`PDM` to manage your virtual environment and packages in Python, then there is no need
+to list all the dependencies that are already in `pyproject.toml`.`
 
 _**Example:**_
 
-> The script uses `pipenv` to manage virtual environment and dependencies:
+> The script uses `PDM` to manage virtual environment and dependencies:
 > ```
-> python3 -m pip install -U pipenv
+> pdm install --dev
 > ```
-> The dependencies are listed in Pipfile.
+> The dependencies are listed in `pyproject.toml`.
 
 ## Configuration / Parameters
+
 Often scripts will need some command line parameters or arguments to specify what the script
 should do.  Even simpler code examples may define a few constants that the user needs to edit
 before it will run.  This is the section that explains what those configuration constants,
@@ -43,6 +53,7 @@ _**Example:**_
 > see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
 
 ## Running the Script
+
 Provide actual instructions to run the script.  If the script is meant to run on command line,
 list the actual commands and arguments to type into the terminal, including any commands
 required to set up environment variables or virtual environment.
@@ -51,12 +62,13 @@ _**Example:**_
 
 > To run the script:
 > ```
-> cd src/microplate-scanning-basic/python
-> pipenv install
-> pipenv run python scanning.py
+> cd src/<example_directory>
+> pdm install --dev
+> pdm run <name_of_script_in_pyproject_toml>
 > ```
 
 # Explaining the Central concept
+
 This section explains the central concept or idea of the example in plain language.
 There could be multiple subsections that talk about different parts of the code that supports
 the central concept.
@@ -66,4 +78,5 @@ Use a [permanent link](https://docs.github.com/en/get-started/writing-on-github/
 to some lines of code in the repository after at least one commit, and GitHub will link directly to the snippet.
 
 ## Optional Troubleshooting Tips or FAQ
+
 Can provide additional information as needed.

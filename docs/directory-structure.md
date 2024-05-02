@@ -4,7 +4,8 @@ Here are guidelines for directory structure and naming conventions in this repos
 
 An organized structure and naming convention makes it easier for visitors
 to find the relevant information, and for contributors to submit pull requests.
-This repository also serves as the data source for a front-end website for Developers (coming soon).
+This repository also serves as the data source for a front-end site
+[Zaber Code Examples](https://software.zaber.com/examples).
 It is important to adhere to a consistent naming convention because it will
 enable the website to index, parse, and display the examples automatically.
 
@@ -17,40 +18,54 @@ files and directories to follow.
     ├── .gitignore
     ├── LICENSE
     ├── README.md
+    ├── .github/
+    │   └── workflows
+    │       └──check_examples.yml
+    │   
     ├── docs/
     │   ├── CONTRIBUTING.md
     │   ├── cpp.md
     │   ├── csharp.md
     │   ├── directory-structure.md
-    │   ├── javascript.md
+    │   ├── example-subdirectory-naming.md
+    │   ├── java.md
+    │   ├── matlab.md
     │   ├── pull-requests.md
     │   ├── python.md
     │   ├── readme-guidelines.md
+    │   ├── typescript.md
+    │   ├── virtual-environment.md
     │   └── img/
     │
-    └── src/
-        ├── _template/
-        │   ├── README.md
-        │   ├── cpp/
-        │   ├── csharp/
-        │   ├── img/
-        │   ├── javascript/
-        │   └── python/
-        │
-        ├── categoryname1_example_name1/
-        ├── categoryname1_example_name2/
-        ├── category_name2_another_example/
-        ├── ...
-        └── <category_name>_<example_name>/
+    ├── src/
+    │   ├── _template/
+    │   │   ├── README.md
+    │   │   ├── cpp/
+    │   │   ├── csharp/
+    │   │   ├── img/
+    │   │   ├── javascript/
+    │   │   └── python/
+    │   │
+    │   ├── categoryname1_example_name1/
+    │   ├── categoryname1_example_name2/
+    │   ├── category_name2_another_example/
+    │   ├── ...
+    │   └── <category_name>_<example_name>/
+    │       ├── README.md
+    │       ├── csharp/
+    │       │   ├── ...
+    │       │   └── ...
+    │       ├── img/
+    │       └── python/
+    │           ├── Pipfile
+    │           ├── Pipfile.lock
+    │           └── main.py
+    │
+    └── tools/
+        └── check_examples
             ├── README.md
-            ├── csharp/
-            │   ├── ...
-            │   └── ...
-            ├── img/
-            └── python/
-                ├── Pipfile
-                ├── Pipfile.lock
-                └── main.py
+            ├── check.py
+            └── ...
 
 ## Files and Directories under `(root)`
 
@@ -100,6 +115,10 @@ This is the starting point if you want to contribute examples or bug fixes to th
 ### [directory-structure.md](directory-structure.md)
 
 This file itself.  Gives a "sitemap" of all the files within this repository.
+
+### [example-subdirectory-naming.md](example-subdirectory-naming.md)
+
+Describe the naming convention for example subdirectories.
 
 ### [pull-requests.md](pull-requests.md)
 
@@ -167,3 +186,12 @@ If you want to contribute to a language not listed here please add it to the lis
 - `typescript/`
 - `java/`
 - `octave/`
+
+## [Directory `tools/`](../tools/)
+
+This directory contains tools used for CI/CD, and maintenance of this repository.
+
+### [Subdirectory `check_examples`](../tools/check_examples/)
+
+A python script for running linters on examples.
+This script is also called as part of the [CI runner script](../.github/workflows/check_examples.yml).
