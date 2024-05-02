@@ -23,7 +23,8 @@ There are many different ways to install PDM according to instructions on the we
 See [microscope_tiling_basler_camera](../src/microscope_tiling_basler_camera/) as an example
 of how PDM is used to manage packages and virtual environment.
 
-PDM handles initializing and populating the example directory with the essential files:
+PDM uses a [src layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/)
+directory structure, and PDM handles initializing and populating a bare directory with the essential files:
 
     pdm init
 
@@ -37,7 +38,12 @@ as development packages in PDM:
     pdm add --dev black pylint pydocstyle mypy
 
 To run scripts, edit `pyproject.toml` section on [PDM Scripts](https://pdm-project.org/en/stable/usage/scripts/).
-Then run `pdm run <sript_name>`.
+The scripts can be executed by `pdm run <sript_name>`.
+
+If you have just cloned this repository and the example you want to run uses PDM:
+
+    pdm install --dev
+    pdm run <script_name>
 
 ## Pipenv
 
