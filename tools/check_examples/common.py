@@ -99,6 +99,7 @@ def load_ignore() -> None:
                     iprint_fail(
                         f"Ignoring '{line.rstrip()}' in {IGNORE_FILE} not found, unable to ignore."
                     )
+        print()
 
 
 def filter_not_ignored(filepath: Path) -> bool:

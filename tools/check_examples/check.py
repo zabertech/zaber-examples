@@ -40,6 +40,8 @@ def main() -> None:
     arguments = sys.argv[1:]
     args = docopt(__doc__, argv=arguments)
 
+    load_ignore()
+
     exit_code = 0
     if args["all"]:
         exit_code |= cmd_check_self(args)
@@ -74,11 +76,11 @@ def cmd_check_all(args: Args) -> int:
     return_code = 0
     fix = args["--fix"]
     markdown = args["--markdown"]
-    load_ignore()
     example_directories = list_example_directories()
-    for example in example_directories:
-        iprint_info(f"Found '{example}'", 1)
     iprint(f"Found {len(example_directories)} example subdirectories in 'src':", 1)
+    for example in example_directories:
+        iprint(f"Found '{example}'", 2)
+
     for example in example_directories:
         return_code |= check_example(example, fix, markdown)
     return return_code
@@ -91,7 +93,6 @@ def cmd_check_changed(args: Args) -> int:
     return_code = 0
     fix = args["--fix"]
     markdown = args["--markdown"]
-    load_ignore()
     list_examples = list_example_directories()
     list_changed = list_changed_files()
     for item in list_changed:
@@ -104,19 +105,17 @@ def cmd_check_changed(args: Args) -> int:
     self_directory = get_git_root_directory() / "tools" / "check_examples"
     docs_dierctory = get_git_root_directory() / "docs"
     for changed_file in list_changed:
-        if changed_file.is_relative_to(self_directory):
-            changed_self = True
-        if changed_file.is_relative_to(docs_dierctory):
-            changed_docs = True
+        changed_self |= changed_file.is_relative_to(self_directory)
+        changed_docs |= changed_file.is_relative_to(docs_dierctory)
         for example in list_examples:
             if changed_file.is_relative_to(example) and example not in changed_examples:
                 changed_examples.append(example)
 
     # Indicate which directories to run checks on
     if changed_self:
-        iprint_info("Found changed files in check_examples script.", 1)
+        iprint_info("Found changed file(s) in check_examples script.", 1)
     if changed_docs:
-        iprint_info("Found changed files in docs/ subdirectory.", 1)
+        iprint_info("Found changed file(s) in docs/ subdirectory.", 1)
     iprint_info(f"Found {len(changed_examples)} changed example subdirectories in 'src':", 1)
     for example in changed_examples:
         iprint(f"Found changed example '{example}'", 2)
@@ -127,9 +126,10 @@ def cmd_check_changed(args: Args) -> int:
         cmd_check_self(args)
     if changed_docs:
         cmd_check_docs(args)
-    print("=== Check changed examples ===")
-    for example in changed_examples:
-        return_code |= check_example(example, fix, markdown)
+    if changed_examples:
+        print("=== Check changed examples ===")
+        for example in changed_examples:
+            return_code |= check_example(example, fix, markdown)
     return return_code
 
 
@@ -148,7 +148,6 @@ def cmd_check_docs(_: Args) -> int:
 def cmd_check_list(_: Args) -> int:
     """List examples."""
     print("=== List examples ===")
-    load_ignore()
     list_examples = list_example_directories()
     print(f"Found {len(list_examples)} example subdirectories in 'src':")
     for example in list_examples:
@@ -177,7 +176,6 @@ def cmd_check_examples(args: Args) -> int:
     fix = args["--fix"]
     markdown = args["--markdown"]
     search_term = args["<example>"]
-    load_ignore()
     list_examples = list_example_directories()
     example_names = [str(x.relative_to(x.parent)) for x in list_examples]
     match_example, message = match_string(search_term, example_names)
