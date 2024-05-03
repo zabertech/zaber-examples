@@ -1,6 +1,6 @@
 # Title of the Article
 
-*By Author Name*
+_*By Author Name*_
 
 This is a template for example code and documentation in this repository.
 Replace this paragraph with a succinct description of the purpose of this example.
@@ -28,14 +28,16 @@ each language.
 Note that this is only required for dependencies and installation instructions
 that are not included as part of the ordinary package manager.  For example, if you are using
 `PDM` to manage your virtual environment and packages in Python, then there is no need
-to list all the dependencies that are already in `pyproject.toml`.`
+to list all the dependencies that are already in `pyproject.toml`.
 
 _**Example:**_
 
 > The script uses `PDM` to manage virtual environment and dependencies:
-> ```
+>
+> ```commandline
 > pdm install --dev
 > ```
+>
 > The dependencies are listed in `pyproject.toml`.
 
 ## Configuration / Parameters
@@ -48,6 +50,7 @@ or command line parameters are.  This will aid the user in getting the script ru
 _**Example:**_
 
 > Edit the following constants in the script to fit your setup before running the script:
+>
 > - `SERIAL_PORT`: the serial port that your device is connected to.
 > For more information on how to identify the serial port,
 > see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
@@ -61,13 +64,14 @@ required to set up environment variables or virtual environment.
 _**Example:**_
 
 > To run the script:
-> ```
+>
+> ```commandline
 > cd src/<example_directory>
 > pdm install --dev
 > pdm run <name_of_script_in_pyproject_toml>
 > ```
 
-# Explaining the Central concept
+## Explaining the Central concept
 
 This section explains the central concept or idea of the example in plain language.
 There could be multiple subsections that talk about different parts of the code that supports

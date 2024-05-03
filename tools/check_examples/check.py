@@ -182,7 +182,7 @@ def cmd_check_examples(args: Args) -> int:
     fix = args["--fix"]
     markdown = args["--markdown"]
     search_term = args["<example>"]
-    list_examples = list_example_directories()
+    list_examples = list_example_directories(ignore=False)
     example_names = [str(x.relative_to(x.parent)) for x in list_examples]
     match_example, message = match_string(search_term, example_names)
     print(message)
@@ -196,7 +196,7 @@ def cmd_check_examples(args: Args) -> int:
     return return_code
 
 
-def list_example_directories() -> list[Path]:
+def list_example_directories(ignore: bool = True) -> list[Path]:
     """Return a list of example directories."""
     git_root_directory = get_git_root_directory()
     list_filepaths = list(git_root_directory.joinpath(EXAMPLE_DIR).iterdir())
@@ -204,7 +204,8 @@ def list_example_directories() -> list[Path]:
     if not list_directories:
         iprint_fail("Unable to list example directories.", 0)
         sys.exit(1)
-    list_directories = list(filter(filter_not_ignored, list_directories))
+    if ignore:
+        list_directories = list(filter(filter_not_ignored, list_directories))
     return sorted(list_directories)
 
 
