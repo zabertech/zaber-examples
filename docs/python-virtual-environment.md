@@ -91,7 +91,7 @@ Adding these lines ensure that when `Pipfile.lock` is generated, it will include
 for all platforms.  Otherwise, the checked-in `Pipfile.lock` will only work
 on the OS where the lock file was generated.
 
-Please see example [`Pipfile`](../src/_template/python/Pipfile) for more detail.
+Please see example [`Pipfile`](../src/_template/python_pipenv/Pipfile) for more detail.
 
 This section will be deleted when all examples are updated to use the latest version of Zaber Motion Library.
 

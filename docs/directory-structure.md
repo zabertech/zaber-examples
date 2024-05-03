@@ -136,10 +136,6 @@ Each language has a document outlining the coding style and best practices to fo
 for the example code in this repository, including recommendation for linters,
 virtual environment, setup, etc.  For example, [python.md](python.md).
 
-### [img/](/img)
-
-Any figures or images referenced from files in the `docs/` directory lives here.
-
 ## [Directory `src/`](../src/)
 
 This directory contains all the example subdirectories.
