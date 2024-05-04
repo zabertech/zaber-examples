@@ -22,21 +22,21 @@ You can remove the Python version requirement from `Pipfile` if you want to use 
 
 Before running for the first time, install the required packages:
 
-```
+```bash
 python3 -m pipenv install
 ```
 
 Then, open a terminal and start the server.
 Set the `PORT` environment variable to your serial port or change the default in `main.py`.
 
-```
+```bash
 export PORT=/dev/ttyUSB0
 python3 -m pipenv run python main.py
 ```
 
 Then open a web browser and navigate to `http://localhost:8080`. Alternatively, you can use the following command:
 
-```
+```bash
 chromium-browser --app=http://localhost:8080
 ```
 
@@ -70,7 +70,7 @@ and `move_server.desktop`.
 
 Add the following content to `move_client.desktop`:
 
-```
+```ini
 [Desktop Entry]
 Encoding=UTF-8
 Version=1.0
@@ -83,7 +83,7 @@ Name=Move Client
 And add this content to `move_server.desktop`.
 You must change the `Path=/home/zaber/code/gui_raspberrypi_touch` line to your directory.
 
-```
+```ini
 [Desktop Entry]
 Encoding=UTF-8
 Version=1.0

@@ -1,7 +1,5 @@
 # 2D Calibration
 
-*By Andrew Lau*
-
 When programming a 2D Cartesian gantry or or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis to achieve the accuracy required. The end goal is to be able to commanding the stage to go to a particular coordinate, and have the stage be on target.
 
 This is a Python example showing how to take the expected and actual coordinates of a few grid
@@ -20,12 +18,14 @@ This calibration algorithm requires as input both the coordinates of the **expec
 - On the right is data from a real-life example of actual measured error in a gantry system, and using the calibration code to do a linear fit (bilinear) in both axis.
 
 ## Hardware Requirements
+
 There is no hardware requirement for this example script, as it only demonstrates the algorithm
 and visualizes the results in a plot.  However, the algorithm can be adapted to be used with any
 Cartesian gantry or X-Y system, such as
 [Zaber Technologies Gantry Systems](https://www.zaber.com/products/xy-xyz-gantry-systems/GANTRY)
 
 ## Dependencies / Software Requirements / Prerequisites
+
 The script uses `pipenv` to manage virtual environment and dependencies:
 
     python3 -m pip install -U pipenv
@@ -33,6 +33,7 @@ The script uses `pipenv` to manage virtual environment and dependencies:
 The dependencies are listed in Pipfile.
 
 ## Running the Script
+
 To run the script:
 
     cd src/gantry_calibration
@@ -40,7 +41,8 @@ To run the script:
     pipenv run python calibrate.py
     pipenv run python calibrate.py basic
 
-# How it works
+## How it works
+
 The script consists of the following files,
 - `calibrate.py` - a script to be called on the command line, to generate random points
 and demonstrates how `Calibration` class works by plotting the coordinates before and after mapping.

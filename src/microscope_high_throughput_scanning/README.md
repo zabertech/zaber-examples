@@ -12,11 +12,13 @@ The example code is written for a [Zaber ADR](https://www.zaber.com/products/sca
 This example uses a Teledyne FLIR BFS-200S6C-M camera. The Spinview application is used to setup the camera settings and perform image acquisition. This example can be adapted to any camera that provides IO for sending and recieving triggers.
 
 The script dependancies are defined in the ['Pipfile'](./Pipfile):
+
 - [Zaber Motion Library](https://software.zaber.com/motion-library/docs)
 - [Plotly](https://plotly.com/python/)
 - [Numpy](https://numpy.org/)
 
 ## Hardware Setup
+
 Follow these steps to setup the hardware for scanning:
 1. Orient long edge of sample along the long axis of the stage
 2. Rotate your camera such that the width of the sensor is perpendicular to the scan direction
@@ -27,6 +29,7 @@ Follow these steps to setup the hardware for scanning:
 ![scan coordinates](img/scan_coordinate_system.jpg)
 
 ## Configuration
+
 - `SERIAL_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
@@ -42,6 +45,7 @@ Enter the details of your camera in `CAMERAS` as shown below:
 https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_high_throughput_scanning/config.py#L69-L73
 
 ## Usage
+
 1. Using the joystick, record the stage origin such that the edge of the camera FOV meets the edge of the scan area (blue square). Enter this as `origin`
 2. Select the COM port to use to connect to your Zaber devices and choose your scan protocol and camera.
 https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_high_throughput_scanning/microscope_hts.py#L18-L21
@@ -49,7 +53,9 @@ https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61
 4. Call `execute_scan()` to move to the origin and start scanning your sample! On subsequent runs you can repeatedly call this without re-doing the setup steps above.
 
 ## Options
+
 - `use_focus_map`: A focus map can be supplied to specify an offset of the focus position for each imaging location. The format is a (m x n) numpy array saved in `focus_map.npy` where m is the number of steppvers and n is the number of images along each scan pass. The code will take care of performing the snake along the rows of the scan.
 
 ## Extras
+
 - `generate_focus_map` can be used to generate a randomized focus map for testing purposes. This can be replaced with your own 5-point focus interpolation.

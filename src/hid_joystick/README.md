@@ -7,6 +7,7 @@ A simple example of controlling Zaber devices with a USB game controller (Window
 ## Prerequisites
 
 ### Python
+
 The Python example uses `pipenv` to manage virtual environment and dependencies:
 
     py -m pip install -U pipenv
@@ -15,6 +16,7 @@ The dependencies are listed in [`Pipfile`](./python/Pipfile).
 This example uses the third-party [`inputs`](https://pypi.org/project/inputs/) library for HID interfacing.
 
 ### C#
+
 The C# example requires the .NET SDK 6.0 or later to be installed and can be compiled with
 Visual Studio Community 2022 or the `dotnet build` command.
 
@@ -33,6 +35,7 @@ them work.
 ## Configuration and Running the Scripts
 
 ### Python
+
 Before running the Python example you should edit the source code to select the serial port and Zaber device
 addresses and axis numbers you will be using.
 
@@ -49,6 +52,7 @@ To run the script:
     pipenv run python scanning.py
 
 ### C#
+
 - `private static string _port`: the default serial port that your device is connected to.
 For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
@@ -58,6 +62,7 @@ editing the default `private static string _port` near the bottom of `Program.cs
 This example will automatically assign detected Zaber stages to joystick axes.
 
 ## Not an Endorsement
+
 We are not necessarily recommending either of the input libraries used in the examples; there
 are several alternatives available for each language. Before developing an application, investigate
 the different HID input libraries available for your language and platform.

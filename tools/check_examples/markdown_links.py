@@ -123,4 +123,5 @@ def check_external_link(url: str) -> list[str]:
 
 def normalize(header: str) -> str:
     """Normalize a header string for comparing against anchor text."""
-    return re.sub(r"[-_ ]+", "-", header.strip()).lower()
+    new_header = re.sub(r"[-_ ]+", "-", header.strip()).lower()
+    return new_header

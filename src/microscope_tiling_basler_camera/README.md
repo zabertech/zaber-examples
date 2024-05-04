@@ -7,9 +7,11 @@ Often we want to capture high resolution images of samples which we cannot fit i
 This example showcases a simple technique for creating an image tileset using the [Zaber Motion Library](https://software.zaber.com/motion-library) microscope API, allowing a user to specify the top left and bottom right corners of the region they'd like to scan, and also the desired percentage of overlap between an image and its horizontal and vertical neighbours. The example also illustrates how to control a [Basler camera](https://www.baslerweb.com/en/cameras/) using the [pypylon API](https://github.com/basler/pypylon).
 
 ## Hardware Requirements
+
 The full example code experience requires a [Zaber microscope](https://www.zaber.com/products/microscopes), Basler camera and objective. If you would like to use a different camera, you can implement your own camera wrapper class following the example contained in [`basler_camera_wrapper.py`](src/microscope_tiling_basler_camera/basler_camera_wrapper.py)
 
 ## Dependencies / Software Requirements / Prerequisites
+
 The script uses `pdm` to manage virtual environment and dependencies:
 
 Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
@@ -17,6 +19,7 @@ Instructions on how to install it can be found on the official `pdm` project pag
 The dependencies are listed in `pyproject.toml`.
 
 ## Configuration / Parameters
+
 Edit the following constants in the script to fit your setup before running the script:
 
 ### Required Params
@@ -33,6 +36,7 @@ For more information on how to identify the serial port, see [Find the right ser
 __Note__: no matter the orientation of your camera and stage, it must be true that `TOP_LEFT.x` <= `BOTTOM_RIGHT.x` and `TOP_LEFT.y` >= `BOTTOM_RIGHT.y`
 
 ### Optional Params
+
 - `SAVE_FOLDER`: the folder in which the tiled images will be saved
 - `RUN_BEST_EFFORT_STITCHING`: program will try to stitch tiles together using openCV's Stitcher class (more on openCV's high level stitching API [here](https://docs.opencv.org/4.x/d8/d19/tutorial_stitcher.html))
 - `RUN_NAIVE_TILING`: concatenate tiles together into single image--this should only be used with 0 horizontal
@@ -60,9 +64,10 @@ for idx_x, point in enumerate(grid_row):
 ```
 
 ### Running the Script
+
 Once everything has been configured, you can run the example:
 
-```
+```shell
 cd src/microscope_tiling_basler_camera/
 pdm install
 pdm run example
@@ -70,7 +75,8 @@ pdm run example
 
 The script will attempt to provide useful feedback for the user, and will raise AssertionError if anything isn't configured properly.
 
-# Tiling Images
+## Tiling Images
+
 Tiling is an important process for developing a digital representation of a sample which is too large to be viewed as a whole in a single frame. While it may be convenient to simply change to a lower-resolution objective to bring the entire sample into the field of view, a user may want to view the sample at a much higher resolution.
 
 This example code exposes parameters for specifying the upper left and bottom right microscope stage coordinates of such a sample. Given these coordinates, it will generate a sequence of grid points based on the desired overlap between frames, then it will move along the points and capture a frame at each. It is important to have an accurate estimate of pixel size, so the code can accurately compute the real-world distance between each point to achieve the desired amount of overlap.
@@ -88,9 +94,6 @@ If we specify that we want 0.5 horizontal and vertical overlap between tiles, th
 | <img src="img/example_tiles/tile_2_0.png" style="max-width:150px; max-height:150px;"> | <img src="img/example_tiles/tile_2_1.png" style="max-width:150px; max-height:150px;"> | <img src="img/example_tiles/tile_2_2.png" style="max-width:150px; max-height:150px;"> |
 | <img src="img/example_tiles/tile_3_0.png" style="max-width:150px; max-height:150px;"> | <img src="img/example_tiles/tile_3_1.png" style="max-width:150px; max-height:150px;"> | <img src="img/example_tiles/tile_3_2.png" style="max-width:150px; max-height:150px;"> |
 
-
-
-
 The algorithm for generating the path is quite simple:
 - compute the size of a camera frame given the size of each pixel and camera resolution (note that the user doesn't have to specify camera resolution)
 - determine horizontal and vertical step length based on frame size and overlap
@@ -99,13 +102,14 @@ The algorithm for generating the path is quite simple:
 
 All this logic is contained in `src/microscope_tiling_basler_camera/path_builder.py`. Additionally, the logic for controlling the Basler camera using `pypylon` API is contained in `src/microscope_tiling_basler_camera/basler_camera_wrapper.py`.
 
-## Next Steps
+### Next Steps
 
 The image tileset can now be joined user any technique the user desires. In this example code, we provide two functions, one which creates an openCV stitching class and attempts to stitch the images together, and one which simply concatenates the tileset together.
 
-### Stitching
+#### Stitching
 
 Stitching is a powerful technique for joining images, but its success depends very much on the quality of the image data being processed. We do not attempt to solve the problem of stitching in this example and instead provide this functionality of an example of how a user could integrate stitching into their own automation workflows. That said, there are some things that a user could do to improve the result of openCV's stitching pipeline:
+
 - ensure objective, camera and sample plate are clean
 - ensure consistent illumination across all tiled images
 - specify 'reasonable' overlap values: between 0.1 and 0.5 overlap depending on your use case (this depends on the sample, but in general adjacent images need to share salient features for the stitching pipeline to compute homography)
@@ -113,7 +117,7 @@ Stitching is a powerful technique for joining images, but its success depends ve
 
 If you'd like to try running the stitching pipeline, set `RUN_BEST_EFFORT_STITCHING` to true. The program will either print an error message indicating that stitching failed, or will save the stitched file as `best_effort_stitched_tiles.png`. You can also stitch together the example tileset provided in this repository by entering the following command:
 
-```
+```shell
 pdm run stitching-example
 ```
 

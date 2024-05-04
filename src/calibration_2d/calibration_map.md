@@ -19,6 +19,7 @@ $$
 $$
 
 In the above equations:
+
 - $(x,y)$ is the **expected** position that the user can theoretically expect to find the ficudial mark or the sample.
 - $(x',y')$ is the **actual** position that the user actually has to send as a command to the machine in order to hit the fiducial mark or sample.
 - $a_{ij}$ and $b_{ij}$ are the unknown constants for computing $x'$ and $y'$, where $i$ is the order of $x$ and $j$ is the order of $y$.

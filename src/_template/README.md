@@ -34,7 +34,7 @@ _**Example:**_
 
 > The script uses `PDM` to manage virtual environment and dependencies:
 >
-> ```commandline
+> ```bash
 > pdm install --dev
 > ```
 >
@@ -65,7 +65,7 @@ _**Example:**_
 
 > To run the script:
 >
-> ```commandline
+> ```bash
 > cd src/<example_directory>
 > pdm install --dev
 > pdm run <name_of_script_in_pyproject_toml>
