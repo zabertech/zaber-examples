@@ -15,7 +15,7 @@ enabled = false
 siblings_only = true
 
 [plugins.md033]
-allowed_elements = "!--,![CDATA[,!DOCTYPE,sup"
+allowed_elements = "!--,![CDATA[,!DOCTYPE,sup,img,br"
 # GitHub explicitly requires <sup> for superscript
 
 [plugins.md034]

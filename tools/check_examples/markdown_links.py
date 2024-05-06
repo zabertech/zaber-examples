@@ -1,27 +1,50 @@
 """Collection of functions to check that markdown links are valid."""
 
-from dataclasses import dataclass
 import re
 from pathlib import Path
 from terminal_utils import iprint, iprint_pass, iprint_fail
 
 LINKS_REGEX = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
-HEADING_REGEX = re.compile(r"^#+ ([\w ]+)")
+HEADING_REGEX = re.compile(r"^#+ (.*)")
 
 
-@dataclass
 class MarkdownLink:
     """Contains information about a markdown link."""
 
-    file: Path
-    line: int
-    text: str
-    url: str
+    def __init__(self, filepath: Path, line: int, link_text: str, link_url: str):
+        """Create a MarkdownLink object."""
+        self.filepath = filepath
+        self.line = line
+        self.link_text = link_text
+        self.link_url = link_url
+        self.url = ""
+        self.anchor = ""
+        self.title = ""
+
+    def parse_link_url(self) -> None:
+        """Parse the link into parts for further processing."""
+        match self.link_url.count(" "):
+            case 0:
+                url_anchor = self.link_url  # potentially has URL and anchor but no title
+            case _:
+                # split at first space only because title may contain spaces as
+                url_anchor, self.title = self.link_url.split(" ", 1)
+        match url_anchor.count("#"):
+            case 0:
+                self.url = url_anchor  # only URL, no anchor
+            case 1:
+                self.url, self.anchor = url_anchor.split("#")
+            case _:
+                raise ValueError(f"invalid link '{self.link_url}' has too many hashtags in it.")
 
     @property
     def location(self) -> str:
         """Return a string that contains the filename and the line number for error reporting."""
-        return f"{self.file.name}:{self.line}"
+        return f"{self.filepath}:{self.line}"
+
+    def __str__(self) -> str:
+        """Print for debugging purposes."""
+        return f"{self.link_url=} {self.url=} {self.anchor=} {self.title=}"
 
 
 def check_links_in_markdown(markdown_filename: Path) -> int:
@@ -49,7 +72,7 @@ def get_links(markdown_filename: Path) -> list[MarkdownLink]:
             for link in links:
                 markdown_link = MarkdownLink(
                     markdown_filename,
-                    line_number,
+                    line_number + 1,
                     link[0],
                     link[1],
                 )
@@ -60,6 +83,11 @@ def get_links(markdown_filename: Path) -> list[MarkdownLink]:
 def check_link(link: MarkdownLink) -> list[str]:
     """Check a link for any issues."""
     error_message: list[str] = []
+
+    try:
+        link.parse_link_url()
+    except ValueError as error:
+        return [f"{link.location} - {error}"]
 
     # Check name of link
     # error_message += check_link_name(link.text)
@@ -82,37 +110,31 @@ def check_link_name(link_text: str) -> list[str]:
 
 def check_internal_link(link: MarkdownLink) -> list[str]:
     """Check validity of internal link."""
-    anchor = ""
-    match link.url.count("#"):
-        case 0:
-            url = link.url
-        case 1:
-            url, anchor = link.url.split("#")
-        case _:
-            return [f"{link.file.name}:{link.line} - '{link.url}' invalid link has too many '#'"]
-    if url:
-        target_filepath = link.file.parent / url
+    if link.url:
+        # Link has both a part (relative path) before hashtag, and a part (anchor) after hashtag
+        target_filepath = link.filepath.parent / link.url
     else:
-        target_filepath = link.file
+        # Link starts with hashtag and only has the anchor part
+        target_filepath = link.filepath
 
     if not target_filepath.exists():
-        return [f"{link.file.name}:{link.line} - '{str(target_filepath)}' does not exist"]
-    if anchor:
-        if not anchor_exists(target_filepath, anchor):
-            return [f"{link.location} - invalid anchor in link '{link.url}'"]
+        return [f"{link.location} - '{str(target_filepath)}' does not exist"]
+    if link.anchor:
+        if not anchor_exists(target_filepath, link.anchor):
+            return [f"{link.location} - invalid anchor '{link.anchor}' in link '{link.url}'"]
     return []
 
 
 def anchor_exists(filepath: Path, anchor: str) -> bool:
     """Check whether an anchor link exists."""
-    anchors: list[str] = []
+    heading_anchors: list[str] = []
     with open(filepath, encoding="utf8") as file:
         markdown = file.readlines()
         for line in markdown:
             result = HEADING_REGEX.findall(line)
             if result:
-                anchors.append(normalize(result[0]))
-    return anchor in anchors
+                heading_anchors.append(normalize(result[0]))
+    return anchor in heading_anchors
 
 
 def check_external_link(url: str) -> list[str]:
@@ -123,5 +145,5 @@ def check_external_link(url: str) -> list[str]:
 
 def normalize(header: str) -> str:
     """Normalize a header string for comparing against anchor text."""
-    new_header = re.sub(r"[-_ ]+", "-", header.strip()).lower()
+    new_header = re.sub(r"[-_ ]+", "-", header.strip().replace("`", "")).lower()
     return new_header

@@ -163,7 +163,7 @@ both people and machine.
 
 Subdirectory for where all the images and figures refereneced in `README.md` live.
 
-#### Language Subdirectories (Optional)
+#### Language Subdirectories
 
 Each example subdirectory may contain examples in multiple languages.
 
