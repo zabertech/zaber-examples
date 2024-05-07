@@ -4,18 +4,17 @@ Check example directories.
 This script may also be called by .github/workflows/check_examples.yml
 
 Usage:
-    check all [-fm]
-    check changed [-fm]
+    check all [-f]
+    check changed [-f]
     check docs
     check list
     check self [-f]
-    check <example> [-fm]
+    check <example> [-f]
     check -h | --help
 
 Options:
     -h --help           Show help screen.
     -f --fix            Fix fixable issues (i.e. black)
-    -m --markdown       Check markdown files in examples
 
 For more information see README.md
 """
@@ -79,14 +78,13 @@ def cmd_check_all(args: Args) -> int:
     print("=== Check all examples ===")
     return_code = 0
     fix = args["--fix"]
-    markdown = args["--markdown"]
     example_directories = list_example_directories()
     iprint(f"Found {len(example_directories)} example subdirectories in '{EXAMPLE_DIR}':", 1)
     for example in example_directories:
         iprint(f"Found '{example}'", 2)
 
     for example in example_directories:
-        return_code |= check_example(example, fix, markdown)
+        return_code |= check_example(example, fix)
     return return_code
 
 
@@ -96,7 +94,6 @@ def cmd_check_changed(args: Args) -> int:
     print("=== Check all changed files ===")
     return_code = 0
     fix = args["--fix"]
-    markdown = args["--markdown"]
     list_examples = list_example_directories()
     list_changed = list_changed_files()
     for item in list_changed:
@@ -135,7 +132,7 @@ def cmd_check_changed(args: Args) -> int:
     if changed_examples:
         print("=== Check changed examples ===")
         for example in changed_examples:
-            return_code |= check_example(example, fix, markdown)
+            return_code |= check_example(example, fix)
     return return_code
 
 
@@ -180,7 +177,6 @@ def cmd_check_examples(args: Args) -> int:
     print("=== Check specific example(s) ===")
     return_code = 0
     fix = args["--fix"]
-    markdown = args["--markdown"]
     search_term = args["<example>"]
     list_examples = list_example_directories(ignore=False)
     example_names = [str(x.relative_to(x.parent)) for x in list_examples]
@@ -192,7 +188,7 @@ def cmd_check_examples(args: Args) -> int:
         return 1
     git_root = get_git_root_directory()
     example_to_check = git_root / EXAMPLE_DIR / match_example
-    return_code |= check_example(example_to_check, fix, markdown)
+    return_code |= check_example(example_to_check, fix)
     return return_code
 
 
@@ -218,15 +214,14 @@ def list_changed_files() -> list[Path]:
     return filepaths_changed
 
 
-def check_example(directory: Path, fix: bool, markdown: bool) -> int:
+def check_example(directory: Path, fix: bool) -> int:
     """Perform check on each example."""
     print()
     print(f"--- Checking: {directory.relative_to(directory.parent)} ---")
 
     return_code = 0
     return_code |= check_basic(directory)
-    if markdown:
-        return_code |= check_markdown(directory)
+    return_code |= check_markdown(directory)
     return_code |= check_python(directory, fix)
     # Can add other languages here such as check_csharp(), check_html(), etc.
     return return_code
