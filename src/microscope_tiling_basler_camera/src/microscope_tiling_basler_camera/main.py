@@ -10,24 +10,20 @@ from cv2.typing import MatLike
 from zaber_motion.ascii import Connection, AxisGroup
 from zaber_motion import Measurement, Units
 from zaber_motion.microscopy import Microscope
-from .basler_camera_wrapper import (
-    BaslerCameraWrapper,
-    ImageCaptureError,
-)
+from .basler_camera_wrapper import BaslerCameraWrapper
 from .example_util import try_stitch_images, join_tiles
 from .path_builder import PathBuilder
 
 # user-specified params
-SERIAL_PORT: str = "/dev/tty.usbserial-AB0PG6A5"
-PIXEL_WIDTH_MICRONS: float = 3.0177054668168553
-PIXEL_HEIGHT_MICRONS: float = 3.0177054668168553
-CAMERA_ROTATION_RAD: float = 0.045226578
+SERIAL_PORT: str = "COMx"
+PIXEL_WIDTH_MICRONS: float = 1.0
+PIXEL_HEIGHT_MICRONS: float = 1.0
+CAMERA_ROTATION_RAD: float = 0.0
 
-# TODO: reset point values to 0 after someone tests this example
 # TOP_LEFT and BOTTOM_RIGHT are np.array([x, y]) where xy are microscope plate coords
 # make sure to specify units
-TOP_LEFT: NDArray[np.float64] = np.array([49.54265625, 48.34875])
-BOTTOM_RIGHT: NDArray[np.float64] = np.array([52.775, 43.6420312499])
+TOP_LEFT: NDArray[np.float64] = np.array([0.0, 1.0])
+BOTTOM_RIGHT: NDArray[np.float64] = np.array([1.0, 0.0])
 POINTS_UNITS: Units = Units.LENGTH_MILLIMETRES  # units for TOP_LEFT and BOTTOM_RIGHT
 OVERLAP_H: float = 0.5
 OVERLAP_V: float = 0.5

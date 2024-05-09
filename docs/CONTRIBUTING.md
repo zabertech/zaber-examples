@@ -25,6 +25,7 @@ in `/src/<example_directory>/`:
 4. Do a Pull Request
 
 ## Adding a new Example
+
 If you want to contribute a new example:
 1. Take a look at all the examples under [`src/`](../src/) directory and make sure the new example
 is not a duplicate or closely related to another example already in the repository.
@@ -39,14 +40,17 @@ the central concept.
 5. Create a `README.md` file in the example directory following this [README guidelines](readme-guidelines.md)
 6. If the example is intended to be implementation in multiple languages,
 make a subdirectory with the language you want to implement:
-    - i.e. `/src/microplate_scanning_basic/python`
+    - i.e. `/src/hid_joystick/csharp` and `/src/hid_joystick/python`
     - See [list of valid language subdirectory names](directory-structure.md#language-subdirectories).
 7. Implement the example in the language(s) of your choice.
 You can start with our [example template](../src/_template/).
-8. Run through the appropriate [Language Checklist](#language-checklist)
-9. Do a Pull Request
+8. Add a file, [`article.yml`](article_yml.md) with metadata specifying how to publish to
+[Zaber Code Examples](https://software.zaber.com/examples)
+9. Run through the appropriate [Language Checklist](#language-checklist)
+10. Do a Pull Request
 
 ## Language Checklist
+
 Here are the checklists for the various languages:
 - [Python](python.md)
 - [MATLAB](matlab.md)
@@ -55,7 +59,7 @@ Here are the checklists for the various languages:
 - [TypeScript](typescript.md)
 - [Java](java.md)
 
-By contributing to this repository you agree that all of your work will be governed by the terms of the [LICENSE](/LICENSE) file.
+By contributing to this repository you agree that all of your work will be governed by the terms of the [LICENSE](../LICENSE) file.
 
 ## Tooling
 

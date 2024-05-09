@@ -44,6 +44,6 @@ To build the executable:
 You'll find the distributable executable `main.exe` in the `dist` directory.
 You can test it by running:
 
-  ```ps1
-  .\dist\main.exe
-  ```
+```ps1
+.\dist\main.exe
+```

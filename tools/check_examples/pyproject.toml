@@ -1,0 +1,28 @@
+[project]
+name = "check_examples"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Andrew Bruce Lau", email = "andrew@zaber.com"},
+]
+dependencies = [
+    "docopt-ng>=0.9.0",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+check = {call="src.check_examples.check:main"}
+[tool.pdm.dev-dependencies]
+dev = [
+    "black>=24.4.2",
+    "pylint>=3.1.0",
+    "pydocstyle>=6.3.0",
+    "mypy>=1.10.0",
+    "pymarkdownlnt>=0.9.19",
+]

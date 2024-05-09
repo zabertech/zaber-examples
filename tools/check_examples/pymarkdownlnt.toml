@@ -1,0 +1,25 @@
+# https://github.com/jackdewinter/pymarkdown/blob/main/docs/rules/rule_md013.md
+
+[plugins.md007]
+enabled = false
+
+[plugins.md013]
+enabled = false
+line_length = 100
+
+[plugins.md020]
+enabled = false
+# Disable so we can type "C#" in a header.
+
+[plugins.md024]
+siblings_only = true
+
+[plugins.md033]
+allowed_elements = "!--,![CDATA[,!DOCTYPE,sup,img,br"
+# GitHub explicitly requires <sup> for superscript
+
+[plugins.md034]
+enabled = false
+
+[plugins.md036]
+enabled = false

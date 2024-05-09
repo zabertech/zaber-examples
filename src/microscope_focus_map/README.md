@@ -6,6 +6,7 @@ A focus map gives estimated focus heights for any location on a microscope slide
 
 This is a Python example showing how to take a set of known good focus points
 from the microscope and interpolate those into a focus map.  The script demonstrates:
+
 - [Bilinear interpolation](https://en.wikipedia.org/wiki/Bilinear_interpolation)
 - Biquadratic interpolation
 - [Bicubic interpolation](https://en.wikipedia.org/wiki/Bicubic_interpolation)
@@ -19,12 +20,14 @@ The algorithm and code illustrated in this example is based on this article for 
 using a simple least squares solution.
 
 ## Hardware Requirements
+
 There is no hardware requirement for this example script, as it only demonstrates the algorithm
 and visualizes the results in a plot.  However, the algorithm can be adapted to be used with any automated
 microscope with motorized stage and focus,
 such as [Zaber Technologies Automated Microscope](https://www.zaber.com/products/microscopes)
 
 ## Dependencies / Software Requirements / Prerequisites
+
 The script uses `pipenv` to manage virtual environment and dependencies:
 
     python3 -m pip install -U pipenv
@@ -32,13 +35,15 @@ The script uses `pipenv` to manage virtual environment and dependencies:
 The dependencies are listed in Pipfile.
 
 ## Running the Script
+
 To run the script:
 
     cd src/microscope_focus_map
     pipenv install
     pipenv run python focus_map.py
 
-# How it works
+## How it works
+
 You can specify the type of interpolation to plot with the script:
 
 | Interpolation  | Order | Minimum Number of Points |

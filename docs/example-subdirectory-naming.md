@@ -1,4 +1,5 @@
 # Example Subdirectory Naming Conventions
+
 Please follow this guideline when naming example subdirectories under [`src/`](../src/).
 This will help make the repository more consistent and easier to browse on GitHub.
 
@@ -18,6 +19,7 @@ is composed of `microplate` as the `<category_name>`, and `scanning_basic` as th
 
 We currently have the following category names. More may be added as required:
 
+- `calibration`: Routines and algorithms for calibrating the accuracy of stages
 - `gui`: Graphical User Interface examples
 - `hid`: Human Interface Devices (HID) examples
 - `microplate`: Examples involving manipulating micro well plates

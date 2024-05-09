@@ -1,4 +1,5 @@
 # Least Square Interpolation
+
 This article explains the math behind the example code for focus map.  We will start with the simplest case of fitting a plane, then extend the idea to doing bilinear and higher order interpolation.
 
 ## Fitting a Plane with 3 points

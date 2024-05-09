@@ -8,6 +8,7 @@ to scan ANSI standard microplates with 96, 384, and 1536 wells.
 ![wellplate.png](img/wellplate.png)
 
 ## Hardware
+
 This script is designed primarily for the
 [ADR](https://www.zaber.com/products/scanning-microscope-stages/X-ADR-AE) (linear motor) and
 [ASR](https://www.zaber.com/products/families/ASR) (lead-screw)
@@ -15,6 +16,7 @@ families of motorized microscope stages, but can be readily adapted to work with
 any modular XY stages by Zaber Technologies.
 
 ## Dependencies
+
 The script uses `pipenv` to manage virtual environment and dependencies:
 
     python3 -m pip install -U pipenv
@@ -22,7 +24,9 @@ The script uses `pipenv` to manage virtual environment and dependencies:
 The dependencies are listed in Pipfile.
 
 ## Configuration
+
 Edit the following constants in the script to fit your setup before running the script:
+
 - `SERIAL_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
@@ -35,6 +39,7 @@ from the home or zero position of both axes to the edge of the well plate.
 Use the string `"96"`, `"384"` or `"1536"`.
 
 ## Running the example script
+
 To run the script:
 
     cd src/microplate_scanning_basic
@@ -42,7 +47,9 @@ To run the script:
     pipenv run python scanning.py
 
 ## Scanning Patterns
+
 The script gives example of three different scanning patterns:
+
 - `sequential()`: Scans each row in the same direction.  When a row is done,
 advance to the next column and scan the next row in the same direction.
 - `fastest()`: Scan the first row in one direction.  When the first row is done,
@@ -53,8 +60,10 @@ after finishing one row.
 visiting each well in a random order, but only visiting each well once.
 
 ## Tasks to perform at each well
+
 The scanning routine calls the function `do_task(*args)` each time it visits a microwell.
 The user can edit the function to do a variety of tasks such as:
+
 - turn on illumination or change filter cube
 - call auto-focus algorithms to find the sample
 - call third-party camera API to take an image

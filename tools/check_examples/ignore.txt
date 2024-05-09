@@ -4,7 +4,6 @@
 
 # Example directories to ignore
 src/_template
-src/microscope_tiling_basler_camera
 
 # Example subdirectories to ignore
 

@@ -1,50 +1,21 @@
 """Common helper functions."""
 
+from typing import Generator
 import sys
+import os
 import subprocess
 from pathlib import Path
+from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_warn
 
-PASS = "✅"
-FAIL = "❌"
-WARN = "⚠️ "
-INFO = "ℹ️ "
-INDENT = 4
 IGNORE_FILE = "ignore.txt"
 
 ignore_list: list[Path] = []
 
 
-def iprint(message: str, indent: int) -> None:
-    """Print with indent level."""
-    lines = message.splitlines(True)
-    indented_lines = [" " * INDENT * indent + line for line in lines if line.strip()]
-    block = "".join(indented_lines)
-    if block.strip():
-        print(block)
-
-
-def iprint_pass(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + PASS + " " + message)
-
-
-def iprint_fail(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + FAIL + " " + message)
-
-
-def iprint_warn(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + WARN + " " + message)
-
-
-def iprint_info(message: str, indent: int = 0) -> None:
-    """Print with PASS icon."""
-    print(" " * INDENT * indent + INFO + " " + message)
-
-
-def execute(command: list[str], cwd: Path, indent: int) -> int:
+def execute(command: list[str], cwd: Path) -> int:
     """Execute subprocess.run and print appropriate message."""
+    env = dict(os.environ)
+    del env["VIRTUAL_ENV"]
     result = subprocess.run(
         command,
         cwd=str(cwd),
@@ -52,12 +23,13 @@ def execute(command: list[str], cwd: Path, indent: int) -> int:
         stderr=subprocess.STDOUT,
         text=True,
         check=False,
+        env=env,
     )
     if result.returncode:
-        iprint_fail(" ".join(command), indent)
-        iprint(result.stdout, indent)
+        iprint_fail(" ".join(command), 1)
+        iprint(result.stdout, 1)
     else:
-        iprint_pass(" ".join(command), indent)
+        iprint_pass(" ".join(command), 1)
     return result.returncode
 
 
@@ -92,6 +64,24 @@ def get_git_root_directory() -> Path:
     return directory
 
 
+def list_files_of_suffix(directory: Path, file_suffix: str, recurse: bool = True) -> list[Path]:
+    """Return a list of python files in a directory."""
+
+    def get_python_files(currdir: Path) -> Generator[Path, None, None]:
+        """Yield all .py files recursively, excluding directories that start with a period."""
+        for item in currdir.iterdir():
+            if item.name[0] == ".":  # ignore files starting with a "."
+                continue
+            if item.suffix == file_suffix:
+                yield item
+            if item.is_dir() and filter_not_ignored(item) and recurse:
+                yield from get_python_files(item)
+
+    list_filepaths = list(get_python_files(directory))
+    list_filepaths = list(filter(filter_not_ignored, list_filepaths))
+    return sorted(list_filepaths)
+
+
 def load_ignore() -> None:
     """Load list of directories and files to ignore."""
     if not ignore_list:
@@ -103,15 +93,17 @@ def load_ignore() -> None:
                     continue
                 ignore_filepath = git_root / line
                 if ignore_filepath.exists():
-                    ignore_list.append(ignore_filepath)
-                    if ignore_filepath.is_dir():
-                        iprint_warn(f"Ignoring directory: '{ignore_filepath}'")
-                    if ignore_filepath.is_file():
-                        iprint_warn(f"Ignoring file: '{ignore_filepath}'")
+                    if ignore_filepath not in ignore_list:
+                        ignore_list.append(ignore_filepath)
+                        if ignore_filepath.is_dir():
+                            iprint_warn(f"Ignoring directory: '{ignore_filepath}'", 1)
+                        if ignore_filepath.is_file():
+                            iprint_warn(f"Ignoring file: '{ignore_filepath}'", 1)
                 else:
                     iprint_fail(
                         f"Ignoring '{line.rstrip()}' in {IGNORE_FILE} not found, unable to ignore."
                     )
+        print()
 
 
 def filter_not_ignored(filepath: Path) -> bool:
