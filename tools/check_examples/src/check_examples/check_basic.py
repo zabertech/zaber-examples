@@ -1,9 +1,9 @@
 """Check for basic requirements of example repositories."""
 
 from pathlib import Path
-from common import file_exists, list_files_of_suffix, execute, get_git_root_directory
-from terminal_utils import iprint_fail, iprint_pass
-from markdown_links import check_links_in_markdown
+from .common import file_exists, list_files_of_suffix, execute, get_git_root_directory
+from .terminal_utils import iprint_fail, iprint_pass
+from .markdown_links import check_links_in_markdown
 
 
 def check_basic(directory: Path) -> int:
@@ -28,7 +28,7 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
     for file in markdown_files:
         filename = str(file)
         return_code |= execute(
-            ["pipenv", "run", "pymarkdownlnt", "--config", str(config_file.name), "scan", filename],
+            ["pdm", "run", "pymarkdownlnt", "--config", str(config_file.name), "scan", filename],
             check_example_directory,
         )
         return_code |= check_links_in_markdown(file)

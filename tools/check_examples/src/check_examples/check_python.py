@@ -1,8 +1,8 @@
 """Check and lint Python files."""
 
 from pathlib import Path
-from common import execute, file_exists, subdirectory_exists, list_files_of_suffix
-from terminal_utils import iprint_pass, iprint_fail
+from .common import execute, file_exists, subdirectory_exists, list_files_of_suffix
+from .terminal_utils import iprint_pass, iprint_fail
 
 
 def check_python(directory: Path, fix: bool) -> int:
@@ -36,7 +36,7 @@ def check_python(directory: Path, fix: bool) -> int:
 def check_python_pdm(directory: Path, fix: bool) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
-    return_code |= execute(["pdm", "install", "-d"], directory)
+    return_code |= execute(["pdm", "install", "--dev"], directory)
 
     python_files = list_files_of_suffix(directory, ".py")
     python_filenames = [str(x.relative_to(directory)) for x in python_files]

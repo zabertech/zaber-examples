@@ -2,9 +2,10 @@
 
 from typing import Generator
 import sys
+import os
 import subprocess
 from pathlib import Path
-from terminal_utils import iprint, iprint_pass, iprint_fail, iprint_warn
+from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_warn
 
 IGNORE_FILE = "ignore.txt"
 
@@ -13,6 +14,8 @@ ignore_list: list[Path] = []
 
 def execute(command: list[str], cwd: Path) -> int:
     """Execute subprocess.run and print appropriate message."""
+    env = dict(os.environ)
+    del env["VIRTUAL_ENV"]
     result = subprocess.run(
         command,
         cwd=str(cwd),
@@ -20,6 +23,7 @@ def execute(command: list[str], cwd: Path) -> int:
         stderr=subprocess.STDOUT,
         text=True,
         check=False,
+        env=env,
     )
     if result.returncode:
         iprint_fail(" ".join(command), 1)

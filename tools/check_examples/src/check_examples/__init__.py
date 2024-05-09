@@ -1,0 +1,1 @@
+"""Package check_example."""

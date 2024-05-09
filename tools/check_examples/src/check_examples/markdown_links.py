@@ -2,7 +2,7 @@
 
 import re
 from pathlib import Path
-from terminal_utils import iprint, iprint_pass, iprint_fail
+from .terminal_utils import iprint, iprint_pass, iprint_fail
 
 LINKS_REGEX = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 HEADING_REGEX = re.compile(r"^#+ (.*)")

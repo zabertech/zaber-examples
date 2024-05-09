@@ -24,10 +24,10 @@ import sys
 import subprocess
 from pathlib import Path
 from docopt import docopt
-from common import filter_not_ignored, load_ignore, get_git_root_directory
-from terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match_string
-from check_python import check_python
-from check_basic import check_basic, check_markdown
+from .common import filter_not_ignored, load_ignore, get_git_root_directory
+from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match_string
+from .check_python import check_python
+from .check_basic import check_basic, check_markdown
 
 EXAMPLE_DIR = "src"
 TOOLS_DIR = "tools"
