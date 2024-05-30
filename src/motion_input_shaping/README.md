@@ -99,10 +99,10 @@ shaped_axis_var = ShapedAxis(axis, plant)
 
 Class Methods:
 
-- `move_absolute()` - Moves to an absolute position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_absolute()](https://software.zaber.com/motion-library/api/py/ascii/axis#_moveabsolute) command.
-- `move_relative()` - Moves to a relative position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_relative()](https://software.zaber.com/motion-library/api/py/ascii/axis#_moverelative) command.
-- `move_max()` - Moves to the max limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_max()](https://software.zaber.com/motion-library/api/py/ascii/axis#_movemax) command.
-- `move_min()` - Moves to the min limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_min()](https://software.zaber.com/motion-library/api/py/ascii/axis#_movemin) command.
+- `move_absolute()` - Moves to an absolute position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_absolute()](https://software.zaber.com/motion-library/api/py/ascii/axis#moveabsolute) command.
+- `move_relative()` - Moves to a relative position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_relative()](https://software.zaber.com/motion-library/api/py/ascii/axis#moverelative) command.
+- `move_max()` - Moves to the max limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_max()](https://software.zaber.com/motion-library/api/py/ascii/axis#movemax) command.
+- `move_min()` - Moves to the min limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_min()](https://software.zaber.com/motion-library/api/py/ascii/axis#movemin) command.
 - `get_max_speed_limit()` - Gets the current velocity limit for which shaped moves will not exceed. Allows user specified units.
 - `set_max_speed_limit()` - Sets the velocity limit for which shaped moves will not exceed. Allows user specified units.
 - `reset_max_speed_limit()` - Resets the velocity limit for shaped moves to the device's existing maxspeed setting. This is the default limit and is automatically set when the class is created.
@@ -147,10 +147,10 @@ Class Properties:
 - `stream_id`: Identifier number for the stream on the device. This defaults to 1 if unspecified. This is necessary if multiple streams are being used on a single device in order to avoid a conflict. For example, when performing input shaping in stream mode on two separate axes on a controller, each axis will need its own stream, so a different id needs to be specified when configuring each class instance.
 
 Class Methods:
-- `move_absolute()` - Moves to an absolute position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_absolute()](https://software.zaber.com/motion-library/api/py/ascii/axis#_moveabsolute) command.
-- `move_relative()` - Moves to a relative position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_relative()](https://software.zaber.com/motion-library/api/py/ascii/axis#_moverelative) command.
-- `move_max()` - Moves to the max limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_max()](https://software.zaber.com/motion-library/api/py/ascii/axis#_movemax) command.
-- `move_min()` - Moves to the min limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_min()](https://software.zaber.com/motion-library/api/py/ascii/axis#_movemin) command.
+- `move_absolute()` - Moves to an absolute position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_absolute()](https://software.zaber.com/motion-library/api/py/ascii/axis#moveabsolute) command.
+- `move_relative()` - Moves to a relative position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_relative()](https://software.zaber.com/motion-library/api/py/ascii/axis#moverelative) command.
+- `move_max()` - Moves to the max limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_max()](https://software.zaber.com/motion-library/api/py/ascii/axis#movemax) command.
+- `move_min()` - Moves to the min limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_min()](https://software.zaber.com/motion-library/api/py/ascii/axis#movemin) command.
 - `get_max_speed_limit()` - Gets the current velocity limit for which shaped moves will not exceed. Allows user specified units.
 - `set_max_speed_limit()` - Sets the velocity limit for which shaped moves will not exceed. Allows user specified units.
 - `reset_max_speed_limit()` - Resets the velocity limit for shaped moves to the device's existing maxspeed setting. This is the default limit and is automatically set when the class is created.
