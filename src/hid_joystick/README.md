@@ -15,7 +15,7 @@ The Python example uses `pipenv` to manage virtual environment and dependencies:
 The dependencies are listed in [`Pipfile`](./python/Pipfile).
 This example uses the third-party [`inputs`](https://pypi.org/project/inputs/) library for HID interfacing.
 
-### C#
+### C\#
 
 The C# example requires the .NET SDK 6.0 or later to be installed and can be compiled with
 Visual Studio Community 2022 or the `dotnet build` command.
@@ -51,7 +51,7 @@ To run the script:
     pipenv install
     pipenv run python scanning.py
 
-### C#
+### C\#
 
 - `private static string _port`: the default serial port that your device is connected to.
 For more information on how to identify the serial port,

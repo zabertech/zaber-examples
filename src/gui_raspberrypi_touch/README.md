@@ -94,4 +94,4 @@ Path=/home/zaber/code/gui_raspberrypi_touch
 Name=Move Server
 ```
 
-Now, you can find your applications under the _Other_ directory in Raspbian's menu.
+Now, you can find your applications under the *Other* directory in Raspbian's menu.

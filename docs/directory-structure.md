@@ -74,7 +74,7 @@ These are files and directories found under the root of the `zaber-examples` rep
 ### [.editorconfig](../.editorconfig)
 
 This is a simple configuration file that sets some basic coding styles in your code editor or IDE.
-For more information visit https://editorconfig.org/
+For more information visit <https://editorconfig.org/>
 
 ### [.gitignore](../.gitignore)
 
@@ -90,8 +90,8 @@ However, for simplicity it is okay to put those files in the project `.gitignore
 
 For further reading, see the following articles:
 
-- http://vinyll.scopyleft.fr/using-gitignore-the-right-way/
-- https://gist.github.com/subfuzion/db7f57fff2fb6998a16c
+- <http://vinyll.scopyleft.fr/using-gitignore-the-right-way/>
+- <https://gist.github.com/subfuzion/db7f57fff2fb6998a16c>
 
 ### [LICENSE](../LICENSE)
 

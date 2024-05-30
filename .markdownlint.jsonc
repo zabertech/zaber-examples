@@ -8,7 +8,7 @@
         "style": "dash"
     },
     "MD007": {
-        "indent": 4  // Default was 2, but we seem to consistently use 4 which is okay.
+        "indent": 2  // Unordered list indentation
     },
     "MD013": false,  // Line length
     "MD024": {
@@ -17,9 +17,13 @@
     "MD032": false,  // Blanks around lists
     "MD033": {  // Inline HTML
         "allowed_elements": [
-            "ReplaceWithAllowedElement"
+            "br",
+            "img",
+            "sup"
         ]
     },
+    "MD036": false,  // Emphasis instead of a heading
+    "MD045": false,  // Image should have alt text
     "MD049": {  // Emphasis style
         "style": "asterisk"
     } 

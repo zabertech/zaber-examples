@@ -11,7 +11,11 @@ and called from `.github/workflows/check_examples.yml`
 
 ## Dependency
 
-The script uses `pdm` and the dependencies are listed in [`pyproject.toml`](pyproject.toml)
+The script uses `markdownlint-cli2` to lint markdown files.
+See [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) for installation instruction.
+
+The script uses `pdm` to manage virtual environment and Python dependencies.
+See [`pyproject.toml`](pyproject.toml) for more detail.
 
 ## Installing the script
 
@@ -33,10 +37,3 @@ Examples of how to use the script:
 - `pdm check list`: list example directories that would be checked
 - `pdm check self`: lint the check_example script itself.
 - `pdm check <example>`: check specific examples
-
-## Note
-
-Currently the check script uses [pymarkdownlnt](https://github.com/jackdewinter/pymarkdown/),
-which has some bugs and limitations.  For example, it doesn't detect all instances of
-needing space around lists (rule [MD032](https://github.com/jackdewinter/pymarkdown/blob/main/docs/rules/rule_md032.md)).  The Python markdown linter should be replaced by
-something a bit more robust, perhaps from the Javascript ecosystem.
