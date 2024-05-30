@@ -22,11 +22,10 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: "3.12"
-      - name: markdownlint-cli2-action
-        uses: DavidAnson/markdownlint-cli2-action@v9
       - id: inspect-examples
         name: Inspect Examples
         run: |
+          npm install markdownlint-cli2 --global
           python3 -m pip install --user --upgrade pip
           python3 -m pip install --user --upgrade pipenv
           python3 -m pip install --user --upgrade pdm
