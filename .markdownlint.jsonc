@@ -1,0 +1,39 @@
+// Configuration file to use with markdownlint-cli2
+// https://github.com/DavidAnson/markdownlint-cli2
+// Configuration of the rules can be found here:
+// https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+{
+    "MD004": {  // Unordered list style
+        "style": "dash"
+    },
+    "MD007": {
+        "indent": 4  // default was 2, but we seem to consistently use 4 which is okay.
+    },
+    "MD013": false,  // Line length
+    "MD024": {
+        "siblings_only": true
+    },
+    "MD032": false,  // blanks around lists
+    "MD033": {  // Inline HTML
+        "allowed_elements": [
+            "a",
+            "ApiRef",
+            "GuidesSearch",
+            "Icon",
+            "LanguageSection",
+            "LanguageSectionEnd",
+            "LanguageSwitch",
+            "Member",
+            "Null",
+            "OSSection",
+            "OSSectionEnd",
+            "SelectOS",
+            "SetLanguage",
+            "VersionArchive"
+        ]
+    },
+    "MD049": {  // Emphasis style
+        "style": "asterisk"
+    } 
+}
