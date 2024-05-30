@@ -5,23 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:94ca87fa0261300b5e1a90b27c0b25ccde32e254bd18f8c9dd8f6fab7f743221"
-
-[[package]]
-name = "application-properties"
-version = "0.8.2"
-requires_python = ">=3.8.0"
-summary = "A simple, easy to use, unified manner of accessing program properties."
-groups = ["dev"]
-dependencies = [
-    "pyyaml>=5.4.1",
-    "tomli>=2.0.1",
-    "typing-extensions>=4.5.0",
-]
-files = [
-    {file = "application_properties-0.8.2-py3-none-any.whl", hash = "sha256:a4fe684e4d95fc45054d3316acf763a7b0f29342ccea02eee09de53004f0139c"},
-    {file = "application_properties-0.8.2.tar.gz", hash = "sha256:e5e6918c8e29ab57175567d51dfa39c00a1d75b3205625559bb02250f50f0420"},
-]
+content_hash = "sha256:d6b42cc4db437935cf1c695306e6f74af85fde9841be692645af28ac1d5221f9"
 
 [[package]]
 name = "astroid"
@@ -80,20 +64,6 @@ marker = "sys_platform == \"win32\" or platform_system == \"Windows\""
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
-]
-
-[[package]]
-name = "columnar"
-version = "1.4.1"
-summary = "A tool for printing data in a columnar format."
-groups = ["dev"]
-dependencies = [
-    "toolz",
-    "wcwidth",
-]
-files = [
-    {file = "Columnar-1.4.1-py3-none-any.whl", hash = "sha256:8efb692a7e6ca07dcc8f4ea889960421331a5dffa8e5af81f0a67ad8ea1fc798"},
-    {file = "Columnar-1.4.1.tar.gz", hash = "sha256:c3cb57273333b2ff9cfaafc86f09307419330c97faa88dcfe23df05e6fbb9c72"},
 ]
 
 [[package]]
@@ -241,39 +211,6 @@ files = [
 ]
 
 [[package]]
-name = "pymarkdownlnt"
-version = "0.9.19"
-requires_python = ">=3.8.0"
-summary = "A GitHub Flavored Markdown compliant Markdown linter."
-groups = ["dev"]
-dependencies = [
-    "application-properties>=0.8.2",
-    "columnar>=1.4.0",
-    "typing-extensions>=4.7.0",
-]
-files = [
-    {file = "pymarkdownlnt-0.9.19-py3-none-any.whl", hash = "sha256:f1584d1b559fef634f83bdfb004b9d446cccc14a8448d01ff66c67d5949e1b7d"},
-    {file = "pymarkdownlnt-0.9.19.tar.gz", hash = "sha256:4ef7b1a2b1ab67e6c5e8859d773f5367638158bd699869f8fbdfdf36d68359d8"},
-]
-
-[[package]]
-name = "pyyaml"
-version = "6.0.1"
-requires_python = ">=3.6"
-summary = "YAML parser and emitter for Python"
-groups = ["dev"]
-files = [
-    {file = "PyYAML-6.0.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:855fb52b0dc35af121542a76b9a84f8d1cd886ea97c84703eaa6d88e37a2ad28"},
-    {file = "PyYAML-6.0.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:40df9b996c2b73138957fe23a16a4f0ba614f4c0efce1e9406a184b6d07fa3a9"},
-    {file = "PyYAML-6.0.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a08c6f0fe150303c1c6b71ebcd7213c2858041a7e01975da3a99aed1e7a378ef"},
-    {file = "PyYAML-6.0.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6c22bec3fbe2524cde73d7ada88f6566758a8f7227bfbf93a408a9d86bcc12a0"},
-    {file = "PyYAML-6.0.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:8d4e9c88387b0f5c7d5f281e55304de64cf7f9c0021a3525bd3b1c542da3b0e4"},
-    {file = "PyYAML-6.0.1-cp312-cp312-win32.whl", hash = "sha256:d483d2cdf104e7c9fa60c544d92981f12ad66a457afae824d146093b8c294c54"},
-    {file = "PyYAML-6.0.1-cp312-cp312-win_amd64.whl", hash = "sha256:0d3304d8c0adc42be59c5f8a4d9e3d7379e6955ad754aa9d6ab7a398b59dd1df"},
-    {file = "PyYAML-6.0.1.tar.gz", hash = "sha256:bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"},
-]
-
-[[package]]
 name = "snowballstemmer"
 version = "2.2.0"
 summary = "This package provides 29 stemmers for 28 languages generated from Snowball algorithms."
@@ -281,17 +218,6 @@ groups = ["dev"]
 files = [
     {file = "snowballstemmer-2.2.0-py2.py3-none-any.whl", hash = "sha256:c8e1716e83cc398ae16824e5572ae04e0d9fc2c6b985fb0f900f5f0c96ecba1a"},
     {file = "snowballstemmer-2.2.0.tar.gz", hash = "sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1"},
-]
-
-[[package]]
-name = "tomli"
-version = "2.0.1"
-requires_python = ">=3.7"
-summary = "A lil' TOML parser"
-groups = ["dev"]
-files = [
-    {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
-    {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 
 [[package]]
@@ -306,17 +232,6 @@ files = [
 ]
 
 [[package]]
-name = "toolz"
-version = "0.12.1"
-requires_python = ">=3.7"
-summary = "List processing tools and functional utilities"
-groups = ["dev"]
-files = [
-    {file = "toolz-0.12.1-py3-none-any.whl", hash = "sha256:d22731364c07d72eea0a0ad45bafb2c2937ab6fd38a3507bf55eae8744aa7d85"},
-    {file = "toolz-0.12.1.tar.gz", hash = "sha256:ecca342664893f177a13dac0e6b41cbd8ac25a358e5f215316d43e2100224f4d"},
-]
-
-[[package]]
 name = "typing-extensions"
 version = "4.11.0"
 requires_python = ">=3.8"
@@ -325,14 +240,4 @@ groups = ["dev"]
 files = [
     {file = "typing_extensions-4.11.0-py3-none-any.whl", hash = "sha256:c1f94d72897edaf4ce775bb7558d5b79d8126906a14ea5ed1635921406c0387a"},
     {file = "typing_extensions-4.11.0.tar.gz", hash = "sha256:83f085bd5ca59c80295fc2a82ab5dac679cbe02b9f33f7d83af68e241bea51b0"},
-]
-
-[[package]]
-name = "wcwidth"
-version = "0.2.13"
-summary = "Measures the displayed width of unicode strings in a terminal"
-groups = ["dev"]
-files = [
-    {file = "wcwidth-0.2.13-py2.py3-none-any.whl", hash = "sha256:3da69048e4540d84af32131829ff948f1e022c1c6bdb8d6102117aac784f6859"},
-    {file = "wcwidth-0.2.13.tar.gz", hash = "sha256:72ea0c06399eb286d978fdedb6923a9eb47e1c486ce63e9b4e64fc18303972b5"},
 ]
