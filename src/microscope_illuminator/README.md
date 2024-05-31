@@ -18,6 +18,7 @@ This script is intended for use with the following hardware:
 ## Dependencies
 
 The script uses the following package:
+
 - [Zaber Motion Library](https://software.zaber.com/motion-library/docs/tutorials/install/py)
 
 ## Configuration
@@ -36,5 +37,6 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 ## Multi-Dimensional Acquisition
 
 This script can be combined with other example scripts to automate complex multi-dimensional imaging processes:
+
 - [microscope_high_throughput_scanning](../microscope_high_throughput_scanning)
 - [microscope_filter_cube](../microscope_filter_cube)

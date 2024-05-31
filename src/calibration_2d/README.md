@@ -43,9 +43,10 @@ To run the script:
 
 ## How it works
 
-The script consists of the following files,
+The script consists of the following files:
+
 - `calibrate.py` - a script to be called on the command line, to generate random points
-and demonstrates how `Calibration` class works by plotting the coordinates before and after mapping.
+and demonstrates how `Calibration` class works by plotting the coordinates before and after mapping
 - `calibration.py` - contains `Calibration` class, which can be used in other programs and applications
 
 When running `calibrate.py`, you can specify the type of interpolation to plot with the script:

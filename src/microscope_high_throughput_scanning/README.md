@@ -20,6 +20,7 @@ The script dependancies are defined in the ['Pipfile'](./Pipfile):
 ## Hardware Setup
 
 Follow these steps to setup the hardware for scanning:
+
 1. Orient long edge of sample along the long axis of the stage
 2. Rotate your camera such that the width of the sensor is perpendicular to the scan direction
 3. Wire IO connections as shown below using the included IO cable (Note: DO1 on the X-LDA is used as a pullup voltage source for the open-drain camera output)
@@ -37,6 +38,7 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 Enter your scan protocol in `config.py`:
 <https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_high_throughput_scanning/config.py#L37-L44>
 These settings define the dimension and position of your sample as well as the magnification. There are three modes:
+
 - `TDI`: Triggering is done using onboard triggers and the TDI calculator as described in our [TDI imaging article](https://www.zaber.com/articles/tdi-imaging). This generates a snaking motion profile which will scan the sample based on the exposure required limited to the maximum stage speed.
 - `area`: For conventional stop-and-shoot imaging as fast as possible. Generates a stream which will move the stage to each position and trigger the camera. Once the exposure is done, a focus adjustment is trigged
 - `continuous`: For use with area cameras operating with short exposures. This method will move the stage continously, scanning the sample at the Nyquist speed and triggering the camera every time the sample has moved by the height of the sensor. Note: Consider your maximum camera FPS when setting up this mode.

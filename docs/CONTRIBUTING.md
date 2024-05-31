@@ -27,6 +27,7 @@ in `/src/<example_directory>/`:
 ## Adding a new Example
 
 If you want to contribute a new example:
+
 1. Take a look at all the examples under [`src/`](../src/) directory and make sure the new example
 is not a duplicate or closely related to another example already in the repository.
 2. Make sure that the example you want to add is illustrating a single concept or task,
@@ -52,6 +53,7 @@ You can start with our [example template](../src/_template/).
 ## Language Checklist
 
 Here are the checklists for the various languages:
+
 - [Python](python.md)
 - [MATLAB](matlab.md)
 - [C#](csharp.md)

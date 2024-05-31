@@ -108,7 +108,8 @@ Class Methods:
 - `reset_max_speed_limit()` - Resets the velocity limit for shaped moves to the device's existing maxspeed setting. This is the default limit and is automatically set when the class is created.
 - `reset_deceleration()` - Resets the trajectory deceleration to the value that existed when the `ShapedAxis` class was first initialized.
 
-__Important Notes:__
+**Important Notes:**
+
 - All shaped movement commands have an optional acceleration parameter. If this parameter is not specified, the current acceleration setting will be queried from the device prior to performing each move. For maximum speed it is recommended to specify this value as it reduces communication overhead.
 - Shaped movement commands will adjust the [motion.decelonly](https://www.zaber.com/protocol-manual#topic_setting_motion_decelonly) setting. The `reset_deceleration()` method can be used to restore this value. No other trajectory settings are adjusted.
 
@@ -143,10 +144,12 @@ shaped_axis_var = ShapedAxisStream(axis, plant, ShaperType.ZV, stream_id)
   - The `Plant` class has `resonant_frequency` and `damping_ratio` properties that define the target vibration frequency in Hz and damping ratio at which the input shaping algorithm will remove vibration.
 
 Class Properties:
+
 - `shaper_type`: Type of the input shaper to use. Defaults to `ShaperType.ZV` if unspecified. Available shaper types are defined in the `ShaperType` enumeration class in [zero_vibration_stream_generator.py](zero_vibration_stream_generator.py). More details on the different input shaper types can be found in  [input_shaper_types.md](input_shaper_types.md).
 - `stream_id`: Identifier number for the stream on the device. This defaults to 1 if unspecified. This is necessary if multiple streams are being used on a single device in order to avoid a conflict. For example, when performing input shaping in stream mode on two separate axes on a controller, each axis will need its own stream, so a different id needs to be specified when configuring each class instance.
 
 Class Methods:
+
 - `move_absolute()` - Moves to an absolute position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_absolute()](https://software.zaber.com/motion-library/api/py/ascii/axis#moveabsolute) command.
 - `move_relative()` - Moves to a relative position using a trajectory shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_relative()](https://software.zaber.com/motion-library/api/py/ascii/axis#moverelative) command.
 - `move_max()` - Moves to the max limit using a trajectory input shaped for the target resonant frequency and damping ratio. Similar format to the [Axis.move_max()](https://software.zaber.com/motion-library/api/py/ascii/axis#movemax) command.
@@ -155,7 +158,8 @@ Class Methods:
 - `set_max_speed_limit()` - Sets the velocity limit for which shaped moves will not exceed. Allows user specified units.
 - `reset_max_speed_limit()` - Resets the velocity limit for shaped moves to the device's existing maxspeed setting. This is the default limit and is automatically set when the class is created.
 
-__Important Notes:__
+**Important Notes:**
+
 - All shaped movement commands have an optional acceleration parameter. If this parameter is not specified, the current acceleration setting will be queried from the device prior to performing each move. For maximum speed it is recommended to specify this value as it reduces communication overhead.
 
 ## Troubleshooting Tips

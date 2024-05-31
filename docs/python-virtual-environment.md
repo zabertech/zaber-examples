@@ -97,7 +97,8 @@ This section will be deleted when all examples are updated to use the latest ver
 
 ### PyCharm configuration with Pipenv
 
-Here are some tips on using PyCharm
+Here are some tips on using PyCharm:
+
 1. Open the `src/example/python/` as a new project.
 2. Note: Opening `zaber-examples/` will not work since pipenv environments are constrained
    within individual examples.
