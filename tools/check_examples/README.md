@@ -14,7 +14,8 @@ and called from `.github/workflows/check_examples.yml`
 The script uses [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2)
 to lint markdown files, and needs [`Node.js`](https://nodejs.org/en) to install and run.
 
-Configure `markdownlint-cli2` rules via [`.markdownlint.jsonc`](.markdownlint.jsonc).
+Configure `markdownlint-cli2` rules via [`.markdownlint.jsonc`](../../.markdownlint.jsonc)
+in the project root directory.
 
 The script uses [`pdm`](https://pdm-project.org/en/latest/) to manage virtual environment
 and Python dependencies.  See [`pyproject.toml`](pyproject.toml) for more detail.

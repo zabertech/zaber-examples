@@ -24,8 +24,11 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
     return_code = 0
     markdown_files = list_files_of_suffix(directory, ".md", recurse=recurse)
     tool_path = get_git_root_directory() / "tools/check_examples"
+    config_path = Path("../../.markdownlint.jsonc")
     for file in markdown_files:
         filename = str(file)
-        return_code |= execute(["npx", "markdownlint-cli2", filename], tool_path)
+        return_code |= execute(
+            ["npx", "markdownlint-cli2", filename, "--config", str(config_path)], tool_path
+        )
         return_code |= check_links_in_markdown(file)
     return return_code
