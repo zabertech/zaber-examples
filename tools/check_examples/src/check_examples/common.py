@@ -107,7 +107,9 @@ def load_ignore() -> None:
 
 
 def filter_not_ignored(filepath: Path) -> bool:
-    """Check if a file or directory is in ignore.txt."""
+    """Check if a file or directory is in ignore.txt or should be ignored otherwise."""
     if filepath in ignore_list:
+        return False
+    if "node_module" in str(filepath):
         return False
     return True

@@ -25,10 +25,10 @@ jobs:
       - id: inspect-examples
         name: Inspect Examples
         run: |
-          npm install markdownlint-cli2 --global
           python3 -m pip install --user --upgrade pip
           python3 -m pip install --user --upgrade pipenv
           python3 -m pip install --user --upgrade pdm
           cd tools/check_examples
+          npm install
           pdm install --dev
           pdm check all
