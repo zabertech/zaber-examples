@@ -23,13 +23,9 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
     """Check markdown files."""
     return_code = 0
     markdown_files = list_files_of_suffix(directory, ".md", recurse=recurse)
-    check_example_directory = get_git_root_directory() / "tools/check_examples"
-    config_file = check_example_directory / "pymarkdownlnt.toml"
+    tool_path = get_git_root_directory() / "tools/check_examples"
     for file in markdown_files:
         filename = str(file)
-        return_code |= execute(
-            ["pdm", "run", "pymarkdownlnt", "--config", str(config_file.name), "scan", filename],
-            check_example_directory,
-        )
+        return_code |= execute(["npx", "markdownlint-cli2", filename], tool_path)
         return_code |= check_links_in_markdown(file)
     return return_code

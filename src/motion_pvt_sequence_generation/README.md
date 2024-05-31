@@ -250,7 +250,7 @@ The following image shows a geometric path consisting of six points. Note that t
 
 Under the hood, the geometric path is represented by an multi-dimensional B-spline. The generated curve is parameterized by a normalized parameterization length `u` that goes from 0, defining the first point, to 1, defining the last.
 
-For more information about B-splines, see https://en.wikipedia.org/wiki/B-spline.
+For more information about B-splines, see <https://en.wikipedia.org/wiki/B-spline>.
 
 #### Initialization
 

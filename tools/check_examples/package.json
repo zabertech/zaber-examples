@@ -1,0 +1,14 @@
+{
+  "name": "check_examples",
+  "version": "1.0.0",
+  "description": "This script checks that all the example directories have the required files, and performs linting as required for various languages.",
+  "main": "index.js",
+  "scripts": {
+    "lint:md": "markdownlint-cli2"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "markdownlint-cli2": "^0.13.0"
+  }
+}

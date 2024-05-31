@@ -1,0 +1,30 @@
+// Configuration file to use with markdownlint-cli2
+// https://github.com/DavidAnson/markdownlint-cli2
+// Configuration of the rules can be found here:
+// https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
+
+{
+    "MD004": {  // Unordered list style
+        "style": "dash"
+    },
+    "MD007": {
+        "indent": 2  // Unordered list indentation
+    },
+    "MD013": false,  // Line length
+    "MD024": {
+        "siblings_only": true
+    },
+    "MD032": false,  // Blanks around lists
+    "MD033": {  // Inline HTML
+        "allowed_elements": [
+            "br",
+            "img",
+            "sup"
+        ]
+    },
+    "MD036": false,  // Emphasis instead of a heading
+    "MD045": false,  // Image should have alt text
+    "MD049": {  // Emphasis style
+        "style": "asterisk"
+    } 
+}

@@ -19,6 +19,9 @@
 obj/
 bin/
 
+## JavaScript
+node_modules/
+
 ## Python
 .venv/
 venv/
