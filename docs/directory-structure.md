@@ -37,14 +37,15 @@ files and directories to follow.
     │   ├── virtual-environment.md
     │   └── img/
     │
-    ├── src/
+    ├── examples/
     │   ├── _template/
     │   │   ├── README.md
     │   │   ├── cpp/
     │   │   ├── csharp/
     │   │   ├── img/
     │   │   ├── javascript/
-    │   │   └── python/
+    │   │   ├── python_pdm/
+    │   │   └── python_pipenv/
     │   │
     │   ├── categoryname1_example_name1/
     │   ├── categoryname1_example_name2/
@@ -136,11 +137,11 @@ Each language has a document outlining the coding style and best practices to fo
 for the example code in this repository, including recommendation for linters,
 virtual environment, setup, etc.  For example, [python.md](python.md).
 
-## [Directory `src/`](../src/)
+## [Directory `examples/`](../examples/)
 
 This directory contains all the example subdirectories.
 
-### [Subdirectory `_template/`](../src/_template/)
+### [Subdirectory `_template/`](../examples/_template/)
 
 This is a template for setting up a new example subdirectory.  Make a copy of this template and
 rename it to make a start contributing to a new example.

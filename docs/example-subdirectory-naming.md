@@ -1,6 +1,6 @@
 # Example Subdirectory Naming Conventions
 
-Please follow this guideline when naming example subdirectories under [`src/`](../src/).
+Please follow this guideline when naming example subdirectories under [`examples/`](../examples/).
 This will help make the repository more consistent and easier to browse on GitHub.
 
 Subdirectory names should consist only of lower-case letters and underscores, for example:

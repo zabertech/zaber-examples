@@ -89,23 +89,12 @@ def check_link(link: MarkdownLink) -> list[str]:
     except ValueError as error:
         return [f"{link.location} - {error}"]
 
-    # Check name of link
-    # error_message += check_link_name(link.text)
-
     # Check whether it is an external link
     if link.url.startswith("https://"):
         error_message += check_external_link(link.url)
     else:
         error_message += check_internal_link(link)
     return error_message
-
-
-def check_link_name(link_text: str) -> list[str]:
-    """Check that the name of link text makes sense."""
-    # This may be useful when transitioning from src to example.
-    if "src" in link_text:
-        return ["Link of text contains 'src'."]
-    return []
 
 
 def check_internal_link(link: MarkdownLink) -> list[str]:
