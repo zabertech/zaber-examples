@@ -2,7 +2,7 @@
 
 This repository contains code examples on how to control [Zaber](https://www.zaber.com) devices, that you can use in your own scripts and programs.  Feel free to browse through application examples to help you get something up and running quickly.
 
-Application examples and code snippets are in the [src](src) subdirectory.
+Application examples and code snippets are in the [`examples/`](examples/) subdirectory.
 
 ## Installation
 

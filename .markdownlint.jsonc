@@ -14,7 +14,6 @@
     "MD024": {
         "siblings_only": true
     },
-    "MD032": false,  // Blanks around lists
     "MD033": {  // Inline HTML
         "allowed_elements": [
             "br",

@@ -95,6 +95,7 @@ If we specify that we want 0.5 horizontal and vertical overlap between tiles, th
 | <img src="img/example_tiles/tile_3_0.png" style="max-width:150px; max-height:150px;"> | <img src="img/example_tiles/tile_3_1.png" style="max-width:150px; max-height:150px;"> | <img src="img/example_tiles/tile_3_2.png" style="max-width:150px; max-height:150px;"> |
 
 The algorithm for generating the path is quite simple:
+
 - compute the size of a camera frame given the size of each pixel and camera resolution (note that the user doesn't have to specify camera resolution)
 - determine horizontal and vertical step length based on frame size and overlap
 - find the minimum number of steps needed to cover the area defined by `TOP_LEFT` and `BOTTOM_RIGHT`

@@ -53,6 +53,7 @@ pipenv run python generate_pvt_sequence.py
 ## Usage
 
 To quickly generate PVT data from position, position-time, or velocity-time data, follow these steps:
+
 1. Create a CSV file with an appropriate structure, as defined in the docstring of [generate_pvt_sequence.py](generate_pvt_sequence.py), or use one of the sample files in one of the [sample_data](sample_data/) directories:
    - [position_data](sample_data/position_data/) contains position-only sequences,
    - [position_time_data](sample_data/position_time_data/) contains position-time sequences,
@@ -62,6 +63,7 @@ To quickly generate PVT data from position, position-time, or velocity-time data
 3. With the input files ready to go and the configuration parameters set, run the script as described in [Running the Script](#running-the-script). If applicable, the output files will be generated in `OUTPUT_DIRECTORY`.
 
 The repository also contains some helper files that may be useful for extending the functionality of the script, or to use in other applications entirely. These are described briefly below, and in more detail in subsequent sections:
+
 - [pvt.py](pvt.py) contains several classes and functions that can be used to shape and manipulate PVT sequences.
 - [visualization.py](visualization.py) contains functions to plot PVT trajectories and geometric paths.
 
@@ -95,6 +97,7 @@ point = pvt.Point(position, velocity, time)
 #### Class Properties
 
 The class has the following read-only properties:
+
 - `time` - The absolute time associated with the point.
 - `position` - The position vector associated with the point.
 - `velocity` - The velocity vector associated with the point.
@@ -123,6 +126,7 @@ segment = pvt.Segment(point4, point5)
 #### Class Properties
 
 The class has the following read-only properties:
+
 - `start_point` - The point defining the start state of the segment.
 - `end_point` - The point defining the end state of the segment.
 - `dim` - The dimension of the segment.
@@ -130,6 +134,7 @@ The class has the following read-only properties:
 #### Class Methods
 
 The class has the following methods:
+
 - `position(time)` - Return the position at any time between the two points.
 - `velocity(time)` - Return the velocity at any time between the two points.
 - `acceleration(time)` - Return the acceleration at any time between the two points.
@@ -226,6 +231,7 @@ sequence = pvt.Sequence.generate_positions(time, velocities)
 #### Class Properties
 
 The class has the following read-only properties:
+
 - `points` - A copy of the list of points defining the sequence.
 - `start_time` - The start time of the sequence.
 - `end_time` - The end time of the sequence.
@@ -234,6 +240,7 @@ The class has the following read-only properties:
 #### Class Methods
 
 The class has the following methods:
+
 - `append_point(point)` - Append a point at the end of the sequence.
 - `position(time)` - Return the position at any time in the sequence.
 - `velocity(time)` - Return the position at any time in the sequence.
@@ -267,6 +274,7 @@ path = pvt.GeometricPath([x_positions, y_positions])
 #### Class Properties
 
 The class has the following read-only properties:
+
 - `length` - The length of the path, from start to finish.
 - `parameterized_lengths` - The normalized lengths corresponding to each of the points used to construct the path. These range from 0, for the first point, to 1, for the final point.
 
@@ -279,6 +287,7 @@ The class has the following read-only properties:
 ## The Visualization File
 
 The [visualization.py](visualization.py) file contains several functions for plotting PVT sequence trajectories and paths:
+
 - `plot_pvt_trajectory(sequence, ...)` - Plots the position, velocity, and acceleration profiles for a given PVT sequence.
 - `plot_pvt_path(sequence, ...)` - Plots the 2-D or 3-D geometric path of a given PVT sequence and scaled arrows representing the velocity vector (or tangent) at each point.
 - `plot_path_and_trajectory(sequence, ...)` - Combines the previous two functions and plots both the PVT trajectories and the geometric path for the given PVT sequence.

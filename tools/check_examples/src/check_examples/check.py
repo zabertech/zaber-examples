@@ -29,7 +29,7 @@ from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match
 from .check_python import check_python
 from .check_basic import check_basic, check_markdown
 
-EXAMPLE_DIR = "src"
+EXAMPLE_DIR = "examples"
 TOOLS_DIR = "tools"
 DOCS_DIR = "docs"
 

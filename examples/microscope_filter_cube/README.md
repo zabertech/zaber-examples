@@ -29,10 +29,12 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 ## Filter Cube Selection
 
 The script gives an example of selecting a specific filter cube:
+
 - `select_cube("BFP")`
 
 ## Multi-Dimensional Acquisition
 
 This script can be combined with other example scripts to automate complex multi-dimensional imaging processes:
+
 - [microplate_scanning_basic](../microplate_scanning_basic)
 - [microscope_illuminator](../microscope_illuminator)

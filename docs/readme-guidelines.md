@@ -23,7 +23,7 @@ directly in the document.
 
 ## README.md template
 
-There is a [`README.md` template](../src/_template/README.md) with suggested headings.
+There is a [`README.md` template](../examples/_template/README.md) with suggested headings.
 You can make a copy of this template and edit as you see fit,
 or browse some of the other examples for inspiration.
 
