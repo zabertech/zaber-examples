@@ -1,0 +1,10 @@
+# rename this file to remove the .template extension
+# then edit the content of the metatdata in this YAML file for rendering on https://software.zaber.com/examples
+authors:
+  - Andrew Lau
+date: 2024-05-01
+category: Microscopy
+tags:
+  - Python
+  - Computer Vision
+picture: img/screenshot.png
