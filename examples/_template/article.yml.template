@@ -1,4 +1,4 @@
-# rename this file to remote the .template extension
+# rename this file to remove the .template extension
 # then edit the content of the metatdata in this YAML file for rendering on https://software.zaber.com/examples
 authors:
   - Andrew Lau
