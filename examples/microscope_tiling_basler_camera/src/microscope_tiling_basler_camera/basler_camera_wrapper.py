@@ -90,7 +90,7 @@ class BaslerCameraWrapper:
             with self._cam.RetrieveResult(MAX_TIMEOUT_MS) as result:
                 if result.GrabSucceeded():
                     with result.GetArrayZeroCopy() as out_array:
-                        ret = out_array
+                        ret = out_array.copy()
                         break
 
         if len(ret) == 0:
