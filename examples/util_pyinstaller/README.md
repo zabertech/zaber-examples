@@ -15,35 +15,41 @@ The command below taken from `build.bat` demonstrates how to include the library
 pyinstaller --onefile --add-binary ".venv\Lib\site-packages\zaber_motion_bindings\zaber-motion-lib-windows-amd64.dll;zaber_motion_bindings" main.py
 ```
 
-## Dependencies
+## Dependencies / Software Requirements / Prerequisites
 
-- The example is made for Windows, but it can be easily adapted for other platforms.
-- Python 3.10 or newer
-- The script uses `venv` to manage virtual environment and dependencies.
-- The dependencies are listed in the requirements.txt file.
+The example is made for Windows, but it can be easily adapted for other platforms.
+
+The script uses `pdm` to manage virtual environment and dependencies:
+
+Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
+
+The dependencies are listed in `pyproject.toml`.
 
 ## Running the Script
 
 Open the `main.py` file and replace the serial port name with the one you are using.
+
 Then run the script:
 
-```ps1
-.\setup_venv.bat
-.\run.bat
+```shell
+cd examples/util_pyinstaller/
+pdm install
+pdm run example
 ```
 
 ## Building the Executable
 
 To build the executable:
 
-```ps1
-.\setup_venv.bat
+```shell
+cd examples/util_pyinstaller/
+pdm install
 .\build.bat
 ```
 
 You'll find the distributable executable `main.exe` in the `dist` directory.
 You can test it by running:
 
-```ps1
+```shell
 .\dist\main.exe
 ```

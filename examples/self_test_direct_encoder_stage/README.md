@@ -32,7 +32,7 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 Once everything has been configured, you can set up the environment with:
 
 ```shell
-cd examples/gui_pyqt6/
+cd examples/self_test_direct_encoder_stage/
 pdm install
 ```
 

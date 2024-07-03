@@ -15,7 +15,7 @@ The dependencies are listed in `pyproject.toml`.
 ## Running the Script
 
 ```shell
-cd examples/gui_pyqt6/
+cd examples/util_com_port_scan/
 pdm install
 pdm run example
 ```
