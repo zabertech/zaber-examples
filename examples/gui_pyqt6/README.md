@@ -6,11 +6,13 @@ This basic GUI allows the user to control and monitor stage position
 
 ![screenshot.png](img/screenshot.png)
 
-## Dependencies
+## Dependencies / Software Requirements / Prerequisites
 
-- Python 3.10 or newer
-- The script uses `venv` to manage virtual environment and dependencies.
-- The dependencies are listed in the requirements.txt file.
+The script uses `pdm` to manage virtual environment and dependencies:
+
+Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
+
+The dependencies are listed in `pyproject.toml`.
 
 ## Configuration
 
@@ -25,26 +27,15 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 
 Connect a stage first.
 
-### Windows
+### Running the Script
 
-To setup `venv`, run `setup_venv.bat` in the `python` folder.
+Once everything has been configured, you can run the example:
 
-To run the script:
-
-    cd src\gui_pyqt6
-    .venv\Scripts\python stage_pos_gui.py
-
-### Linux / MacOS
-
-To setup `venv`:
-
-    cd src/gui_pyqt6
-    python3 -m venv .venv
-    .venv/bin/pip install -r requirements.txt
-
-To run the script:
-
-    .venv/bin/python stage_pos_gui.py
+```shell
+cd examples/gui_pyqt6/
+pdm install
+pdm run example
+```
 
 ## Editing the GUI
 

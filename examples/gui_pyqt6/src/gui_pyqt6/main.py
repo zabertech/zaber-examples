@@ -8,9 +8,16 @@ import time
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import QThread, QEvent, Qt, pyqtSignal
 from PyQt6.QtWidgets import QApplication, QMainWindow, QSplashScreen
+from zaber_motion import Units
+from zaber_motion.ascii import Connection, Axis, AxisType
 
-# Pre-launch tasks
-if __name__ == "__main__":
+import ui
+
+SERIAL_PORT = "COMx"
+AXIS_NUM = 1
+
+
+def main() -> None:
     # Re-generate ui.py, if UI modified in QT Designer
     current_ui, prev_ui = Path("ui_raw.ui"), Path("ui_raw_compare.ui")
     if current_ui.read_text(encoding="utf-8") != prev_ui.read_text(encoding="utf-8"):
@@ -28,15 +35,16 @@ if __name__ == "__main__":
     SPLASH.show()
     APP.processEvents()
 
-# Rest of imports. These load while splash screen is visible.
-from zaber_motion import Units
-from zaber_motion.ascii import Connection, Axis, AxisType
+    # Launch GUI
+    gui = MyProgram()
+    SPLASH.close()  # noqa
 
-import ui
+    # Styling
+    APP.setStyle("Fusion")  # noqa
+    APP.setStyleSheet(open("style.css", encoding="utf-8").read())
 
-SERIAL_PORT = "COMx"
-AXIS_NUM = 1
-
+    # Wait in event loop
+    APP.exec()
 
 class UIExtended(ui.Ui_MainWindow):
     """Take Qt Designer UI and add other necessary components to complete the GUI."""
@@ -185,16 +193,3 @@ class MyProgram:
         self.update_thread.quit = True
         self.stage.device.connection.close()
         event.accept()
-
-
-if __name__ == "__main__":
-    # Launch GUI
-    gui = MyProgram()
-    SPLASH.close()  # noqa
-
-    # Styling
-    APP.setStyle("Fusion")  # noqa
-    APP.setStyleSheet(open("style.css", encoding="utf-8").read())
-
-    # Wait in event loop
-    APP.exec()
