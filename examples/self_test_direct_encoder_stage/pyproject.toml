@@ -1,0 +1,32 @@
+[project]
+name = "self_test_direct_encoder_stage"
+version = "0.1.0"
+description = "Zaber Examples -- Direct Encoder Stage Self Test"
+authors = [
+    {name = "Nathan Paolini", email = "testing@zaber.com"},
+]
+dependencies = [
+    "matplotlib==3.8.1",
+    "zaber-motion==3.3.0",
+]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+accuracy = {call = "src.self_test_direct_encoder_stage.accuracy:main"}
+settling-time = {call = "src.self_test_direct_encoder_stage.settling_time:main"}
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "mypy>=1.9.0",
+    "pylint>=3.1.0",
+    "black>=24.4.0",
+    "pydocstyle>=6.3.0",
+]
+
+[tool.pylint."messages control"]
+disable = ["no-member", "too-many-arguments", "too-many-locals"]
