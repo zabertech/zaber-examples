@@ -28,7 +28,9 @@ Cartesian gantry or X-Y system, such as
 
 The script uses `pipenv` to manage virtual environment and dependencies:
 
-    python3 -m pip install -U pipenv
+```shell
+python3 -m pip install -U pipenv
+```
 
 The dependencies are listed in Pipfile.
 
@@ -69,7 +71,9 @@ the minimum number of points required to fit the interpolation chosen.
 The number of randomly generated points can be overridden with
 the optional parameter `[<points>]` on the command line.  For example:
 
-    pipenv run python calibrate.py bilinear 5
+```shell
+pipenv run python calibrate.py bilinear 5
+```
 
 This generates a 5 x 5 = 25 points grid and does a bilinear least-square fit.
 
@@ -83,14 +87,18 @@ independently for the x-axis and y-axis.
 
 For example:
 
-    pipenv run python calibrate.py poly 1 2 4 3
+```shell
+pipenv run python calibrate.py poly 1 2 4 3
+```
 
 This generates a 4 x 3 = 12 pairs of expected and actual points,
 and tries to do an order 1 (linear) fit for the x-axis and order 2 (quadratic) fit for the y-axis.
 
 To see the arguments for each of the functions, run:
 
-    pipenv run python calibrate.py -h
+```shell
+pipenv run python calibrate.py -h
+```
 
 For a more detailed explanation of the math behind the algorithm,
 please see [calibration_map.md](calibration_map.md).

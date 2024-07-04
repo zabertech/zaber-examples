@@ -51,9 +51,11 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 
 To run the script, make sure you are running in a stand-alone terminal instead of in the terminal of your IDE.
 
-    cd src/gui_textual
-    pipenv install
-    pipenv run python tui.py
+```shell
+cd src/gui_textual
+pipenv install
+pipenv run python tui.py
+```
 
 ## Text-based User Interface
 
