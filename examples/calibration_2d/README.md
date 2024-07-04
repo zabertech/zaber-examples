@@ -9,7 +9,7 @@ points, and generate a mapping from desired coordinates to calibrated coordinate
 |:--------------------------------:|:-----------------------------------:|:-------------------------------------:|
 | ![basic bilinear](img/basic.png) | ![biquadratic](img/biquadratic.png) | ![real example](img/real_example.png) |
 
-This calibration algorithm requires as input both the coordinates of the **expected** positions (blue dots), and the coordinates of the **actual** positions (red dots). The actual positions can be acquired by moving the gantry until the end effector is directly on the fiducial mark or sample, and then reading off the positions from software such as [Zaber Launcher](https://software.zaber.com/zaber-launcher/download).  
+This calibration algorithm requires as input both the coordinates of the **expected** positions (blue dots), and the coordinates of the **actual** positions (red dots). The actual positions can be acquired by moving the gantry until the end effector is directly on the fiducial mark or sample, and then reading off the positions from software such as [Zaber Launcher](https://software.zaber.com/zaber-launcher/download).
 
 - On the left is the most basic bilinear interpolation, requiring four corner point pairs - expected coordinates $(x_p, y_p)$ and actual coordinates $(x_p', y_p')$. The calibration algorithm uses these point pairs to generate the coefficients for a mapping function that the user can call to transform desired coordinates to calibrated coordinates from any location.
 
@@ -36,10 +36,12 @@ The dependencies are listed in Pipfile.
 
 To run the script:
 
-    cd src/gantry_calibration
-    pipenv install
-    pipenv run python calibrate.py
-    pipenv run python calibrate.py basic
+```shell
+cd examples/calibration_2d
+pipenv install
+pipenv run python calibrate.py
+pipenv run python calibrate.py basic
+```
 
 ## How it works
 

@@ -22,14 +22,14 @@ You can remove the Python version requirement from `Pipfile` if you want to use 
 
 Before running for the first time, install the required packages:
 
-```bash
+```shell
 python3 -m pipenv install
 ```
 
 Then, open a terminal and start the server.
 Set the `PORT` environment variable to your serial port or change the default in `main.py`.
 
-```bash
+```shell
 export PORT=/dev/ttyUSB0
 python3 -m pipenv run python main.py
 ```

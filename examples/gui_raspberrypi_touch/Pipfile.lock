@@ -131,26 +131,6 @@
             "markers": "python_version >= '3.7'",
             "version": "==2.1.5"
         },
-        "protobuf": {
-            "hashes": [
-                "sha256:1f22ac0ca65bb70a876060d96d914dae09ac98d114294f77584b0d2644fa9c30",
-                "sha256:237216c3326d46808a9f7c26fd1bd4b20015fb6867dc5d263a493ef9a539293b",
-                "sha256:27f4d15021da6d2b706ddc3860fac0a5ddaba34ab679dc182b60a8bb4e1121cc",
-                "sha256:299ea899484ee6f44604deb71f424234f654606b983cb496ea2a53e3c63ab791",
-                "sha256:3d164928ff0727d97022957c2b849250ca0e64777ee31efd7d6de2e07c494717",
-                "sha256:6ab80df09e3208f742c98443b6166bcb70d65f52cfeb67357d52032ea1ae9bec",
-                "sha256:78a28c9fa223998472886c77042e9b9afb6fe4242bd2a2a5aced88e3f4422aa7",
-                "sha256:7cd532c4566d0e6feafecc1059d04c7915aec8e182d1cf7adee8b24ef1e2e6ab",
-                "sha256:89f9149e4a0169cddfc44c74f230d7743002e3aa0b9472d8c28f0388102fc4c2",
-                "sha256:a53fd3f03e578553623272dc46ac2f189de23862e68565e83dde203d41b76fc5",
-                "sha256:b135410244ebe777db80298297a97fbb4c862c881b4403b71bac9d4107d61fd1",
-                "sha256:b98d0148f84e3a3c569e19f52103ca1feacdac0d2df8d6533cf983d1fda28462",
-                "sha256:d1736130bce8cf131ac7957fa26880ca19227d4ad68b4888b3be0dea1f95df97",
-                "sha256:f45460f9ee70a0ec1b6694c6e4e348ad2019275680bd68a1d9314b8c7e01e574"
-            ],
-            "markers": "python_version >= '3.7'",
-            "version": "==4.21.12"
-        },
         "reactivex": {
             "hashes": [
                 "sha256:0004796c420bd9e68aad8e65627d85a8e13f293de76656165dffbcb3a0e3fb6a",
@@ -158,14 +138,6 @@
             ],
             "markers": "python_version >= '3.7' and python_version < '4.0'",
             "version": "==4.0.4"
-        },
-        "rx": {
-            "hashes": [
-                "sha256:922c5f4edb3aa1beaa47bf61d65d5380011ff6adcd527f26377d05cb73ed8ec8",
-                "sha256:b657ca2b45aa485da2f7dcfd09fac2e554f7ac51ff3c2f8f2ff962ecd963d91c"
-            ],
-            "markers": "python_full_version >= '3.6.0'",
-            "version": "==3.2.0"
         },
         "typing-extensions": {
             "hashes": [
@@ -206,14 +178,6 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==6.2.1"
-        },
-        "zaber-motion-bindings-darwin": {
-            "hashes": [
-                "sha256:a062c47fc9d36a211e0f3cb7168d1c280ae9214c688883dddcd01d3b598afd32",
-                "sha256:fe17137c618b0b3303120f4b8c07ba0b4890e1ffaecccda9ed852445ad1fbd27"
-            ],
-            "markers": "platform_system == 'Darwin'",
-            "version": "==3.3.0"
         },
         "zipp": {
             "hashes": [

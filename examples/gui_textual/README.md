@@ -15,11 +15,15 @@ The script uses `pipenv` to manage virtual environment and dependencies.
 
 Windows:
 
-    py -m pip install --user --upgrade pipenv
+```shell
+py -m pip install --user --upgrade pipenv
+```
 
 Linux / MacOS:
 
-    python3 -m pip install --user --upgrade pipenv
+```shell
+python3 -m pip install --user --upgrade pipenv
+```
 
 For full installation instruction, including making sure that 'pipenv' is available
 in your path after installation,
