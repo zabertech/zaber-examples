@@ -30,7 +30,6 @@ def execute(command: list[str], cwd: Path) -> int:
         iprint(result.stdout, 1)
     else:
         iprint_pass(" ".join(command), 1)
-        iprint(result.stdout, 1)
     return result.returncode
 
 
