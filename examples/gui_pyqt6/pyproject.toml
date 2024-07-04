@@ -28,8 +28,13 @@ dev = [
     "pydocstyle>=6.3.0",
 ]
 
-[tool.pylint.main]
-extension-pkg-whitelist = "PyQt6"
-
 [tool.pylint.messages_control]
-disable=["broad-exception-caught","too-many-instance-attributes","too-many-statements","attribute-defined-outside-init"]
+disable=[
+    "import-error",
+    "no-name-in-module",
+    "broad-exception-caught",
+    "too-many-instance-attributes",
+    "too-many-statements",
+    "attribute-defined-outside-init",
+    "too-few-public-methods",
+]
