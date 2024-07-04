@@ -45,11 +45,15 @@ To launch QT Designer, which can be used to modify the `ui_raw.ui` file, run thi
 
 Windows:
 
-    .venv\Scripts\pyqt6-tools.exe designer
+```shell
+.venv\Scripts\pyqt6-tools.exe designer
+```
 
 Linux/MacOS:
 
-    .venv/bin/pyqt6-tools designer
+```shell
+.venv/bin/pyqt6-tools designer
+```
 
 After modifying the `ui_raw.ui` file, the first time the GUI is run the `ui_raw.ui` file will
 be compared to the `ui_raw_compare.ui` file, the script will see differences, and it will then

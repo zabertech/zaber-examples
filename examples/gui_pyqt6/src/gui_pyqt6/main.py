@@ -18,6 +18,7 @@ AXIS_NUM = 1
 
 
 def main() -> None:
+    """Run the PyQt6 GUI Example"""
     # Re-generate ui.py, if UI modified in QT Designer
     current_ui, prev_ui = Path("ui_raw.ui"), Path("ui_raw_compare.ui")
     if current_ui.read_text(encoding="utf-8") != prev_ui.read_text(encoding="utf-8"):
@@ -45,6 +46,7 @@ def main() -> None:
 
     # Wait in event loop
     APP.exec()
+
 
 class UIExtended(ui.Ui_MainWindow):
     """Take Qt Designer UI and add other necessary components to complete the GUI."""
