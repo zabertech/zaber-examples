@@ -28,8 +28,8 @@ dev = [
     "pydocstyle>=6.3.0",
 ]
 
-[tool.pylint.MAIN]
-extension-pkg-allow-list = "PyQt6"
+[tool.pylint.main]
+extension-pkg-allow-list = ["PyQt6"]
 
 [tool.pylint.messages_control]
 disable=["broad-exception-caught","too-many-instance-attributes","too-many-statements","attribute-defined-outside-init"]
