@@ -36,6 +36,7 @@ def check_python(directory: Path, fix: bool) -> int:
 def check_python_pdm(directory: Path, fix: bool) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
+    # return_code |= execute(["pdm", "update", "-u", "--save-exact", "zaber-motion"], directory)
     return_code |= execute(["pdm", "install", "--dev"], directory)
 
     python_files = list_files_of_suffix(directory, ".py")
