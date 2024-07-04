@@ -117,7 +117,6 @@ def run_linters(
         return_code |= lint_files(["black", "-l100"])
     else:
         return_code |= lint_files(["black", "-l100", "--check"])
-    return_code |= execute(["pdm", "run", "pylint", "--version"], directory)
     return_code |= lint_files(["pylint", "--score=n"])
     return_code |= lint_files(["pydocstyle"])
     return_code |= lint_files(["mypy", "--strict"])
