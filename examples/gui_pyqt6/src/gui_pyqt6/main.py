@@ -1,4 +1,5 @@
-"""Started PyQt GUI for controlling a Zaber stage."""
+# mypy: disable-error-code="method-assign,assignment,truthy-function"
+"""PyQt GUI for controlling a Zaber stage."""
 
 # Initial imports that are necessary for launch
 from pathlib import Path
@@ -11,14 +12,14 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QSplashScreen
 from zaber_motion import Units
 from zaber_motion.ascii import Connection, Axis, AxisType
 
-import ui
+from .ui import UiMainWindow
 
 SERIAL_PORT = "COMx"
 AXIS_NUM = 1
 
 
 def main() -> None:
-    """Run the PyQt6 GUI Example"""
+    """Run the PyQt6 GUI Example."""
     # Re-generate ui.py, if UI modified in QT Designer
     current_ui, prev_ui = Path("ui_raw.ui"), Path("ui_raw_compare.ui")
     if current_ui.read_text(encoding="utf-8") != prev_ui.read_text(encoding="utf-8"):
@@ -29,32 +30,33 @@ def main() -> None:
         raise SystemExit("UI Re-built. Please start again.")
 
     # Show splash screen
-    APP = QApplication([])
+    app = QApplication([])
     splash_pic = QPixmap("images/zaber_splash.png")
-    SPLASH = QSplashScreen(splash_pic, Qt.WindowType.WindowStaysOnTopHint)  # noqa
-    SPLASH.setMask(splash_pic.mask())
-    SPLASH.show()
-    APP.processEvents()
+    splash = QSplashScreen(splash_pic, Qt.WindowType.WindowStaysOnTopHint)  # noqa
+    splash.setMask(splash_pic.mask())
+    splash.show()
+    app.processEvents()
 
     # Launch GUI
-    gui = MyProgram()
-    SPLASH.close()  # noqa
+    MyProgram()
+    splash.close()  # noqa
 
     # Styling
-    APP.setStyle("Fusion")  # noqa
-    APP.setStyleSheet(open("style.css", encoding="utf-8").read())
+    app.setStyle("Fusion")  # noqa
+    with open("style.css", encoding="utf-8") as file:
+        app.setStyleSheet(file.read())
 
     # Wait in event loop
-    APP.exec()
+    app.exec()
 
 
-class UIExtended(ui.Ui_MainWindow):
+class UIExtended(UiMainWindow):
     """Take Qt Designer UI and add other necessary components to complete the GUI."""
 
     def __init__(self) -> None:
         """Set up UI."""
         self.main_window = QMainWindow(flags=Qt.WindowType.Window)  # noqa
-        super().setupUi(self.main_window)
+        super().setup_ui(self.main_window)
 
         self.message_label.setText("")
 

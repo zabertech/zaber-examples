@@ -1,1 +1,1 @@
-"""GUI PyQT6 example."""
+"""PyQt GUI for controlling a Zaber stage."""

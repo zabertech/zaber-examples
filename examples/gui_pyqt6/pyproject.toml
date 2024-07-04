@@ -27,6 +27,3 @@ dev = [
     "black>=24.4.0",
     "pydocstyle>=6.3.0",
 ]
-
-[tool.pylint."messages control"]
-disable = ["no-member", "too-many-arguments", "too-many-locals"]

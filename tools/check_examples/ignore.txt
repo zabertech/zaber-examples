@@ -8,6 +8,3 @@ examples/_template
 # Example subdirectories to ignore
 
 # Files to ignore
-examples/gui_pyqt6/ui.py
-examples/gui_pyqt6/stage_pos_gui.py
-examples/gui_raspberrypi_touch/tasks.py

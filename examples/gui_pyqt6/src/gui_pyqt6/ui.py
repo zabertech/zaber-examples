@@ -1,3 +1,5 @@
+"""UI Window Generator."""
+
 # Form implementation generated from reading ui file 'ui_raw.ui'
 #
 # Created by: PyQt6 UI code generator 6.4.2
@@ -9,19 +11,22 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1333, 793)
+class UiMainWindow:
+    """UI Main Window."""
+
+    def setup_ui(self, main_window: QtWidgets.QMainWindow) -> None:
+        """Set up the UI."""
+        main_window.setObjectName("MainWindow")
+        main_window.resize(1333, 793)
         icon = QtGui.QIcon()
         icon.addPixmap(
             QtGui.QPixmap("images/gui_icon.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off
         )
-        MainWindow.setWindowIcon(icon)
-        self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
+        main_window.setWindowIcon(icon)
+        self.centralwidget = QtWidgets.QWidget(parent=main_window)
         self.centralwidget.setObjectName("centralwidget")
-        self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.vertical_layout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.vertical_layout_3.setObjectName("verticalLayout_3")
         self.table_title_label = QtWidgets.QLabel(parent=self.centralwidget)
         font = QtGui.QFont()
         font.setPointSize(17)
@@ -29,54 +34,55 @@ class Ui_MainWindow(object):
         self.table_title_label.setFont(font)
         self.table_title_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.table_title_label.setObjectName("table_title_label")
-        self.verticalLayout_3.addWidget(self.table_title_label)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
+        self.vertical_layout_3.addWidget(self.table_title_label)
+        self.horizontal_layout = QtWidgets.QHBoxLayout()
+        self.horizontal_layout.setObjectName("horizontalLayout")
+        self.vertical_layout = QtWidgets.QVBoxLayout()
+        self.vertical_layout.setObjectName("verticalLayout")
         self.label_2 = QtWidgets.QLabel(parent=self.centralwidget)
         self.label_2.setObjectName("label_2")
-        self.verticalLayout.addWidget(self.label_2)
+        self.vertical_layout.addWidget(self.label_2)
         self.stage_pos_line_edit = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.stage_pos_line_edit.setReadOnly(True)
         self.stage_pos_line_edit.setObjectName("stage_pos_line_edit")
-        self.verticalLayout.addWidget(self.stage_pos_line_edit)
+        self.vertical_layout.addWidget(self.stage_pos_line_edit)
         self.stage_pos_slider = QtWidgets.QSlider(parent=self.centralwidget)
         self.stage_pos_slider.setMaximum(1000)
         self.stage_pos_slider.setOrientation(QtCore.Qt.Orientation.Horizontal)
         self.stage_pos_slider.setObjectName("stage_pos_slider")
-        self.verticalLayout.addWidget(self.stage_pos_slider)
+        self.vertical_layout.addWidget(self.stage_pos_slider)
         self.message_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.message_label.setObjectName("message_label")
-        self.verticalLayout.addWidget(self.message_label)
-        spacerItem = QtWidgets.QSpacerItem(
+        self.vertical_layout.addWidget(self.message_label)
+        spacer_item = QtWidgets.QSpacerItem(
             20, 20, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred
         )
-        self.verticalLayout.addItem(spacerItem)
+        self.vertical_layout.addItem(spacer_item)
         self.home_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.home_btn.setObjectName("home_btn")
-        self.verticalLayout.addWidget(self.home_btn)
-        spacerItem1 = QtWidgets.QSpacerItem(
+        self.vertical_layout.addWidget(self.home_btn)
+        spacer_item_1 = QtWidgets.QSpacerItem(
             20, 40, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Expanding
         )
-        self.verticalLayout.addItem(spacerItem1)
-        self.horizontalLayout.addLayout(self.verticalLayout)
-        self.verticalLayout_3.addLayout(self.horizontalLayout)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
+        self.vertical_layout.addItem(spacer_item_1)
+        self.horizontal_layout.addLayout(self.vertical_layout)
+        self.vertical_layout_3.addLayout(self.horizontal_layout)
+        main_window.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(parent=main_window)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1333, 22))
         self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
+        main_window.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(parent=main_window)
         self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
+        main_window.setStatusBar(self.statusbar)
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.retranslate_ui(main_window)
+        QtCore.QMetaObject.connectSlotsByName(main_window)
 
-    def retranslateUi(self, MainWindow):
+    def retranslate_ui(self, main_window: QtWidgets.QMainWindow) -> None:
+        """Set text and titles."""
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "My Stage GUI"))
+        main_window.setWindowTitle(_translate("MainWindow", "My Stage GUI"))
         self.table_title_label.setText(_translate("MainWindow", "Starter Stage GUI"))
         self.label_2.setText(_translate("MainWindow", "Stage Position:"))
         self.message_label.setText(_translate("MainWindow", "message_label"))
