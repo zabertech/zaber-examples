@@ -28,7 +28,7 @@ dev = [
     "pydocstyle>=6.3.0",
 ]
 
-[tool.pylint.main]
+[tool.pylint.MAIN]
 extension-pkg-allow-list = "PyQt6"
 
 [tool.pylint.messages_control]
