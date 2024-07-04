@@ -4,8 +4,8 @@
 [metadata]
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
-lock_version = "4.4.1"
-content_hash = "sha256:3b2144e1672c4803b2067f59bc57534aa77da17803b7ab3046cfe90c90c9a00e"
+lock_version = "4.4.2"
+content_hash = "sha256:4fafb008776ba5bc0e19ffb774d6722c8c902ea8c477191b90697debe12384c2"
 
 [[package]]
 name = "astroid"
@@ -165,23 +165,6 @@ files = [
 ]
 
 [[package]]
-name = "protobuf"
-version = "4.21.12"
-requires_python = ">=3.7"
-summary = ""
-groups = ["default"]
-files = [
-    {file = "protobuf-4.21.12-cp310-abi3-win32.whl", hash = "sha256:b135410244ebe777db80298297a97fbb4c862c881b4403b71bac9d4107d61fd1"},
-    {file = "protobuf-4.21.12-cp310-abi3-win_amd64.whl", hash = "sha256:89f9149e4a0169cddfc44c74f230d7743002e3aa0b9472d8c28f0388102fc4c2"},
-    {file = "protobuf-4.21.12-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:299ea899484ee6f44604deb71f424234f654606b983cb496ea2a53e3c63ab791"},
-    {file = "protobuf-4.21.12-cp37-abi3-manylinux2014_aarch64.whl", hash = "sha256:d1736130bce8cf131ac7957fa26880ca19227d4ad68b4888b3be0dea1f95df97"},
-    {file = "protobuf-4.21.12-cp37-abi3-manylinux2014_x86_64.whl", hash = "sha256:78a28c9fa223998472886c77042e9b9afb6fe4242bd2a2a5aced88e3f4422aa7"},
-    {file = "protobuf-4.21.12-py2.py3-none-any.whl", hash = "sha256:a53fd3f03e578553623272dc46ac2f189de23862e68565e83dde203d41b76fc5"},
-    {file = "protobuf-4.21.12-py3-none-any.whl", hash = "sha256:b98d0148f84e3a3c569e19f52103ca1feacdac0d2df8d6533cf983d1fda28462"},
-    {file = "protobuf-4.21.12.tar.gz", hash = "sha256:7cd532c4566d0e6feafecc1059d04c7915aec8e182d1cf7adee8b24ef1e2e6ab"},
-]
-
-[[package]]
 name = "pydocstyle"
 version = "6.3.0"
 requires_python = ">=3.6"
@@ -216,14 +199,17 @@ files = [
 ]
 
 [[package]]
-name = "rx"
-version = "3.2.0"
-requires_python = ">=3.6.0"
-summary = "Reactive Extensions (Rx) for Python"
+name = "reactivex"
+version = "4.0.4"
+requires_python = ">=3.7,<4.0"
+summary = "ReactiveX (Rx) for Python"
 groups = ["default"]
+dependencies = [
+    "typing-extensions<5.0.0,>=4.1.1",
+]
 files = [
-    {file = "Rx-3.2.0-py3-none-any.whl", hash = "sha256:922c5f4edb3aa1beaa47bf61d65d5380011ff6adcd527f26377d05cb73ed8ec8"},
-    {file = "Rx-3.2.0.tar.gz", hash = "sha256:b657ca2b45aa485da2f7dcfd09fac2e554f7ac51ff3c2f8f2ff962ecd963d91c"},
+    {file = "reactivex-4.0.4-py3-none-any.whl", hash = "sha256:0004796c420bd9e68aad8e65627d85a8e13f293de76656165dffbcb3a0e3fb6a"},
+    {file = "reactivex-4.0.4.tar.gz", hash = "sha256:e912e6591022ab9176df8348a653fe8c8fa7a301f26f9931c9d8c78a650e04e8"},
 ]
 
 [[package]]
@@ -252,7 +238,7 @@ name = "typing-extensions"
 version = "4.12.2"
 requires_python = ">=3.8"
 summary = "Backported and Experimental Type Hints for Python 3.8+"
-groups = ["dev"]
+groups = ["default", "dev"]
 files = [
     {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
@@ -260,51 +246,20 @@ files = [
 
 [[package]]
 name = "zaber-motion"
-version = "3.3.0"
-requires_python = ">=3.7"
-summary = "A library for communicating with Zaber devices"
+version = "6.2.1"
+requires_python = ">=3.8"
+summary = "An official library for communicating with Zaber devices."
 groups = ["default"]
 dependencies = [
-    "protobuf<4.22.0,>=3.20.0",
-    "rx>=3.0.0",
-    "zaber-motion-bindings-darwin==3.3.0; platform_system == \"Darwin\"",
-    "zaber-motion-bindings-linux==3.3.0; platform_system == \"Linux\"",
-    "zaber-motion-bindings-windows==3.3.0; platform_system == \"Windows\"",
+    "reactivex~=4.0.0",
 ]
 files = [
-    {file = "zaber_motion-3.3.0-py2.py3-none-any.whl", hash = "sha256:2fbe22ae0b974641938d7465e68cfbd6c7d49f41f9e029ac2f3484e44d2a1030"},
-    {file = "zaber_motion-3.3.0.tar.gz", hash = "sha256:38ae1fd2313d1b34711324ef8bab820ad668ef77cf25b0db43d1002b3ddc08f3"},
-]
-
-[[package]]
-name = "zaber-motion-bindings-darwin"
-version = "3.3.0"
-summary = "Mac OS bindings for Zaber Motion Library"
-groups = ["default"]
-marker = "platform_system == \"Darwin\""
-files = [
-    {file = "zaber_motion_bindings_darwin-3.3.0-py3-none-any.whl", hash = "sha256:fe17137c618b0b3303120f4b8c07ba0b4890e1ffaecccda9ed852445ad1fbd27"},
-    {file = "zaber_motion_bindings_darwin-3.3.0.tar.gz", hash = "sha256:a062c47fc9d36a211e0f3cb7168d1c280ae9214c688883dddcd01d3b598afd32"},
-]
-
-[[package]]
-name = "zaber-motion-bindings-linux"
-version = "3.3.0"
-summary = "Linux bindings for Zaber Motion Library"
-groups = ["default"]
-marker = "platform_system == \"Linux\""
-files = [
-    {file = "zaber_motion_bindings_linux-3.3.0-py3-none-any.whl", hash = "sha256:3b05c96f0dbe4d8eca6466727fcc6b14c9bfea7b08ee554a7a0a222482cb0e64"},
-    {file = "zaber_motion_bindings_linux-3.3.0.tar.gz", hash = "sha256:813e064952e04c910291f33c8d7b803415dde7c10c61b1475297ce48604feb23"},
-]
-
-[[package]]
-name = "zaber-motion-bindings-windows"
-version = "3.3.0"
-summary = "Windows bindings for Zaber Motion Library"
-groups = ["default"]
-marker = "platform_system == \"Windows\""
-files = [
-    {file = "zaber_motion_bindings_windows-3.3.0-py3-none-any.whl", hash = "sha256:9276ae5781b05e4dfc5d9f5c10be7e3590c93efdd72761f1aa6554abafbd3faf"},
-    {file = "zaber_motion_bindings_windows-3.3.0.tar.gz", hash = "sha256:05fc15893709510622822ac3a7d9d472a3d46b5132f6a2bea331fd93f681332f"},
+    {file = "zaber_motion-6.2.1-py3-none-macosx_10_4_universal2.whl", hash = "sha256:4c06f719bf460b4569f835b83bd400b921097e42ddcb9943925e5479c99d24ef"},
+    {file = "zaber_motion-6.2.1-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:071efdd93a288461112d9c7f14581c9b51da68deef0c9c2c592a904a73186c51"},
+    {file = "zaber_motion-6.2.1-py3-none-manylinux_2_27_armv7l.whl", hash = "sha256:18a0ba30c5ef8586254e5574166fa49b4a295e8acb0b205e3a9ff0f7118536b2"},
+    {file = "zaber_motion-6.2.1-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:923dfd44351a084b97d345e483bbce0847db4c7dcfff2bbdfdf42237fb2bb715"},
+    {file = "zaber_motion-6.2.1-py3-none-win32.whl", hash = "sha256:4da017354f56ed28a015381c1536cfa01fc5a9c5114a4e655da32bf9636a41bb"},
+    {file = "zaber_motion-6.2.1-py3-none-win_amd64.whl", hash = "sha256:9b3f2733f6594cfeeb6e90d588e2d45e34ccc40f648b21e7d361a93e2b7af86c"},
+    {file = "zaber_motion-6.2.1-py3-none-win_arm64.whl", hash = "sha256:1a370917fc86c2c1aac243c2f5eeb1bc4f348b506850d483e27a87981303bdd7"},
+    {file = "zaber_motion-6.2.1.tar.gz", hash = "sha256:3e647c0b05b696fb12002fbdc725c816abfdb8b82b2eb60c90bfc3b4ea8bd8dc"},
 ]

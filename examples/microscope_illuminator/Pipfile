@@ -4,11 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-# Zaber Motion Library needs the following three lines to ensure Pipfile.lock work on all platforms.
 zaber-motion = "*"
-zaber-motion-bindings-darwin = "*"
-zaber-motion-bindings-linux = "*"
-zaber-motion-bindings-windows = "*"
 
 [dev-packages]
 black = "*"

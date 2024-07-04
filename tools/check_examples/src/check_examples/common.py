@@ -33,6 +33,22 @@ def execute(command: list[str], cwd: Path) -> int:
     return result.returncode
 
 
+def execute_and_get_output(command: list[str], cwd: Path) -> str:
+    """Execute subprocess.run and return output."""
+    env = dict(os.environ)
+    del env["VIRTUAL_ENV"]
+    result = subprocess.run(
+        command,
+        cwd=str(cwd),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        check=False,
+        env=env,
+    )
+    return result.stdout
+
+
 def file_exists(directory: Path, filename: str) -> bool:
     """Check if a file exists in a directory."""
     filepath = directory / filename

@@ -1,9 +1,10 @@
 # Check Examples
 
 This script checks that all the example directories have the required files,
+updates ZML to the latest version (if included as a dependency),
 and performs linting as required for various languages.
 
-For Python examples, the script looks for `pdm.lock`, `Pipfile` or `requirements.txt`
+For Python examples, the script looks for `pdm.lock`, or `Pipfile`
 and uses `pdm`, `pipenv` or `venv` to create virtual environments and install dependencies as needed.
 
 This script is also used by GitHub Actions,
