@@ -15,11 +15,15 @@ The script uses `pipenv` to manage virtual environment and dependencies.
 
 Windows:
 
-    py -m pip install --user --upgrade pipenv
+```shell
+py -m pip install --user --upgrade pipenv
+```
 
 Linux / MacOS:
 
-    python3 -m pip install --user --upgrade pipenv
+```shell
+python3 -m pip install --user --upgrade pipenv
+```
 
 For full installation instruction, including making sure that 'pipenv' is available
 in your path after installation,
@@ -47,9 +51,11 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 
 To run the script, make sure you are running in a stand-alone terminal instead of in the terminal of your IDE.
 
-    cd src/gui_textual
-    pipenv install
-    pipenv run python tui.py
+```shell
+cd src/gui_textual
+pipenv install
+pipenv run python tui.py
+```
 
 ## Text-based User Interface
 

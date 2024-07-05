@@ -21,7 +21,7 @@ check = {call="src.check_examples.check:main"}
 [tool.pdm.dev-dependencies]
 dev = [
     "black>=24.4.2",
-    "pylint>=3.1.0",
+    "pylint>=3.2.5",
     "pydocstyle>=6.3.0",
     "mypy>=1.10.0",
 ]

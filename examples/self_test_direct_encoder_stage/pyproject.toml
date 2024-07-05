@@ -1,24 +1,21 @@
 [project]
-name = "microscope_tiling_basler_camera"
+name = "self_test_direct_encoder_stage"
 version = "0.1.0"
-description = "Zaber Examples -- Microscope Tiling with Basler Camera"
+description = "Zaber Examples -- Direct Encoder Stage Self Test"
 authors = [
-    {name = "Colby Sparks", email = "software@zaber.com"},
+    {name = "Nathan Paolini", email = "testing@zaber.com"},
 ]
 dependencies = [
-    "numpy==1.26.*",
-    "pypylon==3.0.*",
-    "opencv-python==4.9.0.*",
+    "matplotlib==3.8.1",
     "zaber-motion==6.2.1",
-    "imutils==0.5.*",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"
 license = {text = "MIT"}
 
 [tool.pdm.scripts]
-example = {call = "src.microscope_tiling_basler_camera.main:main"}
-stitching-example = {call = "src.microscope_tiling_basler_camera.main:stitching_example"}
+accuracy = {call = "src.self_test_direct_encoder_stage.accuracy:main"}
+settling-time = {call = "src.self_test_direct_encoder_stage.settling_time:main"}
 
 [tool.pdm]
 distribution = false

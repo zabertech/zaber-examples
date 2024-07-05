@@ -9,7 +9,7 @@ points, and generate a mapping from desired coordinates to calibrated coordinate
 |:--------------------------------:|:-----------------------------------:|:-------------------------------------:|
 | ![basic bilinear](img/basic.png) | ![biquadratic](img/biquadratic.png) | ![real example](img/real_example.png) |
 
-This calibration algorithm requires as input both the coordinates of the **expected** positions (blue dots), and the coordinates of the **actual** positions (red dots). The actual positions can be acquired by moving the gantry until the end effector is directly on the fiducial mark or sample, and then reading off the positions from software such as [Zaber Launcher](https://software.zaber.com/zaber-launcher/download).  
+This calibration algorithm requires as input both the coordinates of the **expected** positions (blue dots), and the coordinates of the **actual** positions (red dots). The actual positions can be acquired by moving the gantry until the end effector is directly on the fiducial mark or sample, and then reading off the positions from software such as [Zaber Launcher](https://software.zaber.com/zaber-launcher/download).
 
 - On the left is the most basic bilinear interpolation, requiring four corner point pairs - expected coordinates $(x_p, y_p)$ and actual coordinates $(x_p', y_p')$. The calibration algorithm uses these point pairs to generate the coefficients for a mapping function that the user can call to transform desired coordinates to calibrated coordinates from any location.
 
@@ -28,7 +28,9 @@ Cartesian gantry or X-Y system, such as
 
 The script uses `pipenv` to manage virtual environment and dependencies:
 
-    python3 -m pip install -U pipenv
+```shell
+python3 -m pip install -U pipenv
+```
 
 The dependencies are listed in Pipfile.
 
@@ -36,10 +38,12 @@ The dependencies are listed in Pipfile.
 
 To run the script:
 
-    cd src/gantry_calibration
-    pipenv install
-    pipenv run python calibrate.py
-    pipenv run python calibrate.py basic
+```shell
+cd examples/calibration_2d
+pipenv install
+pipenv run python calibrate.py
+pipenv run python calibrate.py basic
+```
 
 ## How it works
 
@@ -67,7 +71,9 @@ the minimum number of points required to fit the interpolation chosen.
 The number of randomly generated points can be overridden with
 the optional parameter `[<points>]` on the command line.  For example:
 
-    pipenv run python calibrate.py bilinear 5
+```shell
+pipenv run python calibrate.py bilinear 5
+```
 
 This generates a 5 x 5 = 25 points grid and does a bilinear least-square fit.
 
@@ -81,14 +87,18 @@ independently for the x-axis and y-axis.
 
 For example:
 
-    pipenv run python calibrate.py poly 1 2 4 3
+```shell
+pipenv run python calibrate.py poly 1 2 4 3
+```
 
 This generates a 4 x 3 = 12 pairs of expected and actual points,
 and tries to do an order 1 (linear) fit for the x-axis and order 2 (quadratic) fit for the y-axis.
 
 To see the arguments for each of the functions, run:
 
-    pipenv run python calibrate.py -h
+```shell
+pipenv run python calibrate.py -h
+```
 
 For a more detailed explanation of the math behind the algorithm,
 please see [calibration_map.md](calibration_map.md).

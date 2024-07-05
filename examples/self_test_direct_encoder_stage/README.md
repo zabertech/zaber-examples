@@ -10,11 +10,13 @@ These are scripts that can be run to allow a Zaber stage with a Direct Encoder (
 
 A linear or rotary DE stage.
 
-## Dependencies
+## Dependencies / Software Requirements / Prerequisites
 
-- Python 3.10 or newer
-- The script uses `venv` to manage virtual environment and dependencies.
-- The dependencies are listed in the requirements.txt file.
+The script uses `pdm` to manage virtual environment and dependencies:
+
+Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
+
+The dependencies are listed in `pyproject.toml`.
 
 ## Configuration
 
@@ -27,32 +29,26 @@ see [Find the right serial port name](https://software.zaber.com/motion-library/
 
 ## Running the Scripts
 
-### Windows
+Once everything has been configured, you can set up the environment with:
 
-To setup `venv`, run `setup_venv.bat`.
+```shell
+cd examples/self_test_direct_encoder_stage/
+pdm install
+```
 
-To run the scripts:
+Then, run either the accuracy or settling-time script:
 
-    cd src\self_test_direct_encoder_stage
-    .venv\Scripts\python accuracy.py
-    .venv\Scripts\python settling_time.py
+```shell
+pdm run accuracy
+```
 
-### Linux / MacOS
-
-To setup `venv`:
-
-    cd src/self_test_direct_encoder_stage
-    python3 -m venv .venv
-    .venv/bin/pip install -r requirements.txt
-
-To run the scripts:
-
-    .venv/bin/python accuracy.py
-    .venv/bin/python settling_time.py
+```shell
+pdm run settling-time
+```
 
 ## Script Purpose
 
 Zaber stages with direct encoders allow the stage to report on its own performance.
 
-- `accuracy.py` allows a DE stage to test it's open loop accuracy or repeatability.
-- `settling_time.py` allows a DE stage to determine its move-and-settle time for a variety of settings and step sizes.
+- `src/self_test_direct_encoder_stage/accuracy.py` allows a DE stage to test it's open loop accuracy or repeatability.
+- `src/self_test_direct_encoder_stage/settling_time.py` allows a DE stage to determine its move-and-settle time for a variety of settings and step sizes.

@@ -40,7 +40,8 @@ class Scanner:
             print(err)
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Run COM Port Scanner."""
     print("\nScanning...")
     for key, val in Scanner().get_devices_and_coms().items():
         print(key + ":", val)

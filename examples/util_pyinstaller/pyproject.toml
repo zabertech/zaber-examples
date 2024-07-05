@@ -1,24 +1,20 @@
 [project]
-name = "microscope_tiling_basler_camera"
+name = "util_pyinstaller"
 version = "0.1.0"
-description = "Zaber Examples -- Microscope Tiling with Basler Camera"
+description = "Zaber Examples -- Packaging ZML with PyInstaller"
 authors = [
-    {name = "Colby Sparks", email = "software@zaber.com"},
+    {name = "Martin Zak", email = "software@zaber.com"},
 ]
 dependencies = [
-    "numpy==1.26.*",
-    "pypylon==3.0.*",
-    "opencv-python==4.9.0.*",
     "zaber-motion==6.2.1",
-    "imutils==0.5.*",
+    "pyinstaller==6.5.0",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"
 license = {text = "MIT"}
 
 [tool.pdm.scripts]
-example = {call = "src.microscope_tiling_basler_camera.main:main"}
-stitching-example = {call = "src.microscope_tiling_basler_camera.main:stitching_example"}
+example = {call = "src.util_pyinstaller.main:main"}
 
 [tool.pdm]
 distribution = false

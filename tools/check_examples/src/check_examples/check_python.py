@@ -1,8 +1,14 @@
 """Check and lint Python files."""
 
 from pathlib import Path
-from .common import execute, file_exists, subdirectory_exists, list_files_of_suffix
-from .terminal_utils import iprint_pass, iprint_fail
+from .common import (
+    execute,
+    execute_and_get_output,
+    file_exists,
+    subdirectory_exists,
+    list_files_of_suffix,
+)
+from .terminal_utils import iprint_pass, iprint_fail, iprint_warn
 
 
 def check_python(directory: Path, fix: bool) -> int:
@@ -38,6 +44,11 @@ def check_python_pdm(directory: Path, fix: bool) -> int:
     return_code = 0
     return_code |= execute(["pdm", "install", "--dev"], directory)
 
+    needs_update = execute_and_get_output(["pdm", "outdated", "zaber-motion"], directory)
+    if "zaber-motion" in needs_update:
+        iprint_warn("zaber-motion will update to the latest version", 1)
+        return_code |= execute(["pdm", "update", "-u", "--save-exact", "zaber-motion"], directory)
+
     python_files = list_files_of_suffix(directory, ".py")
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
@@ -54,6 +65,11 @@ def check_python_pipenv(directory: Path, fix: bool) -> int:
     """Check python using pipenv if example provides Pipfile."""
     return_code = 0
     return_code |= execute(["pipenv", "clean"], directory)
+    needs_update = execute_and_get_output(["pipenv", "update", "--outdated"], directory)
+    if "'zaber-motion'" in needs_update:
+        iprint_warn("zaber-motion will update to the latest version", 1)
+        return_code |= execute(["pipenv", "update", "zaber-motion"], directory)
+
     return_code |= execute(["pipenv", "install", "--dev"], directory)
 
     python_files = list_files_of_suffix(directory, ".py")

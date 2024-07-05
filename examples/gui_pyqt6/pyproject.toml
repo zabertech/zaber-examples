@@ -1,0 +1,40 @@
+[project]
+name = "gui_pyqt6"
+version = "0.1.0"
+description = "Zaber Examples -- GUI PyQt6"
+authors = [
+    {name = "Nathan Paolini", email = "testing@zaber.com"},
+]
+dependencies = [
+    "pyqt6==6.4.2",
+    "pyqt6-tools==6.4.2.3.3",
+    "zaber-motion==6.2.1",
+]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+example = {call = "src.gui_pyqt6.main:main"}
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "mypy>=1.9.0",
+    "pylint>=3.2.5",
+    "black>=24.4.0",
+    "pydocstyle>=6.3.0",
+]
+
+[tool.pylint.messages_control]
+disable=[
+    "import-error",
+    "no-name-in-module",
+    "broad-exception-caught",
+    "too-many-instance-attributes",
+    "too-many-statements",
+    "attribute-defined-outside-init",
+    "too-few-public-methods",
+]

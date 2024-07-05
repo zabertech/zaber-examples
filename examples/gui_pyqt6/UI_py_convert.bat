@@ -4,4 +4,4 @@
 cd .venv/Scripts
 call activate
 cd "../.."
-python -m PyQt6.uic.pyuic -o ui.py ui_raw.ui
+python -m PyQt6.uic.pyuic -o src/gui_pyqt6/ui.py ui_raw.ui

@@ -4,34 +4,21 @@
 
 This script quickly scans all active ports and displays which device is connected to which port.
 
-## Dependencies
+## Dependencies / Software Requirements / Prerequisites
 
-- Python 3.10 or newer
-- The script uses `venv` to manage virtual environment and dependencies.
-- The dependencies are listed in the requirements.txt file.
+The script uses `pdm` to manage virtual environment and dependencies:
+
+Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
+
+The dependencies are listed in `pyproject.toml`.
 
 ## Running the Script
 
-### Windows
-
-To setup `venv`, run `setup_venv.bat` in the `python` folder.
-
-To run the script:
-
-    cd src\util_com_port_scan
-    .venv\Scripts\python com_port_scan.py
-
-### Linux / MacOS
-
-To setup `venv`:
-
-    cd src/util_com_port_scan
-    python3 -m venv .venv
-    .venv/bin/pip install -r requirements.txt
-
-To run the script:
-
-    .venv/bin/python com_port_scan.py
+```shell
+cd examples/util_com_port_scan/
+pdm install
+pdm run example
+```
 
 ## Script Purpose
 
