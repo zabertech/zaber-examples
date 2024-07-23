@@ -58,7 +58,12 @@ def main() -> None:  # pylint: disable=too-many-statements
         def area_mode(stream: Stream, scan_axis: Axis, direction: int, trigger_dist: float) -> None:
             """Add stream segments required for stop-and-shoot imaging."""
             stream.wait(1)  # Force stage to stop
-            stream.io.set_digital_output_schedule(1, DigitalOutputAction.ON, DigitalOutputAction.OFF, max(PROTOCOL["exposure"] / 1000, 1))  # Trigger the camera
+            stream.io.set_digital_output_schedule(
+                1,
+                DigitalOutputAction.ON,
+                DigitalOutputAction.OFF,
+                max(PROTOCOL["exposure"] / 1000, 1),
+            )  # Trigger the camera
             stream.line_relative_on(
                 [scan_axis.axis_number - 1], [Measurement(direction * trigger_dist, MM)]
             )
