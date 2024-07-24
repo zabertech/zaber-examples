@@ -127,18 +127,18 @@
         },
         "zaber-motion": {
             "hashes": [
-                "sha256:071efdd93a288461112d9c7f14581c9b51da68deef0c9c2c592a904a73186c51",
-                "sha256:18a0ba30c5ef8586254e5574166fa49b4a295e8acb0b205e3a9ff0f7118536b2",
-                "sha256:1a370917fc86c2c1aac243c2f5eeb1bc4f348b506850d483e27a87981303bdd7",
-                "sha256:3e647c0b05b696fb12002fbdc725c816abfdb8b82b2eb60c90bfc3b4ea8bd8dc",
-                "sha256:4c06f719bf460b4569f835b83bd400b921097e42ddcb9943925e5479c99d24ef",
-                "sha256:4da017354f56ed28a015381c1536cfa01fc5a9c5114a4e655da32bf9636a41bb",
-                "sha256:923dfd44351a084b97d345e483bbce0847db4c7dcfff2bbdfdf42237fb2bb715",
-                "sha256:9b3f2733f6594cfeeb6e90d588e2d45e34ccc40f648b21e7d361a93e2b7af86c"
+                "sha256:003e190b327ce72f967147df77e09a4872714ce4ee2d248cc4e4fe4622e3ba86",
+                "sha256:06dd76f0a1677b131e18f3ea05110bd93f33badb4510d0a089a153fe8064f0bd",
+                "sha256:221f4d749bb0dedd6da657ad40496517e39abb1e6781a54c6f9ba3ded014b187",
+                "sha256:272357f0fe0541bc1479c8978c7998910e8f387f59576a887e81c5bdaf4ed005",
+                "sha256:54d2c4a448461f570b96eb6cc9825977434f0f0a54a203b87d15d3497cad1f88",
+                "sha256:603ee4166f50569eae8d8b4e8da2bbca90bb1db9119d65e531341fddee7be218",
+                "sha256:835736a81a9a4da96ddce7ac6c45e92a934352355374e9b5f247eb1c45e84572",
+                "sha256:c09c57b9a881c17a324b81500d099967ceff9eba35e56cddddce75299244cd89"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==6.2.1"
+            "version": "==6.4.0"
         }
     },
     "develop": {

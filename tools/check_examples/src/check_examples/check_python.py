@@ -66,7 +66,7 @@ def check_python_pipenv(directory: Path, fix: bool) -> int:
     return_code = 0
     return_code |= execute(["pipenv", "clean"], directory)
     needs_update = execute_and_get_output(["pipenv", "update", "--outdated"], directory)
-    if "'zaber-motion'" in needs_update:
+    if "'zaber_motion'" in needs_update:
         iprint_warn("zaber-motion will update to the latest version", 1)
         return_code |= execute(["pipenv", "update", "zaber-motion"], directory)
 

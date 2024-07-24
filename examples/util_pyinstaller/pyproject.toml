@@ -6,7 +6,7 @@ authors = [
     {name = "Martin Zak", email = "software@zaber.com"},
 ]
 dependencies = [
-    "zaber-motion==6.2.1",
+    "zaber-motion==6.4.0",
     "pyinstaller==6.5.0",
 ]
 requires-python = "==3.11.*"

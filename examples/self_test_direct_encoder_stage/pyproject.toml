@@ -7,7 +7,7 @@ authors = [
 ]
 dependencies = [
     "matplotlib==3.8.1",
-    "zaber-motion==6.2.1",
+    "zaber-motion==6.4.0",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"

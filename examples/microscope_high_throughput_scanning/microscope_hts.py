@@ -58,9 +58,12 @@ def main() -> None:  # pylint: disable=too-many-statements
         def area_mode(stream: Stream, scan_axis: Axis, direction: int, trigger_dist: float) -> None:
             """Add stream segments required for stop-and-shoot imaging."""
             stream.wait(1)  # Force stage to stop
-            stream.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera
-            stream.wait(max(PROTOCOL["exposure"] / 1000, 1))  # Wait for exposure to complete
-            stream.set_digital_output(1, DigitalOutputAction.OFF)  # Turn off trigger
+            stream.io.set_digital_output_schedule(
+                1,
+                DigitalOutputAction.ON,
+                DigitalOutputAction.OFF,
+                max(PROTOCOL["exposure"] / 1000, 1),
+            )  # Trigger the camera
             stream.line_relative_on(
                 [scan_axis.axis_number - 1], [Measurement(direction * trigger_dist, MM)]
             )
@@ -69,12 +72,12 @@ def main() -> None:  # pylint: disable=too-many-statements
             stream: Stream, scan_axis: Axis, direction: int, trigger_dist: float
         ) -> None:
             """Add stream segments required for continuous scan imaging."""
-            stream.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera
+            stream.io.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera
             stream.line_relative_on(
                 [scan_axis.axis_number - 1],  # Move half distance to next point
                 [Measurement(direction * trigger_dist / 2, MM)],
             )
-            stream.set_digital_output(1, DigitalOutputAction.OFF)  # Turn off trigger
+            stream.io.set_digital_output(1, DigitalOutputAction.OFF)  # Turn off trigger
             stream.line_relative_on(
                 [scan_axis.axis_number - 1],
                 [Measurement(direction * trigger_dist / 2, MM)],
@@ -144,9 +147,9 @@ def main() -> None:  # pylint: disable=too-many-statements
                     if focus_map is not None:
                         # Prepare a focus move
                         z_pos = focus_map[i - 1, j - 1]
-                        focus_stream.wait_digital_input(1, True)
+                        focus_stream.io.wait_digital_input(1, True)
                         # Wait for falling edge of exposure active pulse to move the focus
-                        focus_stream.wait_digital_input(1, False)
+                        focus_stream.io.wait_digital_input(1, False)
                         focus_stream.line_relative(Measurement(z_pos, UM))
 
                 # End of line turnaround
@@ -155,7 +158,7 @@ def main() -> None:  # pylint: disable=too-many-statements
                 # Arcs add extra travel to the scan which must fit within the stage limits
                 if mode != "TDI":
                     # Trigger the camera at the last position
-                    stream.set_digital_output(1, DigitalOutputAction.ON)
+                    stream.io.set_digital_output(1, DigitalOutputAction.ON)
 
                 # Remove the speed limit for the stepover
                 stream.set_max_speed(x_axis.settings.get("maxspeed"))
@@ -165,9 +168,9 @@ def main() -> None:  # pylint: disable=too-many-statements
                     if focus_map is not None:
                         # Prepare a focus move
                         z_pos = focus_map[i - 1, frames - 1]
-                        focus_stream.wait_digital_input(1, True)
+                        focus_stream.io.wait_digital_input(1, True)
                         # Wait for falling edge of exposure active pulse to move the LDA
-                        focus_stream.wait_digital_input(1, False)
+                        focus_stream.io.wait_digital_input(1, False)
                         focus_stream.line_relative(Measurement(z_pos, UM))
 
         def execute_scan(use_focus_map: bool = False) -> float:
