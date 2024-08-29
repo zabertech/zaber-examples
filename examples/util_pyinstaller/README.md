@@ -12,7 +12,7 @@ When used with Zaber Motion Library the shared library (.dll, .so, or .dylib) fi
 The command below taken from `build.bat` demonstrates how to include the library.
 
 ```ps1
-pyinstaller --onefile --add-binary ".venv\Lib\site-packages\zaber_motion_bindings\zaber-motion-lib-windows-amd64.dll;zaber_motion_bindings" main.py
+pyinstaller --onefile --add-binary ".venv\Lib\site-packages\zaber_motion_bindings\zaber-motion-core-windows-amd64.dll;zaber_motion_bindings" main.py
 ```
 
 ## Dependencies / Software Requirements / Prerequisites
