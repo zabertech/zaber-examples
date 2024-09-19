@@ -22,7 +22,7 @@ This calibration algorithm requires as input both the coordinates of the **expec
 There is no hardware requirement for this example script, as it only demonstrates the algorithm
 and visualizes the results in a plot.  However, the algorithm can be adapted to be used with any
 Cartesian gantry or X-Y system, such as
-[Zaber Technologies Gantry Systems](https://www.zaber.com/products/xy-xyz-gantry-systems/GANTRY)
+[Zaber Technologies Gantry Systems](https://www.zaber.com/products/xy-xyz-gantry-stages)
 
 ## Dependencies / Software Requirements / Prerequisites
 
