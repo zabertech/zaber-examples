@@ -37,7 +37,7 @@ pdm install
 pdm run example
 ```
 
-## Building the Executable
+## Building the Executable (Windows)
 
 To build the executable:
 
@@ -52,4 +52,21 @@ You can test it by running:
 
 ```shell
 .\dist\main.exe
+```
+
+## Building the Executable (Linux/macOS)
+
+```shell
+cd examples/util_pyinstaller/
+pdm install
+./build.sh
+```
+
+Note to linux users that you may need to use `sudo`
+
+You'll find the distributable executable `main.exe` in the `dist` directory.
+You can test it by running:
+
+```shell
+./dist/main
 ```
