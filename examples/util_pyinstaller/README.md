@@ -62,9 +62,7 @@ pdm install
 ./build.sh
 ```
 
-Note to linux users that you may need to use `sudo`
-
-You'll find the distributable executable `main.exe` in the `dist` directory.
+You'll find the distributable executable `main` in the `dist` directory.
 You can test it by running:
 
 ```shell
