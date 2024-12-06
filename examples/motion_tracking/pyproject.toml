@@ -1,0 +1,31 @@
+[project]
+name = "motion_tracking"
+version = "0.1.0"
+description = "Example for motion tracking"
+authors = [
+    {name = "Software Team", email = "contact@zaber.com"},
+]
+dependencies = [
+    "zaber-motion==7.2.*",
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+example = {call = "src.motion_tracking.main:main"}
+black = { cmd = "black -l 120 src" }
+mypy = { cmd = "mypy src" }
+check = { composite = ["black", "mypy"] }
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "black==24.4.*",
+    "pylint==3.1.*",
+    "pydocstyle==6.3.*",
+    "mypy==1.10.*",
+]
