@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:122953ca59ea7cb961c09b25f853ddeb0359600333c8bbc77413bd48946e221f"
+content_hash = "sha256:232e6c3a555d3288fe443516080d3ef08d2611bd23d7139ef37f9bdb89bb7ee8"
 
 [[metadata.targets]]
 requires_python = "==3.11.*"
@@ -367,7 +367,7 @@ files = [
 
 [[package]]
 name = "zaber-motion"
-version = "7.2.1"
+version = "7.2.2"
 requires_python = ">=3.8"
 summary = "An official library for communicating with Zaber devices."
 groups = ["default"]
@@ -375,12 +375,12 @@ dependencies = [
     "reactivex~=4.0.0",
 ]
 files = [
-    {file = "zaber_motion-7.2.1-py3-none-macosx_10_4_universal2.whl", hash = "sha256:3bf68fb5f9e3ebde18180043803fdeb6db6640f5b18f2e890f5cdf5c6523a960"},
-    {file = "zaber_motion-7.2.1-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:1dfbf56e34b5c33ec4af6a5c25d100badadb324a8782753d17f0c27348d256d8"},
-    {file = "zaber_motion-7.2.1-py3-none-manylinux_2_27_armv7l.whl", hash = "sha256:2a1b545668b00cf9778e2c839e62df9cf59b33f894ac4a7e4573c6d36777303f"},
-    {file = "zaber_motion-7.2.1-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:128a7de511ad7194507335c4942449e9dac005983ef9e279776617d1388928be"},
-    {file = "zaber_motion-7.2.1-py3-none-win32.whl", hash = "sha256:21e8a7811d027724945eec142dc7fb8457e1e3f13fa36a323dcd9a1571efde0c"},
-    {file = "zaber_motion-7.2.1-py3-none-win_amd64.whl", hash = "sha256:b6f90a92faf3bf8ca4e052150d8d926c1229283122e41c1380b33a3994d6eb46"},
-    {file = "zaber_motion-7.2.1-py3-none-win_arm64.whl", hash = "sha256:8affa341ce6f8e4c389440b623823f2c88b91ff066ac1ca2f86cc0daa788aace"},
-    {file = "zaber_motion-7.2.1.tar.gz", hash = "sha256:1a17ef16a7ec2d8b7cd503690b801d05a2fd4db2c3627e5ea3b705e100c929db"},
+    {file = "zaber_motion-7.2.2-py3-none-macosx_10_4_universal2.whl", hash = "sha256:a7bee4afe5c09cd8948544318540fc3c26fad33a97d7ec14f3c32e906145a433"},
+    {file = "zaber_motion-7.2.2-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:93a564c133aca595443335c90ac79f413c7ea0587254c66573fc0bcd5e92642b"},
+    {file = "zaber_motion-7.2.2-py3-none-manylinux_2_27_armv7l.whl", hash = "sha256:c530b245888ea874508881a249b489bc12c98dde46116fcff54b2d121d47d0a5"},
+    {file = "zaber_motion-7.2.2-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:5c7555f9459b738feb3c1909e220c2bff7e1de3c3110d39474fbd8cee80d4b1d"},
+    {file = "zaber_motion-7.2.2-py3-none-win32.whl", hash = "sha256:1e208d42b18501c099ea28526cf43512d1ab5d952b887507cf628ced19196cc3"},
+    {file = "zaber_motion-7.2.2-py3-none-win_amd64.whl", hash = "sha256:6fe545e1937b853253f12e7ad3b563f7b7fff968c6710efc8250bb92d9fdda16"},
+    {file = "zaber_motion-7.2.2-py3-none-win_arm64.whl", hash = "sha256:65edb06cbbba6f7c36b5575f392c2efad1585b297355a1c8c5637eba868b07d3"},
+    {file = "zaber_motion-7.2.2.tar.gz", hash = "sha256:29b1d19fd7522f19a133712247bacd4c8b33e51b20cc28607e505e53ac28164d"},
 ]
