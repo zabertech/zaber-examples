@@ -4,8 +4,11 @@
 [metadata]
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
-lock_version = "4.4.2"
-content_hash = "sha256:24d3a33fbaaac9344d985cd298a8088043e70db21689a814492b447b4972e0b6"
+lock_version = "4.5.0"
+content_hash = "sha256:232e6c3a555d3288fe443516080d3ef08d2611bd23d7139ef37f9bdb89bb7ee8"
+
+[[metadata.targets]]
+requires_python = "==3.11.*"
 
 [[package]]
 name = "altgraph"
@@ -23,6 +26,9 @@ version = "3.2.2"
 requires_python = ">=3.8.0"
 summary = "An abstract syntax tree for Python with inference support."
 groups = ["dev"]
+dependencies = [
+    "typing-extensions>=4.0.0; python_version < \"3.11\"",
+]
 files = [
     {file = "astroid-3.2.2-py3-none-any.whl", hash = "sha256:e8a0083b4bb28fcffb6207a3bfc9e5d0a68be951dd7e336d5dcf639c682388c0"},
     {file = "astroid-3.2.2.tar.gz", hash = "sha256:8ead48e31b92b2e217b6c9733a21afafe479d52d6e164dd25fb1a770c7c3cf94"},
@@ -40,6 +46,8 @@ dependencies = [
     "packaging>=22.0",
     "pathspec>=0.9.0",
     "platformdirs>=2",
+    "tomli>=1.1.0; python_version < \"3.11\"",
+    "typing-extensions>=4.0.1; python_version < \"3.11\"",
 ]
 files = [
     {file = "black-24.4.2-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:257d724c2c9b1660f353b36c802ccece186a30accc7742c176d29c146df6e474"},
@@ -58,6 +66,7 @@ summary = "Composable command line interface toolkit"
 groups = ["dev"]
 dependencies = [
     "colorama; platform_system == \"Windows\"",
+    "importlib-metadata; python_version < \"3.8\"",
 ]
 files = [
     {file = "click-8.1.7-py3-none-any.whl", hash = "sha256:ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28"},
@@ -132,6 +141,7 @@ summary = "Optional static typing for Python"
 groups = ["dev"]
 dependencies = [
     "mypy-extensions>=1.0.0",
+    "tomli>=1.1.0; python_version < \"3.11\"",
     "typing-extensions>=4.1.0",
 ]
 files = [
@@ -207,6 +217,7 @@ requires_python = ">=3.6"
 summary = "Python docstring style checker"
 groups = ["dev"]
 dependencies = [
+    "importlib-metadata<5.0.0,>=2.0.0; python_version < \"3.8\"",
     "snowballstemmer>=2.2.0",
 ]
 files = [
@@ -222,6 +233,7 @@ summary = "PyInstaller bundles a Python application and all its dependencies int
 groups = ["default"]
 dependencies = [
     "altgraph",
+    "importlib-metadata>=4.6; python_version < \"3.10\"",
     "macholib>=1.8; sys_platform == \"darwin\"",
     "packaging>=22.0",
     "pefile>=2022.5.30; sys_platform == \"win32\"",
@@ -251,6 +263,7 @@ requires_python = ">=3.7"
 summary = "Community maintained hooks for PyInstaller"
 groups = ["default"]
 dependencies = [
+    "importlib-metadata>=4.6; python_version < \"3.10\"",
     "packaging>=22.0",
     "setuptools>=42.0.0",
 ]
@@ -268,11 +281,15 @@ groups = ["dev"]
 dependencies = [
     "astroid<=3.3.0-dev0,>=3.2.2",
     "colorama>=0.4.5; sys_platform == \"win32\"",
+    "dill>=0.2; python_version < \"3.11\"",
     "dill>=0.3.6; python_version >= \"3.11\"",
+    "dill>=0.3.7; python_version >= \"3.12\"",
     "isort!=5.13.0,<6,>=4.2.5",
     "mccabe<0.8,>=0.6",
     "platformdirs>=2.2.0",
+    "tomli>=1.1.0; python_version < \"3.11\"",
     "tomlkit>=0.10.1",
+    "typing-extensions>=3.10.0; python_version < \"3.10\"",
 ]
 files = [
     {file = "pylint-3.2.5-py3-none-any.whl", hash = "sha256:32cd6c042b5004b8e857d727708720c54a676d1e22917cf1a2df9b4d4868abd6"},
@@ -350,7 +367,7 @@ files = [
 
 [[package]]
 name = "zaber-motion"
-version = "6.4.0"
+version = "7.2.2"
 requires_python = ">=3.8"
 summary = "An official library for communicating with Zaber devices."
 groups = ["default"]
@@ -358,12 +375,12 @@ dependencies = [
     "reactivex~=4.0.0",
 ]
 files = [
-    {file = "zaber_motion-6.4.0-py3-none-macosx_10_4_universal2.whl", hash = "sha256:835736a81a9a4da96ddce7ac6c45e92a934352355374e9b5f247eb1c45e84572"},
-    {file = "zaber_motion-6.4.0-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:c09c57b9a881c17a324b81500d099967ceff9eba35e56cddddce75299244cd89"},
-    {file = "zaber_motion-6.4.0-py3-none-manylinux_2_27_armv7l.whl", hash = "sha256:54d2c4a448461f570b96eb6cc9825977434f0f0a54a203b87d15d3497cad1f88"},
-    {file = "zaber_motion-6.4.0-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:272357f0fe0541bc1479c8978c7998910e8f387f59576a887e81c5bdaf4ed005"},
-    {file = "zaber_motion-6.4.0-py3-none-win32.whl", hash = "sha256:06dd76f0a1677b131e18f3ea05110bd93f33badb4510d0a089a153fe8064f0bd"},
-    {file = "zaber_motion-6.4.0-py3-none-win_amd64.whl", hash = "sha256:003e190b327ce72f967147df77e09a4872714ce4ee2d248cc4e4fe4622e3ba86"},
-    {file = "zaber_motion-6.4.0-py3-none-win_arm64.whl", hash = "sha256:603ee4166f50569eae8d8b4e8da2bbca90bb1db9119d65e531341fddee7be218"},
-    {file = "zaber_motion-6.4.0.tar.gz", hash = "sha256:221f4d749bb0dedd6da657ad40496517e39abb1e6781a54c6f9ba3ded014b187"},
+    {file = "zaber_motion-7.2.2-py3-none-macosx_10_4_universal2.whl", hash = "sha256:a7bee4afe5c09cd8948544318540fc3c26fad33a97d7ec14f3c32e906145a433"},
+    {file = "zaber_motion-7.2.2-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:93a564c133aca595443335c90ac79f413c7ea0587254c66573fc0bcd5e92642b"},
+    {file = "zaber_motion-7.2.2-py3-none-manylinux_2_27_armv7l.whl", hash = "sha256:c530b245888ea874508881a249b489bc12c98dde46116fcff54b2d121d47d0a5"},
+    {file = "zaber_motion-7.2.2-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:5c7555f9459b738feb3c1909e220c2bff7e1de3c3110d39474fbd8cee80d4b1d"},
+    {file = "zaber_motion-7.2.2-py3-none-win32.whl", hash = "sha256:1e208d42b18501c099ea28526cf43512d1ab5d952b887507cf628ced19196cc3"},
+    {file = "zaber_motion-7.2.2-py3-none-win_amd64.whl", hash = "sha256:6fe545e1937b853253f12e7ad3b563f7b7fff968c6710efc8250bb92d9fdda16"},
+    {file = "zaber_motion-7.2.2-py3-none-win_arm64.whl", hash = "sha256:65edb06cbbba6f7c36b5575f392c2efad1585b297355a1c8c5637eba868b07d3"},
+    {file = "zaber_motion-7.2.2.tar.gz", hash = "sha256:29b1d19fd7522f19a133712247bacd4c8b33e51b20cc28607e505e53ac28164d"},
 ]
