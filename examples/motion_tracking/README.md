@@ -1,6 +1,6 @@
 # Tracking Motion Using PID Controller
 
-This example demonstrates how Zaber stages can track analog input signals using a PID controller.
+The example demonstrates how Zaber stages can track analog input signals using a PID controller.
 A PID controller is a control loop feedback mechanism widely used in industrial control systems.
 It calculates the error between a desired setpoint and a measured process variable and applies a correction based on proportional, integral, and derivative terms.
 In Zaber's case, the controller can move the stage to track the setpoint of the analog input signal.
@@ -38,7 +38,7 @@ pdm run example
 
 ### Explanation
 
-<https://github.com/zabertech/zaber-examples/blob/main/examples/motion_tracking/src/motion_tracking/main.py#L17-L32>
+https://github.com/zabertech/zaber-examples/blob/main/examples/motion_tracking/src/motion_tracking/main.py#L17-L32
 
 After establishing a connection with the device, the script prints the PI controller parameters.
 
@@ -59,4 +59,4 @@ There is also a `move track once` variant of the `move track` command that reach
 For this variant a settings `motion.tracking.settle.tolerance` and `motion.tracking.settle.period` determines
 when the stage is considered to have settled at the setpoint.
 
-You can find the exhaustive list of commands and settings in the [ASCII Protocol Manual](https://www.zaber.com/protocol-manual?protocol=ASCII).
+You can find the exhaustive list of commands and settings in the [ASCII Protocol Manual](https://www.zaber.com/protocol-manual?protocol=ASCII#topic_command_move_track).
