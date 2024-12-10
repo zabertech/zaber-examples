@@ -24,6 +24,7 @@ def execute(command: list[str], cwd: Path) -> int:
         text=True,
         check=False,
         env=env,
+        shell=True,
     )
     if result.returncode:
         iprint_fail(" ".join(command), 1)
@@ -45,6 +46,7 @@ def execute_and_get_output(command: list[str], cwd: Path) -> str:
         text=True,
         check=False,
         env=env,
+        shell=True,
     )
     return result.stdout
 
