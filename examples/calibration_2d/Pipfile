@@ -8,6 +8,7 @@ docopt = "*"
 types-docopt = "*"
 numpy = "*"
 matplotlib = "*"
+zaber-motion = "*"
 
 [dev-packages]
 black = "*"
