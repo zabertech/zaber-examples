@@ -107,7 +107,7 @@ def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
         actual = Point(x_position, y_position)
         for point in points:
             if distance(point.actual, actual) < 0.01:
-                print("Point is too close to an existing point. Please move to a new position.")
+                print("Current location is too close to an already-recorded point. Please move to a new position.")
                 continue
 
         print(f"Current device position reads as X: {x_position:.3f}mm, Y: {y_position:.3f}mm")
