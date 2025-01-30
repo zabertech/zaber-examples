@@ -59,6 +59,8 @@ def select_axes(connection: Connection) -> tuple:
         for i in range(1, device.axis_count):
             axis = device.get_axis(i)
             if (axis.axis_type == AxisType.LINEAR):
+                # The calibration will also work with non-linear stages but this example allows
+                # only linear stages so as to eliminate extra code for selecting the right units.
                 axes.append(axis)
                 print(f"{len(axes)}: {device.name} axis {i} ({axis.identity.peripheral_name})")
 
