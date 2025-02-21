@@ -1,6 +1,6 @@
 # 2D Calibration
 
-When programming a 2D Cartesian gantry or or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis to achieve the accuracy required. The end goal is to be able to commanding the stage to go to a particular coordinate, and have the stage be on target.
+When programming a 2D Cartesian gantry or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis to achieve the accuracy required. The end goal is to be able to commanding the stage to go to a particular coordinate, and have the stage be on target.
 
 This is a Python example showing how to take the expected and actual coordinates of a few grid
 points, and generate a mapping from desired coordinates to calibrated coordinates.

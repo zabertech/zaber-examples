@@ -56,7 +56,7 @@ def select_axes(connection: Connection) -> tuple:
     print("Detected linear motion axes:")
     axes = []
     for device in devices:
-        for i in range(1, device.axis_count):
+        for i in range(1, device.axis_count + 1):
             axis = device.get_axis(i)
             if (axis.axis_type == AxisType.LINEAR):
                 # The calibration will also work with non-linear stages but this example allows
