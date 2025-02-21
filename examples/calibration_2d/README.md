@@ -1,6 +1,6 @@
 # 2D Calibration
 
-When programming a 2D Cartesian gantry or or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis to achieve the accuracy required. The end goal is to be able to commanding the stage to go to a particular coordinate, and have the stage be on target.
+When programming a 2D Cartesian gantry or XY system, it is often necessary to calibrate the stages for orthogonality, distortion, and stretch of each axis to achieve the accuracy required. The end goal is to be able to commanding the stage to go to a particular coordinate, and have the stage be on target.
 
 This is a Python example showing how to take the expected and actual coordinates of a few grid
 points, and generate a mapping from desired coordinates to calibrated coordinates.
@@ -19,10 +19,17 @@ This calibration algorithm requires as input both the coordinates of the **expec
 
 ## Hardware Requirements
 
-There is no hardware requirement for this example script, as it only demonstrates the algorithm
+There are two scripts included in this example: A non-interactive math demo, and an interactive demo that works with Zaber stages.
+
+There is no hardware requirement for the non-interactive example script, as it only demonstrates the algorithm
 and visualizes the results in a plot.  However, the algorithm can be adapted to be used with any
 Cartesian gantry or X-Y system, such as
 [Zaber Technologies Gantry Systems](https://www.zaber.com/products/xy-xyz-gantry-stages)
+
+For the interactive demo, you will need two Zaber linear stages. This can be either two peripherals connected to a controller,
+or two separate integrated devices connected in a daisy chain to the same serial port. You will need a way to move the devices
+while the script is running - either by turning the knobs, or by starting Zaber Launcher before the script so it can share
+the connection.
 
 ## Dependencies / Software Requirements / Prerequisites
 
@@ -36,7 +43,7 @@ The dependencies are listed in Pipfile.
 
 ## Running the Script
 
-To run the script:
+To run the math-only script:
 
 ```shell
 cd examples/calibration_2d
@@ -45,9 +52,19 @@ pipenv run python calibrate.py
 pipenv run python calibrate.py basic
 ```
 
+To run the interactive script (assuming COM1 is the serial port your devices are connected to):
+
+```shell
+cd examples/calibration_2d
+pipenv install
+pipenv run python interactive.py COM1
+```
+
 ## How it works
 
-The script consists of the following files:
+### Non-Interactive Script
+
+The non-interactive script consists of the following files:
 
 - `calibrate.py` - a script to be called on the command line, to generate random points
 and demonstrates how `Calibration` class works by plotting the coordinates before and after mapping
@@ -102,3 +119,39 @@ pipenv run python calibrate.py -h
 
 For a more detailed explanation of the math behind the algorithm,
 please see [calibration_map.md](calibration_map.md).
+
+
+### Interactive Script
+
+The interactive script `interactive.py` uses functions found in the other files and in the
+[Zaber Motion Library](https://software.zaber.com/motion-library/docs) to demonstrate how you
+can collect data to calculate a calibration matrix and then use the calibration to make the
+stages move to corrected positions.
+
+To use this example effectively, we recommend you set up your Zaber stages in an X-Y configuration
+with some way to measure or visually register their positions in the real world - for a simple example,
+attach a pen or wire to the carriage, pointing at a fixed piece of graph paper.
+
+When you run the example script, it will list detected linear stages and ask you to select two
+to be the X and Y axes for the demo.
+
+Then, it will ask you to move the stages to sample points and enter the expected coordinates of those points.
+You must enter a square grid of 4, 9, 16 or 25 sample points; the script chooses the interpolation method based
+on the number of points.
+
+To enter a data point, use the knobs on the devices or Zaber Launcher's Basic Movement or Terminal apps to
+move the devices until your measurement indicator shows the desired position, then press Enter in the script
+window and type in what the coordinates of that location should be. Then repeat for subsequent points.
+
+For this simple example, it's important to enter a square grid of points in raster scan order as shown below.
+
+![raster scan](img/raster.png)
+
+After you're done entering points, enter a blank line to end this phase. The script will then display a plot
+of expected versus actual device coordinates, similar to the non-interactive example. Close the plot window
+to continue.
+
+In the final phase of the example, it will ask you to type in coordinate pairs. Type in the coordinates you expect
+the device to move to in order to correspond with the measurements you've made. The script will apply the calculated
+calibration to move the devices to positions that most closely match your measurements. Enter a blank line to
+end the example.
