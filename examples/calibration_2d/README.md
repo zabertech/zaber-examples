@@ -28,7 +28,7 @@ Cartesian gantry or X-Y system, such as
 
 For the interactive demo, you will need two Zaber linear stages. This can be either two peripherals connected to a controller,
 or two separate integrated devices connected in a daisy chain to the same serial port. You will need a way to move the devices
-while the script is running - either by turning the knobs, or bt starting Zaber Launcher before the script so it can share
+while the script is running - either by turning the knobs, or by starting Zaber Launcher before the script so it can share
 the connection.
 
 ## Dependencies / Software Requirements / Prerequisites
