@@ -26,8 +26,6 @@ pin = 1  # DO pin#
 
 
 def main() -> None:
-    Library.enable_device_db_store()
-
     with Connection.open_serial_port(PORT) as connection:
         device_list = connection.detect_devices()
 

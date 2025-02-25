@@ -140,8 +140,8 @@ def goto_xaxis_exchange_position(robot: mdr.Robot, stages: Stages, num_trays_on_
     stages.x.wait_until_idle()
     stages.robot_axis.wait_until_idle()
 
-    stages.x.move_absolute(p.LOADER_PICKUP_POS, MM)
-    stages.robot_axis.move_absolute(p.EXTENDER_PICKUP_POS, MM)
+    stages.x.move_absolute(p.LOADER_PICKUP_POS, MM, wait_until_idle=False)
+    stages.robot_axis.move_absolute(p.EXTENDER_PICKUP_POS, MM, wait_until_idle=False)
     stages.x.wait_until_idle()
     stages.robot_axis.wait_until_idle()
 
@@ -363,8 +363,6 @@ def stack(machine: Machine, starting_plates: int) -> None:
 
 
 def main() -> None:
-    Library.enable_device_db_store()
-
     # Connect and set up robot arm
     robot = mdr.Robot()
     robot.Connect(address=ROBOT_ADDRESS, enable_synchronous_mode=False)
