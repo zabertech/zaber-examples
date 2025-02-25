@@ -46,7 +46,7 @@ make a subdirectory with the language you want to implement:
 7. Implement the example in the language(s) of your choice.
 You can start with our [example template](../examples/_template/).
 8. Add a file, [`article.yml`](article_yml.md) with metadata specifying how to publish to
-[Zaber Code Examples](https://software.zaber.com/examples)
+[Zaber Code Examples](https://software.zaber.com/examples), if the example is meant to be included there.
 9. Run through the appropriate [Language Checklist](#language-checklist)
 10. Do a Pull Request
 

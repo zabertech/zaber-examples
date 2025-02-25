@@ -1,0 +1,33 @@
+[project]
+name = "PlateLoadingDemo"
+version = "1.0.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Zaber Technologies Inc.", email = "contact@zaber.com"},
+]
+dependencies = ["zaber-motion>=7.4.1", "mecademicpy>=2.2.0"]
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.scripts]
+demo = {call = "src.plateloadingdemo.stacker:main"}
+stream = {call = "src.plateloadingdemo.stream_setup:main"}
+format = { cmd = "ruff format" }
+ruff = { cmd = "ruff check --fix" }
+pyright = { cmd = "pyright src" }
+lint = { composite = ["format", "ruff", "pyright"] }
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.6",
+    "pylint>=3.3.4",
+    "pyright>=1.1.394",
+]
+
+[tool.ruff]
+line-length = 120
