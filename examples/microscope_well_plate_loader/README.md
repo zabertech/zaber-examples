@@ -4,7 +4,7 @@ _*By Alex Canan and Albert David*_
 
 ![Image of demo machine](img/well_plate_loader.png)
 
-This example code is for the Zaber microscope [well plate loader demo](https://www.youtube.com/watch?v=l33kLwqV8tg),
+This example code is for the Zaber microscope [well plate loader demo](https://www.youtube.com/watch?v=uOAFeYliAak),
 which is a machine comprising a Zaber microscope with an X-ADR stage and X-LCA4 illuminator, a Mecademic robot arm
 on an X-LRM stage as a range extender, and a VSR on top of an LSM stage to transport well plates from two stack
 towers that use an X-SCA Process Controller to control solenoids that restrain the plate stacks.
