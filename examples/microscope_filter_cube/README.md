@@ -22,7 +22,7 @@ Edit the following constants in the script to fit your setup before running the 
 
 - `SERIAL_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
-see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
+see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port).
 - `FILTER_SETS`: dictionary of the loaded filter cubes and their pocket numbers
 <https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_filter_cube/filtercube.py#L9-L10>
 

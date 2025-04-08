@@ -34,7 +34,7 @@ The example script takes four parameters:
 - `start_mm`: the position, in millimeters, to start the search at.
 - `end_mm`: the position, in millimeters, to end the search at.
 - `step size_mm`: the size of step to take between each image capture. This must be small enough that the ideal focal position isn't completely skipped. But be careful, if this is too small, the script will take a very long time to run.
-- `microscope_serial_port`: the port that the Zaber Microscope is connected to. See the [ZML guide](https://software.zaber.com/motion-library/docs/guides/find_right_port) for help finding the port name.
+- `microscope_serial_port`: the port that the Zaber Microscope is connected to. See the [ZML guide](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port) for help finding the port name.
 
 There are also a number of optional parameters:
 

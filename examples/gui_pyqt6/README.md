@@ -20,7 +20,7 @@ Edit the following constants in the script to fit your setup before running the 
 
 - `SERIAL_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
-see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
+see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port).
 - `AXIS_NUM`: the axis number of your stage.
 
 ## Running the Script

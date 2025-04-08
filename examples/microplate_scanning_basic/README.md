@@ -29,7 +29,7 @@ Edit the following constants in the script to fit your setup before running the 
 
 - `SERIAL_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
-see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
+see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port).
 - `DEVICE_NUMBER`: the order that the controller or stage is plugged into the device chain.
 For example, if it is the first and only device in the chain then use the number 1.
 Check the device numbering by opening [Zaber Launcher](https://software.zaber.com/zaber-launcher/download) to view the devices connected to a serial port.

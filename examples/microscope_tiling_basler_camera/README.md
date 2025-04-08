@@ -25,7 +25,7 @@ Edit the following constants in the script to fit your setup before running the 
 ### Required Params
 
 - `SERIAL_PORT`: the serial port that your microscope is connected to.
-For more information on how to identify the serial port, see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
+For more information on how to identify the serial port, see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port).
 - `TOP_LEFT`: top left point of sample region (can be copied directly from microscope app in [Zaber Launcher](https://software.zaber.com/zaber-launcher/download))
 - `BOTTOM_RIGHT`: bottom right point of sample region (also can be copied)
 - `OVERLAP_H`: desired decimal percentage of horizontal overlap between neighbouring tiles

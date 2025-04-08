@@ -77,7 +77,7 @@ as development packages in Pipenv:
 If you are using the latest version of Zaber Motion Library (after 5.2.0), you can ignore this section.
 
 For examples using Zaber Motion Library prior to
-[Version 5.2.0](https://software.zaber.com/motion-library/docs/support/changelog#_2024-04-11-version-520),
+[Version 5.2.0](https://software.zaber.com/motion-library/docs/support/changelog#2024-04-11-version-520),
 please add three OS-specific lines to the `Pipfile` under `zaber-motion = "*"`:
 
     [packages]
