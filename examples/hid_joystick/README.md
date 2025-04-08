@@ -41,7 +41,7 @@ addresses and axis numbers you will be using.
 
 - `SERIAL_PORT`: the serial port that your device is connected to.
 For more information on how to identify the serial port,
-see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
+see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port).
 - `X-AXIS`: Mapping the device and axis number corresponding to X-Axis of the joystick.
 - `Y-AXIS`: Mapping the device and axis number corresponding to Y-Axis of the joystick.
 
@@ -55,7 +55,7 @@ To run the script:
 
 - `private static string _port`: the default serial port that your device is connected to.
 For more information on how to identify the serial port,
-see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/find_right_port).
+see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port).
 
 You can change the port to connect to by using the `-p PORT` command-line argument, or by
 editing the default `private static string _port` near the bottom of `Program.cs`.
