@@ -15,8 +15,11 @@ explanation of the theory, and intent behind the central concept of the code to 
 
 `README.md` is written in [GitHub's flavour of Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
 
-There are some cool features, such as the ability to insert [permanent links to code snippets](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-a-permanent-link-to-a-code-snippet)
-directly in the document.
+To insert a [link to a code snippet](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-a-permanent-link-to-a-code-snippet), link to a specific commit and not to a branch. Also, enclose the link in angle brackets. For example:
+
+```
+<https://github.com/zabertech/zaber-examples/blob/9b7440e22bfcfd4096441dc03ddff4fd122cb0a4/examples/motion_tracking/src/motion_tracking/main.py#L17-L32>
+```
 
 - Note: if the code is changed in a subsequent commit, be sure to update the permanent link to the latest commit
 (requires a second, separate commit to update README.md).
