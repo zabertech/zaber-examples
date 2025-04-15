@@ -4,7 +4,7 @@
 
 This repository contains code to complement our article [Input Shaping for Motion Control Vibration Reduction](https://www.zaber.com/articles/input-shaping-for-vibration-reduction). Input shaping algorithms described in the article are implemented in Python, along with classes allowing them to be easily used with Zaber stages via the [Zaber Motion Library](https://software.zaber.com/motion-library/api/py) API.
 
-![input_shaping.jpg](img/input_shaping.jpg)
+<img src="img/input_shaping.jpg" style="max-width:30rem;" alt="Input Shaping">
 
 ## Hardware Requirements
 

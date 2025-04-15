@@ -5,7 +5,7 @@
 This example script demonstrates how to set up a Zaber motorized microscope stage
 to scan ANSI standard microplates with 96, 384, and 1536 wells.
 
-![wellplate.png](img/wellplate.png)
+<img src="img/wellplate.png" style="max-width:30rem;" alt="Wellplate">
 
 ## Hardware
 

@@ -145,7 +145,7 @@ window and type in what the coordinates of that location should be. Then repeat 
 
 For this simple example, it's important to enter a square grid of points in raster scan order as shown below.
 
-![raster scan](img/raster.png)
+<img src="img/raster.png" style="max-width:20rem;" alt="raster scan">
 
 After you're done entering points, enter a blank line to end this phase. The script will then display a plot
 of expected versus actual device coordinates, similar to the non-interactive example. Close the plot window

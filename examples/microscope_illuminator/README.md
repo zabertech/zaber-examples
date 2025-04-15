@@ -5,7 +5,7 @@
 This example script demonstrates how to switch between different LED channels and change the illuminator intensity,
 using the X-LCA4 lighting controller and MLR3 illuminaor for multi-channel imaging of flourescent targets using multiple fluorophores.
 
-![X-LCA4.jpg](img/X-LCA4.jpg)
+<img src="img/X-LCA4.jpg" style="max-width:30rem;" alt="X-LCA4">
 
 ## Hardware
 
