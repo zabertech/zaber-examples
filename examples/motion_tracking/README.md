@@ -38,7 +38,7 @@ pdm run example
 
 ### Explanation
 
-https://github.com/zabertech/zaber-examples/blob/main/examples/motion_tracking/src/motion_tracking/main.py#L17-L32
+<https://github.com/zabertech/zaber-examples/blob/9b7440e22bfcfd4096441dc03ddff4fd122cb0a4/examples/motion_tracking/src/motion_tracking/main.py#L17-L32>
 
 After establishing a connection with the device, the script prints the PI controller parameters.
 

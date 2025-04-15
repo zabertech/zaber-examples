@@ -47,6 +47,7 @@ There are also a number of optional parameters:
 First, it will initialize the motor and camera:
 
 <https://github.com/zabertech/zaber-examples/blob/04150a1fee2df1fa43c6d06df728f61cc12c59ba/src/microscope_autofocus/autofocus.py#L90-L94>
+
 In the example code, I'll be using the following pyspin and ZML functions:
 
 - `cam.get_array`: returns an image from the camera in a format that OpenCV can use
