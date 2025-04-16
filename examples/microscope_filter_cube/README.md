@@ -4,7 +4,7 @@
 
 This example script demonstrates how to switch between different filter cubes on the Zaber filter cube turret and Zaber microscopes equipped with it.
 
-![X-FCR.jpg](img/X-FCR.jpg)
+<img src="img/X-FCR.jpg" style="max-width:30rem" alt="X-FCR">
 
 ## Hardware
 
