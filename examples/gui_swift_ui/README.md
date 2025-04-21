@@ -11,8 +11,8 @@ Any Zaber linear motion device connected to a serial port.
 
 ## Dependencies / Software Requirements / Prerequisites
 
-XCode 16+
-MacOS 14.5+
+- MacOS 14.5+
+- [XCode 16+](https://developer.apple.com/xcode/)
 
 ## Configuration / Parameters
 
