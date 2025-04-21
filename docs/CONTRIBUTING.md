@@ -60,6 +60,7 @@ Here are the checklists for the various languages:
 - [C++](cpp.md)
 - [TypeScript](typescript.md)
 - [Java](java.md)
+- [Swift](swift.md)
 
 By contributing to this repository you agree that all of your work will be governed by the terms of the [LICENSE](../LICENSE) file.
 
