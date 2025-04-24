@@ -12,11 +12,10 @@ struct ContentView: View {
     var body: some View {
         VStack {
             HStack {
-                Image(systemName: "z.square.fill")
+                Image("logo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 100)
-                    .foregroundStyle(.tint)
                     .padding()
                 VStack(alignment: .leading) {
                     HStack{

@@ -20,8 +20,9 @@ enum DeviceConstants {
     static let axisNumber = 1
 }
 
-@MainActor @Observable
-final class DeviceModel: ObservableObject, Sendable {
+@MainActor
+@Observable
+final class DeviceModel: Sendable {
     var connection: Connection?
     
     var isConnected: Bool{

@@ -18,7 +18,7 @@ Any Zaber linear motion device connected to a serial port.
 
 The serial port to connect to can be entered into the input box after script startup.
 
-Optinally, you can edit the following constants in the script before running the script:
+Optionally, you can edit the following constants in the script before running the script:
 
 - `DeviceConstants.deviceAddress`: The device address of the device you'd like to connect to
 - `DeviceConstants.axisNumber`: The axis number of the axis you'd like to control on the device (`1` for most integrated devices)
