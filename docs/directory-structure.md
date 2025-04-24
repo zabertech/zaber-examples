@@ -183,6 +183,7 @@ If you want to contribute to a language not listed here please add it to the lis
 - `typescript/`
 - `java/`
 - `octave/`
+- `swift/`
 
 ## [Directory `tools/`](../tools/)
 
