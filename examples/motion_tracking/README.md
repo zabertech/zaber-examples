@@ -8,7 +8,7 @@ Zaber only supports the PI controller, which is a simplified version of the PID 
 
 The following video demonstrates the concept:
 
-![video.mp4](img/video.mp4)
+https://github.com/user-attachments/assets/07edae8d-5f73-4bfc-bec9-fb10752e4269
 
 In the video above there is a load cell mounted on a Zaber stage.
 The stage is tracking the analog input signal from the load cell keeping a constant tension on the spring.
