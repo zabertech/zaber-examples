@@ -2,7 +2,7 @@
 
 _*By Alex Canan and Albert David*_
 
-![Image of demo machine](img/well_plate_loader.png)
+![Image of demo machine](img/well_plate_loader.jpg)
 
 This example code is for the Zaber microscope [well plate loader demo](https://www.youtube.com/watch?v=uOAFeYliAak),
 which is a machine comprising a Zaber microscope with an X-ADR stage and X-LCA4 illuminator, a Mecademic robot arm

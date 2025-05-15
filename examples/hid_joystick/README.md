@@ -4,6 +4,8 @@
 
 A simple example of controlling Zaber devices with a USB game controller (Windows, Python & C#).
 
+![Gamepad](img/gamepad.jpg)
+
 ## Prerequisites
 
 ### Python
