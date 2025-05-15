@@ -2,7 +2,8 @@
 # then edit the content of the metatdata in this YAML file for rendering on https://software.zaber.com/examples
 authors:
   - Andrew Lau
-date: 2024-05-01
+date: 2024-05-01          # This should stay at the original publication date of the article.
+updated_date: 2025-06-02  # Update this if you change the content (code or documentation) but not infrastructure.
 category: Microscopy
 tags:
   - Python

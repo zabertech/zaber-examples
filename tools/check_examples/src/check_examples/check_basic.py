@@ -1,6 +1,10 @@
 """Check for basic requirements of example repositories."""
 
+from datetime import date
 from pathlib import Path
+
+import yaml
+
 from .common import file_exists, list_files_of_suffix, execute, get_git_root_directory
 from .terminal_utils import iprint_fail, iprint_pass
 from .markdown_links import check_links_in_markdown
@@ -32,3 +36,26 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
         )
         return_code |= check_links_in_markdown(file)
     return return_code
+
+
+def validate_article_metadata(directory: Path) -> int:
+    """Check that the required yaml fields exist."""
+    with open(directory.joinpath("article.yml"), "r", encoding="utf-8") as stream:
+        meta = yaml.safe_load(stream)
+
+    required_fields = {
+        "date": date,
+        "updated_date": date,
+        "category": str,
+        "picture": str,
+    }
+
+    for field, field_type in required_fields.items():
+        if field not in meta:
+            iprint_fail(f"article.yml does not contain the {field} field.", 1)
+            return 1
+        if not isinstance(meta[field], field_type):
+            iprint_fail(f"article.yml {field} field is not of type {field_type.__name__}.", 1)
+            return 1
+
+    return 0
