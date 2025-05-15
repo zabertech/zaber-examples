@@ -7,4 +7,4 @@ category: Microscopy
 tags:
   - Python
   - Computer Vision
-picture: img/screenshot.png
+picture: img/screenshot.png  # Should have a picture < 1000 pixels wide for the link. Doesn't need to be in the md.
