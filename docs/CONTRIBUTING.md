@@ -47,8 +47,11 @@ make a subdirectory with the language you want to implement:
 You can start with our [example template](../examples/_template/).
 8. Add a file, [`article.yml`](article_yml.md) with metadata specifying how to publish to
 [Zaber Code Examples](https://software.zaber.com/examples), if the example is meant to be included there.
-9. Run through the appropriate [Language Checklist](#language-checklist)
-10. Do a Pull Request
+9. Add an image to be used with the link to the article from the main website. The picture should be less than 1000
+pixels wide and have a horizontal aspect. Reference it with the `picture:` key in `article.yml`. The image
+doesn't have to be used in the readme, but ideally should be similar to a readme image if there are any suitable.
+10. Run through the appropriate [Language Checklist](#language-checklist)
+11. Do a Pull Request
 
 ## Updating an Existing Example
 
