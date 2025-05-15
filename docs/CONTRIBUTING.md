@@ -50,6 +50,13 @@ You can start with our [example template](../examples/_template/).
 9. Run through the appropriate [Language Checklist](#language-checklist)
 10. Do a Pull Request
 
+## Updating an Existing Example
+
+If you change the code or documentation of an example in a way that would matter to readers, remember
+to update the `updated_date` field in the `article.yml` file.
+
+This is used by the Zaber website to display a last modified date in addition to the creation date.
+
 ## Language Checklist
 
 Here are the checklists for the various languages:
