@@ -19,10 +19,12 @@ distribution = false
 
 [tool.pdm.scripts]
 check = {call="src.check_examples.check:main"}
-[tool.pdm.dev-dependencies]
+
+[dependency-groups]
 dev = [
     "black>=24.4.2",
     "pylint>=3.2.5",
     "pydocstyle>=6.3.0",
     "mypy>=1.10.0",
+    "types-PyYAML>=6.0.12.20250402",
 ]

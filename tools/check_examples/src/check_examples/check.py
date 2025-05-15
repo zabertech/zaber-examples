@@ -27,7 +27,7 @@ from docopt import docopt
 from .common import filter_not_ignored, load_ignore, get_git_root_directory
 from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match_string
 from .check_python import check_python
-from .check_basic import check_basic, check_markdown, check_lastmod_date
+from .check_basic import check_basic, check_markdown, validate_article_metadata
 
 EXAMPLE_DIR = "examples"
 TOOLS_DIR = "tools"
@@ -222,7 +222,7 @@ def check_example(directory: Path, fix: bool) -> int:
     return_code = 0
     return_code |= check_basic(directory)
     return_code |= check_markdown(directory)
-    return_code |= check_lastmod_date(directory)
+    return_code |= validate_article_metadata(directory)
     return_code |= check_python(directory, fix)
     # Can add other languages here such as check_csharp(), check_html(), etc.
     return return_code
