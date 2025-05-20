@@ -53,6 +53,13 @@ doesn't have to be used in the readme, but ideally should be similar to a readme
 10. Run through the appropriate [Language Checklist](#language-checklist)
 11. Do a Pull Request
 
+## Updating an Existing Example
+
+If you change the code or documentation of an example in a way that would matter to readers, remember
+to update the `updated_date` field in the `article.yml` file.
+
+This is used by the Zaber website to display a last modified date in addition to the creation date.
+
 ## Language Checklist
 
 Here are the checklists for the various languages:
