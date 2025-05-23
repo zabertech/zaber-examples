@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/zabertech/zaber-motion-lib-swift",
       "state" : {
-        "revision" : "1b0b07993dd5b80f0e213b8ed853253427ed4fc6",
-        "version" : "7.6.1"
+        "revision" : "19545760e0003fa0c8d705efd3298cb2a1d73849",
+        "version" : "7.8.2"
       }
     }
   ],
