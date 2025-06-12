@@ -1,6 +1,6 @@
 # Simple GUI using SwiftUI
 
-This example demonstrates using the [SwiftUI Framework](https://developer.apple.com/xcode/swiftui/)
+This example demonstrates using the [SwiftUI Framework](https://developer.apple.com/documentation/swiftui/)
 to create a simple Interface to control a Zaber device.
 
 <img src="img/screenshot.png" style="max-width:30rem;" alt="Screenshot">
