@@ -28,16 +28,12 @@ def sequence_data_from_csv(
     generate any missing parameters. Generation is only possible
     in the following cases:
     - No velocity or time information is provided (i.e., there are
-        no such columns or all values in corresponding columns are
-        empty.) In this case, all velocity and time parameters will
-        be generated.
+        no such columns). In this case, all velocity and time parameters
+        will be generated.
     - No position information is provided (i.e., there are no such
-        columns or all values in the corresponding columns are empty.)
-        In this case, all position values will be generated.
-    - Some or all velocity information is missing (i.e., there are no
-        velocity columns at all, or there is a velocity column for
-        each position column, and some or all values are empty.) In this
-        case only the missing velocity parameters will be generated.
+        columns). In this case, all position values will be generated.
+    - No velocity information is provided (i.e., there are no velocity
+        columns at all). In this case, all velocity values will be generated.
 
     This function assumes the file has a header row with all
     necessary columns, and that position and velocity columns
@@ -83,13 +79,12 @@ def sequence_data_from_csv(
     if not contains_time_data:
         gen_type = GenerationType.TIME_AND_VELOCITY
         assert not contains_velocity_data, (
-            "Invalid csv structure. Time can only be generated if"
-            "velocity is also unspecified."
+            "Invalid csv structure. Time can only be generated if velocity is also unspecified."
         )
     elif not contains_velocity_data:
         gen_type = GenerationType.VELOCITY
         assert contains_position_data, (
-            "Invalid csv structure. If velocity is unspecified, " "position must be specified."
+            "Invalid csv structure. If velocity is unspecified, position must be specified."
         )
     if not contains_position_data:
         gen_type = GenerationType.POSITION
@@ -504,7 +499,7 @@ class Sequence:
         """
         Return a PVT sequence from sequence data.
 
-        This function generates a PVT sequence from a sequence data object.
+        This function generates a PVT sequence from a ZML PVT sequence data object.
 
         :param data: The sequence data object.
         :return: The PVT sequence with generated parameters.
