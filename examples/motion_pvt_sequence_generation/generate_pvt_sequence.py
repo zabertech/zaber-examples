@@ -32,16 +32,18 @@ import os
 
 import pvt
 from visualization import plot_path_and_trajectory
+from zaber_motion import Measurement, Units
+from zaber_motion.ascii import PvtSequence
 
 # ------------------- Script Settings ----------------------
 
-DATA_DIRECTORY = "sample_data/position_velocity_time_data/"
+DATA_DIRECTORY = "sample_data/position_time_data/"
 """The directory of the input file(s)"""
 FILENAMES = ["wave_1d.csv", "spiral_2d.csv", "spiral_3d.csv"]
 """The names of the input files to read."""
-TARGET_SPEED = 6
+TARGET_SPEED = Measurement(6, Units.VELOCITY_CENTIMETRES_PER_SECOND)
 """The target speed to use when generating velocities and times."""
-TARGET_ACCEL = 10
+TARGET_ACCEL = Measurement(10, Units.ACCELERATION_CENTIMETRES_PER_SECOND_SQUARED)
 """The target aceleration to use when generating velocities and times."""
 SHOW_PLOTS = True
 """Whether to plot the generated sequences."""
@@ -60,17 +62,20 @@ def main() -> None:
     """Generate complete PVT sequences from underdefined input data."""
     for filename in FILENAMES:
         # Generate the sequence
-        pvt_sequence = pvt.Sequence.from_csv(
+        sequence_data = pvt.sequence_data_from_csv(
             os.path.join(DATA_DIRECTORY, filename), TARGET_SPEED, TARGET_ACCEL
         )
+        if sequence_data is None:
+            return
+
         if SHOW_PLOTS:
             # Plot the sequence
-            plot_path_and_trajectory(pvt_sequence)
+            plot_path_and_trajectory(sequence_data, times_relative=True)
         if OUTPUT_DIRECTORY is not None:
             # Write the file with the same name plus a _generated suffix
             base, extension = filename.rsplit(".", 1)
             output_filename = f"{base}_generated.{extension}"
-            pvt_sequence.save_to_file(os.path.join(OUTPUT_DIRECTORY, output_filename))
+            PvtSequence.save_sequence_data(sequence_data, os.path.join(OUTPUT_DIRECTORY, output_filename))
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 import numpy as np
+from zaber_motion.ascii import PvtSequenceData
 
 import pvt
 
@@ -247,7 +248,10 @@ def plot_pvt_path(
 
 
 def plot_path_and_trajectory(
-    sequence: pvt.Sequence, axis_indices: list[int] | None = None, num_samples: int | None = None
+    sequence_data: PvtSequenceData,
+    times_relative: bool = True,
+    axis_indices: list[int] | None = None,
+    num_samples: int | None = None,
 ) -> None:
     """
     Plot the per-axis trajectories and path view on one figure.
@@ -260,6 +264,7 @@ def plot_path_and_trajectory(
         y, and z axes (as applicable).
     :param num_samples: The number of samples to use, or unspecified to use a default value.
     """
+    sequence = pvt.Sequence.from_sequence_data(sequence_data, times_relative)
     # Defer to plot_trajectory if sequence has only one dimension
     if sequence.dim == 1:
         plot_pvt_trajectory(sequence, num_samples, show=True)
