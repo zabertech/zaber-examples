@@ -28,12 +28,12 @@ def sequence_data_from_csv(
     generate any missing parameters. Generation is only possible
     in the following cases:
     - No velocity or time information is provided (i.e., there are
-        no such columns). In this case, all velocity and time parameters
-        will be generated.
-    - No position information is provided (i.e., there are no such
-        columns). In this case, all position values will be generated.
-    - No velocity information is provided (i.e., there are no velocity
-        columns at all). In this case, all velocity values will be generated.
+      no such columns). In this case, all velocity and time parameters
+      will be generated.
+    - No position information is provided (i.e., there is no such column).
+      In this case, all position values will be generated.
+    - No velocity information is provided (i.e., there is no such column).
+      In this case, all velocity values will be generated.
 
     This function assumes the file has a header row with all
     necessary columns, and that position and velocity columns

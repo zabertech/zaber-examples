@@ -14,9 +14,9 @@ can only be generated in the following two cases:
 - No velocity or time information is provided (i.e., there are no such
   columns). In this case, all velocity and time parameters will be
   generated.
-- No position information is provided (i.e., there are no such columns).
+- No position information is provided (i.e., there is no such column).
   In this case, all position values will be generated.
-- No velocity information is provided (i.e. there are no such columns).
+- No velocity information is provided (i.e. there is no such column).
   In this case, all velocity values will be generated.
 
 1-D, 2-D, and 3-D sample data is also provided and can be found in the
