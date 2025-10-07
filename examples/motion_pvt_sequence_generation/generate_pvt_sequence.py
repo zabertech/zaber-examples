@@ -10,7 +10,7 @@ Launcher's PVT Viewer App.
 
 Input data must be given in CSV form, with columns for time, position
 in each dimension, and velocity in each dimension. Missing parameters
-can only be generated in the following two cases:
+can only be generated in the following three cases:
 - No velocity or time information is provided (i.e., there are no such
   columns). In this case, all velocity and time parameters will be
   generated.
