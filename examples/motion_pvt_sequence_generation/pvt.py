@@ -78,17 +78,18 @@ def sequence_data_from_csv(
     gen_type = GenerationType.NONE
     if not contains_time_data:
         gen_type = GenerationType.TIME_AND_VELOCITY
-        assert not contains_velocity_data, (
-            "Invalid csv structure. Time can only be generated if velocity is also unspecified."
+        assert not contains_velocity_data and contains_position_data, (
+            "Invalid csv structure. Time can only be generated if position is specified and "
+            "velocity is unspecified."
         )
     elif not contains_velocity_data:
         gen_type = GenerationType.VELOCITY
         assert contains_position_data, (
             "Invalid csv structure. If velocity is unspecified, position must be specified."
         )
-    if not contains_position_data:
+    elif not contains_position_data:
         gen_type = GenerationType.POSITION
-        assert contains_time_data and contains_velocity_data, (
+        assert contains_velocity_data, (
             "Invalid csv structure. If position is unspecified, "
             "velocity and time must both be specified"
         )
