@@ -4,7 +4,7 @@
 
 To acquire a sharp image from a microscope requires that the sample be in focus. This is achieved by positioning the sample at the correct distance from the objective lens. The human eyes and brain are good at judging when an image is in focus, so a typical workflow here is to manually move the objective up and down, watching the resulting image until it looks good. However, this process is tedious, subjective, and requires a person to be present every time a slide or objective is changed.
 
-So why not let a computer handle it? In this article, we'll show you how to leverage the power of a motorized focus axis by using [OpenCV](https://opencv.org/) to automatically discover a good position in fewer than 200 lines of Python code. This allows you to obtain sharp images from your microscope without human intervention, even as slides are moved and objectives are switched out. The example code is all written for a [Zaber Microscope](https://www.zaber.com/products/families/MVR), controlling motion with [Zaber Motion Library](https://software.zaber.com/motion-library/api/py).
+So why not let a computer handle it? In this article, we'll show you how to leverage the power of a motorized focus axis by using [OpenCV](https://opencv.org/) to automatically discover a good position in fewer than 200 lines of Python code. This allows you to obtain sharp images from your microscope without human intervention, even as slides are moved and objectives are switched out. The example code is all written for a [Zaber Microscope](https://www.zaber.com/products/microscopes), controlling motion with [Zaber Motion Library](https://software.zaber.com/motion-library/api/py).
 
 ## Dependencies
 
