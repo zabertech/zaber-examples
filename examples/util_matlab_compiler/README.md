@@ -1,4 +1,4 @@
-# Packaging ZML with MATLAB Compiler
+# Packaging Zaber Motion Library with MATLAB Compiler
 
 *By Colby Sparks*
 
