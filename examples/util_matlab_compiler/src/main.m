@@ -3,8 +3,7 @@ function main()
     import zaber.motion.Units;
     import zaber.motion.ascii.Connection;
 
-	connection = Connection.openTcp('simulator.izaber.com', 10002);
-    % connection = Connection.openSerialPort("COM5");
+    connection = Connection.openSerialPort("COM5");
     cleanup = onCleanup(@() connection.close());
 
     connection.enableAlerts();
