@@ -9,7 +9,6 @@ from .common import file_exists, list_files_of_suffix, execute, get_git_root_dir
 from .terminal_utils import iprint_fail, iprint_pass
 from .markdown_links import check_links_in_markdown
 
-
 def check_basic(directory: Path) -> int:
     """Check basic requirements of any example repository."""
     return_code = 0
@@ -57,5 +56,10 @@ def validate_article_metadata(directory: Path) -> int:
         if not isinstance(meta[field], field_type):
             iprint_fail(f"article.yml {field} field is not of type {field_type.__name__}.", 1)
             return 1
+
+    picture_path = directory.joinpath(*str.split(meta["picture"], '/'))
+    if not picture_path.exists():
+        iprint_fail(f"Picture not found at path {picture_path}.", 1)
+        return 1
 
     return 0
