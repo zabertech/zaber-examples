@@ -9,6 +9,7 @@ from .common import file_exists, list_files_of_suffix, execute, get_git_root_dir
 from .terminal_utils import iprint_fail, iprint_pass
 from .markdown_links import check_links_in_markdown
 
+
 def check_basic(directory: Path) -> int:
     """Check basic requirements of any example repository."""
     return_code = 0
