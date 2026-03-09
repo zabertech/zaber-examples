@@ -24,9 +24,9 @@ This code example has been tested with MATLAB R2025b.
 
 ## Building the Application
 
-There are a couple different ways of configuring MATLAB Compiler to build a standalone application.
+There are several different ways of configuring MATLAB Compiler to build a standalone application.
 In this example we use the [compiler.build.standaloneApplication](https://www.mathworks.com/help/compiler/compiler.build.standaloneapplication.html) function with [StandaloneApplicationOptions](https://www.mathworks.com/help/compiler/compiler.build.standaloneapplicationoptions.html) object,
-but it is also possible to configure and build an application using the [Standalone Application Compiler](https://www.mathworks.com/help/compiler/create-application-using-standalone-application-compiler-app.html) in the MATLAB IDE.
+It is also possible to configure and build an application using the [Standalone Application Compiler](https://www.mathworks.com/help/compiler/create-application-using-standalone-application-compiler-app.html) in the MATLAB IDE.
 
 The `build_standalone_app.m` script contains all the logic for setting up and building an app with the Zaber Motion Library toolbox.
 The most important thing to note is the following line where we assign the return value from `zaber.motion.Helper.getCompilerDependencies`
