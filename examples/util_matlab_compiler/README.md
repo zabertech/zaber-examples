@@ -63,4 +63,4 @@ cd examples/util_matlab_compiler
 ./ZaberTestApp/output/build/run_ZaberTestApp.sh <deployedMcrRoot>
 ```
 
-Where <deployedMcrRoot> is the path to your MATLAB install.
+Where `<deployedMcrRoot>` is the path to your MATLAB install.
