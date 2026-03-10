@@ -58,4 +58,9 @@ def validate_article_metadata(directory: Path) -> int:
             iprint_fail(f"article.yml {field} field is not of type {field_type.__name__}.", 1)
             return 1
 
+    picture_path = directory.joinpath(*str.split(meta["picture"], '/'))
+    if not picture_path.exists():
+        iprint_fail(f"Picture not found at path {picture_path}.", 1)
+        return 1
+
     return 0
