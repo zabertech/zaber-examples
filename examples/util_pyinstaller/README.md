@@ -8,7 +8,7 @@ The script itself in `main.py` is a simple motion example.
 ## PyInstaller
 
 PyInstaller is a tool to package Python scripts into standalone executables.
-When used with Zaber Motion Library the shared library (.dll, .so, or .dylib) file must be explicitly included in the package.
+When used with Zaber Motion Library the shared library (`*.dll`, `*.so`, or `*.dylib`) file must be explicitly included in the package.
 The command below taken from `build.bat` demonstrates how to include the library.
 
 ```ps1

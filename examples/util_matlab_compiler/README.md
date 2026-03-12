@@ -9,23 +9,23 @@ The source code for the application is in `src/main.m`.
 
 MATLAB Compiler is a tool which allows users to package MATLAB code into standalone applications.
 During the build process, it will perform a dependency analysis of a project to determine exactly which files
-need to be included in the final packaged application, but binary dependencies such as mex files and shared libraries
+need to be included in the final packaged application, but binary dependencies such as `*.mex` files and shared libraries (`*.dll`/`*.so`/`*.dylib`)
 will not be included automatically.
 
-The Zaber Motion Library toolbox includes some binary dependencies, namely a shared library (dll/so/dylib) and
+The Zaber Motion Library toolbox includes some binary dependencies, namely a shared library and
 its corresponding thunk file, so the paths to these binary files must be specified manually.
 
 ## Prerequisites
 
 The user must have the [MATLAB Compiler](https://www.mathworks.com/products/compiler.html) and [Zaber Motion Library toolbox](https://software.zaber.com/motion-library/docs/tutorials/install/matlab) (version `>=8.4.0`) installed.
-Additionally, in order to run the matlab batch commands below, MATLAB must be added to the system [PATH](https://stackoverflow.com/questions/4822400/register-an-exe-so-you-can-run-it-from-any-command-line-in-windows).
+Additionally, in order to run the `matlab -batch` command below, MATLAB must be added to the system [PATH](https://stackoverflow.com/questions/4822400/register-an-exe-so-you-can-run-it-from-any-command-line-in-windows).
 
 This code example has been tested with MATLAB R2025b.
 
 ## Building the Application
 
 There are several different ways of configuring MATLAB Compiler to build a standalone application.
-In this example we use the [compiler.build.standaloneApplication](https://www.mathworks.com/help/compiler/compiler.build.standaloneapplication.html) function with [StandaloneApplicationOptions](https://www.mathworks.com/help/compiler/compiler.build.standaloneapplicationoptions.html) object,
+In this example we use the [compiler.build.standaloneApplication](https://www.mathworks.com/help/compiler/compiler.build.standaloneapplication.html) function with [StandaloneApplicationOptions](https://www.mathworks.com/help/compiler/compiler.build.standaloneapplicationoptions.html) object.
 It is also possible to configure and build an application using the [Standalone Application Compiler](https://www.mathworks.com/help/compiler/create-application-using-standalone-application-compiler-app.html) in the MATLAB IDE.
 
 The `build_standalone_app.m` script contains all the logic for setting up and building an app with the Zaber Motion Library toolbox.
@@ -47,7 +47,7 @@ matlab -batch "build_standalone_app"
 
 ## Running the Application (Windows)
 
-To run the application on Windows, you can either locate and run the exe directly from File Explorer, or in powershell:
+To run the application in Windows, you can either locate the `ZaberTestApp.exe` file directly in File Explorer or use the following command in PowerShell:
 
 ```shell
 cd examples/util_matlab_compiler
