@@ -4,7 +4,7 @@ from matplotlib.axes import Axes
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 import numpy as np
-from zaber_motion.ascii import PvtSequenceData
+from zaber_motion.ascii import PvtPoint
 
 import pvt
 
@@ -248,7 +248,7 @@ def plot_pvt_path(
 
 
 def plot_path_and_trajectory(
-    sequence_data: PvtSequenceData,
+    sequence_data: list[PvtPoint],
     times_relative: bool = True,
     axis_indices: list[int] | None = None,
     num_samples: int | None = None,
