@@ -29,14 +29,9 @@ other platforms supported by LabVIEW, we have not tested it.
 ## The Example Project
 
 In `labview/zaber.lvproj` you will find a working example project created in LabVIEW 2026 Q1 (64-bit). This project
-has two example VIs:
-
-* `basic.vi` is a minimal example showing how to open a connection, get a reference to a Zaber device object,
-  invoke its methods, and dispose of resources. This one will only work with RS-232 or USB device connections on your
-  local computer.
-* `demo.vi` is a more advanced example that can open RS-232 or USB connections, or connections shared over the
-  network by Zaber Launcher, or over IoT from the Zaber Cloud system, including Virtual Devices, and allows you to
-  perform several operations on a selected device.
+contains one example VI: `basic.vi` is a minimal example showing how to open a connection, get references to Zaber
+device and axis objects, invoke its methods, and dispose of resources. This one will only work with RS-232 or USB
+device connections on your local computer.
 
 ## How it Works
 
