@@ -30,3 +30,6 @@ venv/
 
 ## Swift
 xcuserdata/
+
+## LabVIEW
+*.UserState
