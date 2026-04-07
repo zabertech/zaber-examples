@@ -28,6 +28,7 @@ def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
         positions=point.positions,
         velocities=point.velocities,
         time=point.time,
+        relative=point.relative or False,
     )
 
 
@@ -525,9 +526,9 @@ class Sequence:
         """
         points = []
         if times_relative:
-            data = PvtSequence.convert_times_relative_to_absolute(data)
+            data = PvtSequence.convert_time_relative_to_absolute(data)
 
-        for i in range(len(data.times.values)):
+        for i in range(len(data)):
             point: Point = Point(
                 position=tuple(ms.value for ms in data[i].positions),
                 velocity=tuple(ms.value for ms in data[i].velocities),

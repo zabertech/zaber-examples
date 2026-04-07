@@ -50,7 +50,7 @@ how to structure these files can be found in the docstring of [generate_pvt_sequ
 To run the script:
 
 ```shell
-cd src/pvt_parameter_generation
+cd src/motion_pvt_sequence_generation
 pipenv install
 pipenv run python generate_pvt_sequence.py
 ```
@@ -294,7 +294,18 @@ points = [
       velocities=[None],
       time = Measurement(1, Units.TIME_SECONDS)
    ),
+   PvtPartialPoint(
+      positions=[Measurement(4, Units.LENGTH_CENTIMETRES)],
+      velocities=[None],
+      time = Measurement(1, Units.TIME_SECONDS)
+   ),
+   PvtPartialPoint(
+      positions=[Measurement(5, Units.LENGTH_CENTIMETRES)],
+      velocities=[Measurement(0, Units.VELOCITY_CENTIMETRES_PER_SECOND)],
+      time = Measurement(1, Units.TIME_SECONDS)
+   ),
 ]
+
 sequence_data = PvtSequence.generate_velocities(points)
 sequence = pvt.Sequence.from_sequence_data(sequence_data)
 ```
