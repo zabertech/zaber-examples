@@ -15,14 +15,29 @@ from enum import Enum, auto
 import numpy as np
 
 from zaber_motion import Measurement
-from zaber_motion.ascii import PvtSequenceData, PvtSequence
+from zaber_motion.ascii import PvtPartialPoint, PvtPoint, PvtSequence
+
+def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
+    """ Helper function for sequience_data_from_csv. """
+    assert len(point.positions) > 0 , "Point is missing position data."
+    assert all(pos is not None for pos in point.positions), "Point has null position data entries."
+    assert len(point.velocities) == len(point.positions), "Point has different quantities of positions and velocities."
+    assert all(vel is not None for vel in point.velocities), "Point has null velocity data entries."
+    assert point.time is not None, "Point is missing time data."
+    return PvtPoint(
+        positions=point.positions,
+        velocities=point.velocities,
+        time=point.time,
+        relative=point.relative or False,
+    )
+
 
 @staticmethod
 def sequence_data_from_csv(
     filename: str, target_speed: Measurement | None = None, target_accel: Measurement | None = None
-) -> PvtSequenceData | None:
+) -> list[PvtPoint] | None:
     """
-    Return a PVT sequence data object loaded from CSV.
+    Return a PVT sequence loaded from CSV.
 
     This function will load all the given data and attempt to
     generate any missing parameters. Generation is only possible
@@ -65,14 +80,17 @@ def sequence_data_from_csv(
         """Generate velocity only."""
 
     # Read the data and do some sanity checks
-    data = PvtSequence.load_sequence_data(filename)
+    data = PvtSequence.load_partial_sequence_data(filename)
 
-    contains_time_data = len(data.sequence_data.times.values) > 0
+    # ZML will throw an error if any columns that have headings lack complete data,
+    # so we only need to check the first point for those.
+    first_point = data.sequence_data[0]
+    contains_time_data = first_point.time is not None
     contains_position_data = (
-        len(data.sequence_data.positions) > 0 and len(data.sequence_data.positions[0].values) > 0
+        len(first_point.positions) > 0 and all(pos is not None for pos in first_point.positions)
     )
     contains_velocity_data = (
-        len(data.sequence_data.velocities) > 0 and len(data.sequence_data.velocities[0].values) > 0
+        len(first_point.velocities) > 0 and all(vel is not None for vel in first_point.velocities)
     )
 
     gen_type = GenerationType.NONE
@@ -94,34 +112,30 @@ def sequence_data_from_csv(
             "velocity and time must both be specified"
         )
 
+    # Note all of the sample data files in this project have relative times. If loading a file
+    # with absolute times, you must convert to relative times before calling the generation functions:
+    # data.sequence_data = PvtSequence.convert_times_absolute_to_relative_partial(data.sequence_data)
+
     # Call the appropriate generation function
     match gen_type:
         case GenerationType.NONE:
-            return data.sequence_data
+            # This assumes there are no non-point actions in the CSV files.
+            return [partial_to_complete_point(point) for point in data.sequence_data]
         case GenerationType.TIME_AND_VELOCITY:
-            assert (
-                target_speed is not None and target_accel is not None
-            ), "Target speed and accel must be defined to generate velocities and times"
+            assert target_speed is not None and target_accel is not None, (
+                "Target speed and accel must be defined to generate velocities and times"
+            )
             return PvtSequence.generate_velocities_and_times(
-                data.sequence_data.positions,
+                data.sequence_data,
                 target_speed,
                 target_accel,
             )
         case GenerationType.POSITION:
-            return PvtSequence.generate_positions(
-                data.sequence_data.velocities,
-                data.sequence_data.times,
-                times_relative=True,
-            )
+            return PvtSequence.generate_positions(data.sequence_data)
         case GenerationType.VELOCITY:
-            return PvtSequence.generate_velocities(
-                data.sequence_data.positions,
-                data.sequence_data.times,
-                velocities=None,
-                times_relative=True,
-            )
+            return PvtSequence.generate_velocities(data.sequence_data)
         case _:
-            return data.sequence_data
+            assert False, "BUG: Unhandled generation case."
 
 @dataclass(frozen=True)
 class Point:
@@ -496,22 +510,31 @@ class Sequence:
         return self._segments[index]
 
     @staticmethod
-    def from_sequence_data(data: PvtSequenceData, times_relative: bool):
+    def from_sequence_data(data: list[PvtPoint], times_relative: bool):
         """
         Return a PVT sequence from sequence data.
 
-        This function generates a PVT sequence from a ZML PVT sequence data object.
+        This function generates a PVT sequence from a ZML PVT sequence data object,
+        with times converted to absolute for plotting purposes.
+
+        Discards units of measure from the input data; times, positions and
+        velocities are assumed to be in compatible units and the same across
+        axes.
 
         :param data: The sequence data object.
         :return: The PVT sequence with generated parameters.
         """
         points = []
-        absolute_times = np.cumsum(data.times.values) if times_relative else data.times.values
-        for i in range(len(data.times.values)):
+        if times_relative:
+            data = PvtSequence.convert_time_relative_to_absolute(data)
+
+        for i in range(len(data)):
             point: Point = Point(
-                position=tuple(ms.values[i] for ms in data.positions),
-                velocity=tuple(ms.values[i] for ms in data.velocities),
-                time=absolute_times[i],
+                position=tuple(ms.value for ms in data[i].positions),
+                velocity=tuple(ms.value for ms in data[i].velocities),
+                time=data[i].time.value,
             )
+
             points.append(point)
+
         return Sequence(points)

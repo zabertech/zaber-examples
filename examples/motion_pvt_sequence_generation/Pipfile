@@ -7,7 +7,7 @@ name = "pypi"
 matplotlib = "*"
 numpy = "*"
 scipy = "*"
-zaber-motion = "*"
+zaber-motion = ">=9.0.0"
 
 [dev-packages]
 black = "*"
