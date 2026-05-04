@@ -2,13 +2,13 @@
 
 *By Nathan Paolini*
 
-These are scripts that can be run to allow a Zaber stage with a Direct Encoder (DE) to analyze its own performance.
+These are scripts that can be run to allow a Zaber stage with a direct encoder to analyze its own performance.
 
 ![accuracy_plot.png](img/accuracy_plot.png)
 
 ## Hardware Requirements
 
-A linear or rotary DE stage.
+A linear or rotary direct encoder stage.
 
 ## Dependencies / Software Requirements / Prerequisites
 
@@ -50,5 +50,5 @@ pdm run settling-time
 
 Zaber stages with direct encoders allow the stage to report on its own performance.
 
-- `src/self_test_direct_encoder_stage/accuracy.py` allows a DE stage to test it's open loop accuracy or repeatability.
-- `src/self_test_direct_encoder_stage/settling_time.py` allows a DE stage to determine its move-and-settle time for a variety of settings and step sizes.
+- `src/self_test_direct_encoder_stage/accuracy.py` allows a direct encoder stage to test it's open loop accuracy or repeatability.
+- `src/self_test_direct_encoder_stage/settling_time.py` allows a direct encoder stage to determine its move-and-settle time for a variety of settings and step sizes.
