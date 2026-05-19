@@ -40,15 +40,18 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
 
 def validate_article_metadata(directory: Path) -> int:
     """Check that the required yaml fields exist."""
-    with open(directory.joinpath("article.yml"), "r", encoding="utf-8") as stream:
-        meta = yaml.safe_load(stream)
+    try: 
+        with open(directory.joinpath("article.yml"), "r", encoding="utf-8") as stream:
+            meta = yaml.safe_load(stream)
 
-    required_fields = {
-        "date": date,
-        "updated_date": date,
-        "category": str,
-        "picture": str,
-    }
+        required_fields = {
+            "date": date,
+            "updated_date": date,
+            "category": str,
+            "picture": str,
+        }
+    except Exception:
+        return 1
 
     for field, field_type in required_fields.items():
         if field not in meta:

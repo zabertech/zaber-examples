@@ -7,6 +7,7 @@ from .common import (
     file_exists,
     subdirectory_exists,
     list_files_of_suffix,
+    get_git_root_directory,
 )
 from .terminal_utils import iprint_pass, iprint_fail, iprint_warn
 
@@ -35,6 +36,10 @@ def check_python(directory: Path, fix: bool) -> int:
         iprint_pass("requirements.txt found: use venv and pip.", 1)
         return check_python_requirements(python_directory, fix)
 
+    if file_exists(python_directory, "uv.lock"):
+        iprint_pass("uv.lock found: use uv.", 1)
+        return check_python_uv(python_directory, fix)
+
     iprint_fail("Missing Pipfile or requirements.txt", 1)
     return 1
 
@@ -49,12 +54,8 @@ def check_python_pdm(directory: Path, fix: bool) -> int:
         iprint_warn("zaber-motion will update to the latest version", 1)
         return_code |= execute(["pdm", "update", "-u", "--save-exact", "zaber-motion"], directory)
 
-    python_files = list_files_of_suffix(directory, ".py")
-    python_filenames = [str(x.relative_to(directory)) for x in python_files]
-
-    return_code |= run_linters(
+    return_code |= run_legacy_linters(
         ["pdm", "run"],
-        python_filenames,
         directory,
         fix,
     )
@@ -72,10 +73,7 @@ def check_python_pipenv(directory: Path, fix: bool) -> int:
 
     return_code |= execute(["pipenv", "install", "--dev"], directory)
 
-    python_files = list_files_of_suffix(directory, ".py")
-    python_filenames = [str(x.relative_to(directory)) for x in python_files]
-
-    return_code |= run_linters(["pipenv", "run"], python_filenames, directory, fix)
+    return_code |= run_legacy_linters(["pipenv", "run"], directory, fix)
     return return_code
 
 
@@ -96,33 +94,38 @@ def check_python_requirements(directory: Path, fix: bool) -> int:
         directory,
     )
     return_code |= execute(
-        [
-            ".venv/bin/python3",
-            "-m",
-            "pip",
-            "install",
-            "--upgrade",
-            "black",
-            "pylint",
-            "pydocstyle",
-            "mypy",
-        ],
+        [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "ruff", "pyright"],
         directory,
     )
 
-    python_files = list_files_of_suffix(directory, ".py")
-    python_filenames = [str(x.relative_to(directory)) for x in python_files]
-
-    return_code |= run_linters([".venv/bin/python3", "-m"], python_filenames, directory, fix)
+    return_code |= run_legacy_linters([".venv/bin/python3", "-m"], directory, fix)
 
     return return_code
 
 
-def run_linters(
-    command_prefix: list[str], python_filenames: list[str], directory: Path, fix: bool
+def check_python_uv(directory: Path, fix: bool) -> int:
+    """Check python using uv if example provides uv.lock."""
+    return_code = 0
+    return_code |= execute(["uv", "sync"], directory)
+
+    needs_update = execute_and_get_output(["uv", "pip", "list", "--outdated"], directory)
+    if "zaber-motion" in needs_update:
+        iprint_warn("zaber-motion will update to the latest version", 1)
+        return_code |= execute(["uv", "lock", "--upgrade-package", "zaber-motion"], directory)
+        return_code |= execute(["uv", "sync"], directory)
+
+    return_code |= run_uv_linters(["uv", "run"], directory, fix)
+    return return_code
+
+
+def run_legacy_linters(
+    command_prefix: list[str], directory: Path, fix: bool
 ) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
+    
+    python_files = list_files_of_suffix(directory, ".py")
+    python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
     def lint_files(command: list[str]) -> int:
         """Lint files using venv."""
@@ -135,5 +138,27 @@ def run_linters(
     return_code |= lint_files(["pylint", "--score=n"])
     return_code |= lint_files(["pydocstyle"])
     return_code |= lint_files(["mypy", "--strict"])
+
+    return return_code
+
+def run_uv_linters(
+    command_prefix: list[str], directory: Path, fix: bool
+) -> int:
+    """Run a set of linters in the appropriate virtual environment."""
+    return_code = 0
+    ruff_config = get_git_root_directory() / "tools" / "python-tooling-config" / "zaber-ruff.toml"
+
+    def lint_files(command: list[str]) -> int:
+        """Lint files using venv."""
+        return execute(command_prefix + command, directory)
+
+    return_code |= lint_files(["ruff", "format", "--config", str(ruff_config)])
+    
+    if fix:
+        return_code |= lint_files(["ruff", "check", "--fix", "--config", str(ruff_config)])
+    else:
+        return_code |= lint_files(["ruff", "check", "--config", str(ruff_config)])
+    
+    return_code |= lint_files(["pyright", str(directory)])
 
     return return_code

@@ -1,0 +1,9 @@
+{
+  "typeCheckingMode": "strict",
+  "reportUnusedVariable": false,
+  "reportWildcardImportFromLibrary": false,
+  "reportUntypedNamedTuple": false,
+  "reportMissingParameterType": false,
+  "reportPrivateUsage": false,
+  "reportUnusedImport": false,
+}
