@@ -12,7 +12,7 @@ IGNORE_FILE = "ignore.txt"
 ignore_list: list[Path] = []
 
 
-def execute(command: list[str], cwd: Path) -> int:
+def execute(command: list[str], cwd: Path, debug: bool = False) -> int:
     """Execute subprocess.run and print appropriate message."""
     env = dict(os.environ)
     del env["VIRTUAL_ENV"]
@@ -26,7 +26,7 @@ def execute(command: list[str], cwd: Path) -> int:
         env=env,
         shell=True,
     )
-    if result.returncode:
+    if result.returncode or debug:
         iprint_fail(" ".join(command), 1)
         iprint(result.stdout, 1)
     else:

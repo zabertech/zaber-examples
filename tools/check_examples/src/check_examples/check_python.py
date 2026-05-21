@@ -47,7 +47,7 @@ def check_python(directory: Path, fix: bool) -> int:
 def check_python_pdm(directory: Path, fix: bool) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
-    return_code |= execute(["pdm", "install", "--dev"], directory)
+    return_code |= execute(["pdm", "install", "--dev"], directory, True)
 
     needs_update = execute_and_get_output(["pdm", "outdated", "zaber-motion"], directory)
     if "zaber-motion" in needs_update:
@@ -58,6 +58,7 @@ def check_python_pdm(directory: Path, fix: bool) -> int:
         ["pdm", "run"],
         directory,
         fix,
+        True
     )
     return return_code
 
@@ -67,11 +68,12 @@ def check_python_pipenv(directory: Path, fix: bool) -> int:
     return_code = 0
     return_code |= execute(["pipenv", "clean"], directory)
     needs_update = execute_and_get_output(["pipenv", "update", "--outdated"], directory)
-    if "'zaber_motion'" in needs_update:
-        iprint_warn("zaber-motion will update to the latest version", 1)
-        return_code |= execute(["pipenv", "update", "zaber-motion"], directory)
+    # if "'zaber_motion'" in needs_update:
+    #     iprint_warn("zaber-motion will update to the latest version", 1)
+    #     return_code |= execute(["pipenv", "update", "zaber-motion"], directory)
 
     return_code |= execute(["pipenv", "install", "--dev"], directory)
+    #todo: is this even running the shell?
 
     return_code |= run_legacy_linters(["pipenv", "run"], directory, fix)
     return return_code
@@ -94,7 +96,7 @@ def check_python_requirements(directory: Path, fix: bool) -> int:
         directory,
     )
     return_code |= execute(
-        [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "ruff", "pyright"],
+        [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "ruff", "pyright"], #todo: undo
         directory,
     )
 
@@ -119,7 +121,7 @@ def check_python_uv(directory: Path, fix: bool) -> int:
 
 
 def run_legacy_linters(
-    command_prefix: list[str], directory: Path, fix: bool
+    command_prefix: list[str], directory: Path, fix: bool, debug: bool = False
 ) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
@@ -129,7 +131,7 @@ def run_legacy_linters(
 
     def lint_files(command: list[str]) -> int:
         """Lint files using venv."""
-        return execute(command_prefix + command + python_filenames, directory)
+        return execute(command_prefix + command + python_filenames, directory, debug)
 
     if fix:
         return_code |= lint_files(["black", "-l100"])
