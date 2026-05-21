@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 opencv-python = "*"
 simple-pyspin = "*"
-matplotlib = "*"
+matplotlib = ">=3.9.2"
 zaber-motion = "*"
 
 [dev-packages]
