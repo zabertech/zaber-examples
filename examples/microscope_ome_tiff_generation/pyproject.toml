@@ -9,69 +9,21 @@ dependencies = [
     "tifffile>=2026.5.2",
 ]
 
+[dependency-groups]
+dev = [
+    "ruff~=0.14.0",
+    "pyright>=1.1.0",
+]
+
 [tool.ruff]
-# The required version of Ruff compatible with this configuration.
-required-version = "~=0.11.9"
-
-# This is a default max line length. 
-# It is largely a matter of team taste and can be modified.
-line-length = 100
-
-[tool.ruff.format]
-# Format python code snippets in comments
-docstring-code-format = true
+extend = "../../tools/tooling_config/zaber-ruff.toml"
 
 [tool.ruff.lint]
-# Use all lint rules, incorporating new rules as they are made. 
-# It is expected that projects pin their tools' versions (by committing their
-# uv.lock file) so new rules will only be incorporated when the version is
-# explicitly changed.
-select = [
-    # Rule     Explanation for selecting
-    "ALL",
-    "D204",    # Require empty line after class docstring (PEP 257)
-    "D401",    # Require imperative mood doc strings (PEP 257)
-    "D404",    # Do not start doc strings with "This function..." (PEP 257)
+extend-ignore = [
+    "D100",  # Do not require docstrings in public module
+    "D103",  # Do not require docstrings in public functions
+    "D107",  # Do not require docstrings in __init__
 ]
-ignore = [    
-    # Rule     Explanation for ignoring
-    "COM812",  # Do not lint trailing commas in multi-line lists, etc.
-               # Not required when also using `ruff format`.
-
-    "EM",      # Allow strings in error constructors to reduce verbosity
-    "FIX002",  # Allow TODO comments
-    "G003",    # Do not require %-formatting in logging calls
-    "G004",    # Allow f-strings in logging calls
-    "PD008",   # Allow the use of pandas.Dataframe.at()
-    "PERF401", # Do not force list comprehensions
-    "PERF403", # Do not force dictionary comprehensions
-    "S310",    # Allow constructing arbitrary URLs for urllib.urlopen
-               # (we do not have many security concerns internally)
-    "S311",    # Allow random.random()-like calls
-               # (we do not have many security concerns internally)
-    "S603",    # Allow subprocesses without shells 
-               # (risk internally is low and test is prone to false-positives)
-    "SIM108",  # Do not always force ternary operator
-    "T20",     # Allow print/pprint calls (often used in scripts)
-    "TC001",   # Do not require typechecking import block
-    "TC002",   # Do not require typechecking import block
-    "TC003",   # Do not require typechecking import block
-    "TD002",   # Do not require author in TODO comment
-    "TD003",   # Do not require ticket link in TODO comment
-    "D103",    # Do not require docstrings in public functions
-    "D100",    # Do not require docstrings in public module
-    "D107",    # Do not require docstrings in init
-]
-
-# Follow Google's documentation convention, with some changes to bring
-# it closer to PEP 257 (see selected rules above).
-pydocstyle.convention = "google"
 
 [tool.pyright]
-# Use strict mode, enabling most checks
-typeCheckingMode = "strict"
-
-# Defer to Ruff for the following checks
-reportUnusedVariable = false
-reportWildcardImportFromLibrary = false
-reportUntypedNamedTuple = false
+extends = "../../tools/tooling_config/zaber-pyright.toml"

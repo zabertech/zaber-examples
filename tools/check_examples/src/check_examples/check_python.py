@@ -1,5 +1,6 @@
 """Check and lint Python files."""
 
+import tomllib
 from pathlib import Path
 from .common import (
     execute,
@@ -108,15 +109,69 @@ def check_python_requirements(directory: Path, fix: bool) -> int:
 def check_python_uv(directory: Path, fix: bool) -> int:
     """Check python using uv if example provides uv.lock."""
     return_code = 0
-    return_code |= execute(["uv", "sync"], directory)
+    return_code |= check_uv_tooling_config(directory)
+    return_code |= execute(["uv", "sync", "--dev"], directory)
 
     needs_update = execute_and_get_output(["uv", "pip", "list", "--outdated"], directory)
     if "zaber-motion" in needs_update:
         iprint_warn("zaber-motion will update to the latest version", 1)
         return_code |= execute(["uv", "lock", "--upgrade-package", "zaber-motion"], directory)
-        return_code |= execute(["uv", "sync"], directory)
+        return_code |= execute(["uv", "sync", "--dev"], directory)
 
     return_code |= run_uv_linters(["uv", "run"], directory, fix)
+    return return_code
+
+
+def check_uv_tooling_config(directory: Path) -> int:
+    """Verify pyproject.toml extends the shared ruff and pyright configs."""
+    pyproject_path = directory / "pyproject.toml"
+    if not pyproject_path.exists():
+        iprint_fail("pyproject.toml not found", 1)
+        return 1
+
+    with open(pyproject_path, "rb") as f:
+        config = tomllib.load(f)
+
+    tooling_config = get_git_root_directory() / "tools" / "tooling_config"
+    expected_ruff = (tooling_config / "zaber-ruff.toml")
+    expected_pyright = (tooling_config / "zaber-pyright.toml")
+
+    return_code = 0
+    
+    try: 
+        ruff_config = config["tool"]["ruff"]
+        ruff_extend = ruff_config.get("extend", None)
+        
+        if not ruff_extend:
+            iprint_fail(f"pyproject.toml [tool.ruff] missing 'extend'. [tool.ruff] extend must point to {expected_ruff}", 1)
+            return_code = 1
+        elif (directory / ruff_extend) != expected_ruff:
+            iprint_fail(f"[tool.ruff] extend must point to {expected_ruff}", 1)
+            return_code = 1
+        else:
+            iprint_pass("[tool.ruff] extend correct", 1)
+            
+    except KeyError: 
+        iprint_fail("pyproject.toml missing [tool.ruff]", 1)
+        return_code = 1
+        
+    try: 
+        pyright_config = config["tool"]["pyright"]
+        pyright_extend = ruff_config.get("extend", None)
+        
+        if not pyright_config:
+            iprint_fail(f"pyproject.toml [tool.pyright] missing 'extend'. [tool.pyright] extend must point to {expected_pyright}", 1)
+            return_code = 1
+        elif (directory / pyright_extend) != expected_pyright:
+            iprint_fail(f"[tool.pyright] extend must point to {expected_pyright}", 1)
+            return_code = 1
+        else:
+            iprint_pass("[tool.pyright] extend correct", 1)
+            
+    except KeyError: 
+        iprint_fail("pyproject.toml missing [tool.pyright]", 1)
+        return_code = 1
+    
     return return_code
 
 
@@ -148,19 +203,21 @@ def run_uv_linters(
 ) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
-    ruff_config = get_git_root_directory() / "tools" / "python-tooling-config" / "zaber-ruff.toml"
 
     def lint_files(command: list[str]) -> int:
         """Lint files using venv."""
         return execute(command_prefix + command, directory)
 
-    return_code |= lint_files(["ruff", "format", "--config", str(ruff_config)])
-    
     if fix:
-        return_code |= lint_files(["ruff", "check", "--fix", "--config", str(ruff_config)])
+        return_code |= lint_files(["ruff", "format"])
     else:
-        return_code |= lint_files(["ruff", "check", "--config", str(ruff_config)])
-    
+        return_code |= lint_files(["ruff", "format", "--check"])
+
+    if fix:
+        return_code |= lint_files(["ruff", "check", "--fix"])
+    else:
+        return_code |= lint_files(["ruff", "check"])
+
     return_code |= lint_files(["pyright", str(directory)])
 
     return return_code
