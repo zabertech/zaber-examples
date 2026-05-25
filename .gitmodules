@@ -1,3 +1,0 @@
-[submodule "tools/python-tooling-config"]
-	path = tools/python-tooling-config
-	url = git@gitlab.izaber.com:prog-std/python-tooling-config.git
