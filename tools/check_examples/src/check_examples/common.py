@@ -1,6 +1,7 @@
 """Common helper functions."""
 
 import os
+import shlex
 import subprocess
 import sys
 from collections.abc import Generator
@@ -18,7 +19,7 @@ def execute(command: list[str], cwd: Path) -> int:
     env = dict(os.environ)
     env.pop("VIRTUAL_ENV", None)
     result = subprocess.run(
-        command,
+        shlex.join(command),
         cwd=str(cwd),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -40,7 +41,7 @@ def execute_and_get_output(command: list[str], cwd: Path) -> str:
     env = dict(os.environ)
     env.pop("VIRTUAL_ENV", None)
     result = subprocess.run(
-        command,
+        shlex.join(command),
         cwd=str(cwd),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
