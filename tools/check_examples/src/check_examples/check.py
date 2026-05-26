@@ -126,9 +126,9 @@ def cmd_check_changed(args: Args) -> int:
 
     # Run checks
     if changed_self:
-        cmd_check_self(args)
+        return_code |= cmd_check_self(args)
     if changed_docs:
-        cmd_check_docs(args)
+        return_code |= cmd_check_docs(args)
     if changed_examples:
         print("=== Check changed examples ===")
         for example in changed_examples:

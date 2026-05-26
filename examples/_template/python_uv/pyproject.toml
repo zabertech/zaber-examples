@@ -16,7 +16,7 @@ dev = [
 ]
 
 [tool.ruff]
-extend = "../../tools/tooling_config/zaber-ruff.toml"
+extend = "../../../tools/tooling_config/zaber-ruff.toml" # Update relative path for your example
 
 [tool.pyright]
-extends = "../../tools/tooling_config/zaber-pyright.toml"
+extends = "../../../tools/tooling_config/zaber-pyright.toml" # Update relative path for your example

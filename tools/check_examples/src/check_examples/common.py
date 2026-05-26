@@ -12,10 +12,10 @@ IGNORE_FILE = "ignore.txt"
 ignore_list: list[Path] = []
 
 
-def execute(command: list[str], cwd: Path, debug: bool = False) -> int:
+def execute(command: list[str], cwd: Path) -> int:
     """Execute subprocess.run and print appropriate message."""
     env = dict(os.environ)
-    del env["VIRTUAL_ENV"]
+    env.pop("VIRTUAL_ENV", None)
     result = subprocess.run(
         command,
         cwd=str(cwd),
@@ -31,16 +31,13 @@ def execute(command: list[str], cwd: Path, debug: bool = False) -> int:
         iprint(result.stdout, 1)
     else:
         iprint_pass(" ".join(command), 1)
-        
-    if debug: 
-        iprint(result.stdout, 1)
     return result.returncode
 
 
 def execute_and_get_output(command: list[str], cwd: Path) -> str:
     """Execute subprocess.run and return output."""
     env = dict(os.environ)
-    del env["VIRTUAL_ENV"]
+    env.pop("VIRTUAL_ENV", None)
     result = subprocess.run(
         command,
         cwd=str(cwd),

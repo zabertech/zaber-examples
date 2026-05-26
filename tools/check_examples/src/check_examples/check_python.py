@@ -2,15 +2,16 @@
 
 import tomllib
 from pathlib import Path
+
 from .common import (
     execute,
     execute_and_get_output,
     file_exists,
-    subdirectory_exists,
-    list_files_of_suffix,
     get_git_root_directory,
+    list_files_of_suffix,
+    subdirectory_exists,
 )
-from .terminal_utils import iprint_pass, iprint_fail, iprint_warn
+from .terminal_utils import iprint_fail, iprint_pass, iprint_warn
 
 
 def check_python(directory: Path, fix: bool) -> int:
@@ -48,19 +49,14 @@ def check_python(directory: Path, fix: bool) -> int:
 def check_python_pdm(directory: Path, fix: bool) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
-    return_code |= execute(["pdm", "install", "--dev"], directory, True)
+    return_code |= execute(["pdm", "install", "--dev"], directory)
 
-    # needs_update = execute_and_get_output(["pdm", "outdated", "zaber-motion"], directory)
-    # if "zaber-motion" in needs_update:
-    #     iprint_warn("zaber-motion will update to the latest version", 1)
-    #     return_code |= execute(["pdm", "update", "-u", "--save-exact", "zaber-motion"], directory)
+    needs_update = execute_and_get_output(["pdm", "outdated", "zaber-motion"], directory)
+    if "zaber-motion" in needs_update:
+        iprint_warn("zaber-motion will update to the latest version", 1)
+        return_code |= execute(["pdm", "update", "-u", "--save-exact", "zaber-motion"], directory)
 
-    return_code |= run_legacy_linters(
-        ["pdm", "run"],
-        directory,
-        fix,
-        True
-    )
+    return_code |= run_legacy_linters(["pdm", "run"], directory, fix)
     return return_code
 
 
@@ -68,13 +64,12 @@ def check_python_pipenv(directory: Path, fix: bool) -> int:
     """Check python using pipenv if example provides Pipfile."""
     return_code = 0
     return_code |= execute(["pipenv", "clean"], directory)
-    # needs_update = execute_and_get_output(["pipenv", "update", "--outdated"], directory)
-    # if "'zaber_motion'" in needs_update:
-    #     iprint_warn("zaber-motion will update to the latest version", 1)
-    #     return_code |= execute(["pipenv", "update", "zaber-motion"], directory)
+    needs_update = execute_and_get_output(["pipenv", "update", "--outdated"], directory)
+    if "'zaber_motion'" in needs_update:
+        iprint_warn("zaber-motion will update to the latest version", 1)
+        return_code |= execute(["pipenv", "update", "zaber-motion"], directory)
 
     return_code |= execute(["pipenv", "install", "--dev"], directory)
-    #todo: is this even running the shell?
 
     return_code |= run_legacy_linters(["pipenv", "run"], directory, fix)
     return return_code
@@ -94,10 +89,6 @@ def check_python_requirements(directory: Path, fix: bool) -> int:
 
     return_code |= execute(
         [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "-r", "requirements.txt"],
-        directory,
-    )
-    return_code |= execute(
-        [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "ruff", "pyright"], #todo: undo
         directory,
     )
 
@@ -129,64 +120,69 @@ def check_uv_tooling_config(directory: Path) -> int:
         iprint_fail("pyproject.toml not found", 1)
         return 1
 
-    with open(pyproject_path, "rb") as f:
+    with Path.open(pyproject_path, "rb") as f:
         config = tomllib.load(f)
 
     tooling_config = get_git_root_directory() / "tools" / "tooling_config"
-    expected_ruff = (tooling_config / "zaber-ruff.toml")
-    expected_pyright = (tooling_config / "zaber-pyright.toml")
+    expected_ruff = (tooling_config / "zaber-ruff.toml").resolve()
+    expected_pyright = (tooling_config / "zaber-pyright.toml").resolve()
 
     return_code = 0
-    
-    try: 
+
+    try:
         ruff_config = config["tool"]["ruff"]
         ruff_extend = ruff_config.get("extend", None)
-        
+
         if not ruff_extend:
-            iprint_fail(f"pyproject.toml [tool.ruff] missing 'extend'. [tool.ruff] extend must point to {expected_ruff}", 1)
+            iprint_fail(
+                f"pyproject.toml [tool.ruff] missing 'extend'.\
+                [tool.ruff] extend must point to {expected_ruff}",
+                1,
+            )
             return_code = 1
-        elif (directory / ruff_extend) != expected_ruff:
+        elif (directory / ruff_extend).resolve() != expected_ruff:
             iprint_fail(f"[tool.ruff] extend must point to {expected_ruff}", 1)
             return_code = 1
         else:
             iprint_pass("[tool.ruff] extend correct", 1)
-            
-    except KeyError: 
+
+    except KeyError:
         iprint_fail("pyproject.toml missing [tool.ruff]", 1)
         return_code = 1
-        
-    try: 
+
+    try:
         pyright_config = config["tool"]["pyright"]
-        pyright_extend = ruff_config.get("extend", None)
-        
-        if not pyright_config:
-            iprint_fail(f"pyproject.toml [tool.pyright] missing 'extend'. [tool.pyright] extend must point to {expected_pyright}", 1)
+        pyright_extends = pyright_config.get("extends", None)
+
+        if not pyright_extends:
+            iprint_fail(
+                f"pyproject.toml [tool.pyright] missing 'extends'. Must point to {expected_pyright}",
+                1,
+            )
             return_code = 1
-        elif (directory / pyright_extend) != expected_pyright:
-            iprint_fail(f"[tool.pyright] extend must point to {expected_pyright}", 1)
+        elif (directory / pyright_extends).resolve() != expected_pyright:
+            iprint_fail(f"[tool.pyright] extends must point to {expected_pyright}", 1)
             return_code = 1
         else:
             iprint_pass("[tool.pyright] extend correct", 1)
-            
-    except KeyError: 
+
+    except KeyError:
         iprint_fail("pyproject.toml missing [tool.pyright]", 1)
         return_code = 1
-    
+
     return return_code
 
 
-def run_legacy_linters(
-    command_prefix: list[str], directory: Path, fix: bool, debug: bool = False
-) -> int:
+def run_legacy_linters(command_prefix: list[str], directory: Path, fix: bool) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
-    
+
     python_files = list_files_of_suffix(directory, ".py")
     python_filenames = [str(x.relative_to(directory)) for x in python_files]
 
     def lint_files(command: list[str]) -> int:
         """Lint files using venv."""
-        return execute(command_prefix + command + python_filenames, directory, debug)
+        return execute(command_prefix + command + python_filenames, directory)
 
     if fix:
         return_code |= lint_files(["black", "-l100"])
@@ -198,9 +194,8 @@ def run_legacy_linters(
 
     return return_code
 
-def run_uv_linters(
-    command_prefix: list[str], directory: Path, fix: bool
-) -> int:
+
+def run_uv_linters(command_prefix: list[str], directory: Path, fix: bool) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
 

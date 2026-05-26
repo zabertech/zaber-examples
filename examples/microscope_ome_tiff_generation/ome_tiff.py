@@ -1,11 +1,10 @@
-from argparse import ArgumentError, ArgumentParser
 from collections.abc import Iterator
-from os import path
 from pathlib import Path
 from typing import Final
 
+import click
 import numpy as np
-from ome_types import from_xml
+from ome_types import from_xml  # pyright: ignore [reportUnknownVariableType]
 from ome_types.model import PixelType
 from PIL import Image
 from tifffile import TiffWriter
@@ -35,31 +34,36 @@ class OMETiffWriter:
         np.dtype("float64"): PixelType.DOUBLE,
     }
 
-    NUM_COLOR_CHANNELS: Final = 3
+    NUM_CHANNELS_GREYSCALE: Final = 2
 
-    def __init__(self, metadata: Path, image_dir: Path) -> None:
+    def __init__(self, metadata: Path, image_dir: Path, output_ome_tiff: Path | None) -> None:
         self.metadata = metadata
         self.image_dir = image_dir
+        self.output_ome_tiff = output_ome_tiff
 
     def write_ome_tiff(self) -> None:
         """Write a OME-TIFF file."""
-        ome_tiff_filename = f"{self.metadata.stem}.tiff"
-        sample = next(self.get_acquisition_images())
-        metadata_str = self.modify_metadata(sample)
+        ome_tiff_file = self.output_ome_tiff or self.metadata.with_suffix(".tiff")
 
-        with TiffWriter(ome_tiff_filename, ome=False, shaped=False) as tif:
-            first = True
-            for frame in self.get_acquisition_images():
-                if first:
+        with TiffWriter(ome_tiff_file, ome=False, shaped=False) as tif:
+            for index, frame in enumerate(self.get_acquisition_images()):
+                if index == 0:
+                    metadata_str = self.modify_metadata(frame)
                     tif.write(frame, contiguous=True, description=metadata_str.encode())
-                    first = False
                 else:
                     tif.write(frame, contiguous=True)
+
+    def get_acquistion_order(self, acquistion_filenames: list[str]) -> list[str]:
+        """Sorts acquistion image file names by acquistion order.
+
+        Assumes alphabetically sorted image file names correspond to order of acquistion.
+        """
+        return sorted(acquistion_filenames)
 
     def get_acquisition_images(self) -> Iterator[np.ndarray]:
         """Yield acquisition images from the image directory as numpy arrays in acquistion roder.
 
-        Assumes acquisition images were created in order of capture.
+        Assumes alphabetically sorted image file names correspond to order of acquistion.
 
         Yields:
             Numpy array of shape ``(H, W)`` or ``(H, W, C)`` per image.
@@ -69,7 +73,7 @@ class OMETiffWriter:
             pattern_filenames = self.image_dir.glob(pattern)
             filenames += list(pattern_filenames)
 
-        filenames.sort(key=path.getctime)
+        filenames.sort()
 
         for filename in filenames:
             yield np.asarray(Image.open(filename))
@@ -88,13 +92,12 @@ class OMETiffWriter:
         ome = from_xml(self.metadata)
         pixel_type = self.DTYPE_TO_OME.get(sample.dtype)
 
-        if sample.ndim == self.NUM_COLOR_CHANNELS:
-            num_pixel_channels = sample.shape[2]
-            samples_per_pixel = num_pixel_channels
-            interleaved = num_pixel_channels in (3, 4)
-        else:
+        if sample.ndim == self.NUM_CHANNELS_GREYSCALE:  # greyscale (H, W)
             samples_per_pixel = 1
             interleaved = False
+        else:  # color (H, W, C)
+            samples_per_pixel = sample.shape[2]
+            interleaved = True
 
         for image in ome.images:
             if pixel_type is not None:
@@ -105,42 +108,37 @@ class OMETiffWriter:
         return ome.to_xml()
 
 
-def validate_xml(value: str) -> Path:
-    if not value.endswith(".ome.xml"):
-        raise ArgumentError(None, "Metadata must be a .ome.xml file.")
-    file_path = Path(value)
-    if not file_path.is_file():
-        raise ArgumentError(None, f"Metadata file not found: {value}")
-    return file_path
+@click.command()
+@click.option(
+    "-m",
+    "--ome-metadata",
+    help="Path to the .ome.xml metadata file.",
+    required=True,
+    type=click.Path(file_okay=True, readable=True, resolve_path=True),
+)
+@click.option(
+    "-d,",
+    "--acquisition-dir",
+    help="Directory containing acquisition images.",
+    required=True,
+    type=click.Path(dir_okay=True, file_okay=False, readable=True, resolve_path=True),
+)
+@click.option(
+    "-m,",
+    "--output-file",
+    help="Output file path.",
+    required=False,
+    type=click.Path(dir_okay=False, file_okay=True, writable=True, resolve_path=True),
+)
+def generate(ome_metadata: Path, acquisition_dir: Path, output_file: Path | None) -> None:
+    if not (ome_metadata.name.endswith(".ome.xml")):
+        raise click.BadParameter("must be .ome.xml file.")
 
+    if output_file is not None and not (output_file.name.endswith(".ome.tiff")):
+        raise click.BadParameter("must be .ome.tiff file.")
 
-def validate_directory(value: str) -> Path:
-    dir_path = Path(value)
-    if not dir_path.is_dir():
-        raise ArgumentError(None, f"Image directory not found: {value}")
-    return dir_path
+    OMETiffWriter(ome_metadata, acquisition_dir, output_file).write_ome_tiff()
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(
-        description=(
-            "Generate an OME-TIFF from an OME-XML metadata file and an acquisition image directory."
-        )
-    )
-    parser.add_argument(
-        "-m",
-        "--metadata",
-        required=True,
-        type=validate_xml,
-        help="Path to the .ome.xml metadata file.",
-    )
-    parser.add_argument(
-        "-d",
-        "--image_dir",
-        required=True,
-        type=validate_directory,
-        help="Directory containing acquisition images.",
-    )
-
-    args = parser.parse_args()
-    OMETiffWriter(args.metadata, args.image_dir).write_ome_tiff()
+    generate()
