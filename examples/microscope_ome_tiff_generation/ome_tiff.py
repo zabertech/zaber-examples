@@ -53,17 +53,17 @@ class OMETiffWriter:
                 else:
                     tif.write(frame, contiguous=True)
 
-    def get_acquistion_order(self, acquistion_filenames: list[str]) -> list[str]:
-        """Sorts acquistion image file names by acquistion order.
+    def get_acquisition_order(self, acquisition_filenames: list[str]) -> list[str]:
+        """Sorts acquisition image file names by acquisition order.
 
-        Assumes alphabetically sorted image file names correspond to order of acquistion.
+        Assumes alphabetically sorted image file names correspond to order of acquisition.
         """
-        return sorted(acquistion_filenames)
+        return sorted(acquisition_filenames)
 
     def get_acquisition_images(self) -> Iterator[np.ndarray]:
-        """Yield acquisition images from the image directory as numpy arrays in acquistion roder.
+        """Yield acquisition images from the image directory as numpy arrays in acquisition order.
 
-        Assumes alphabetically sorted image file names correspond to order of acquistion.
+        Assumes alphabetically sorted image file names correspond to order of acquisition.
 
         Yields:
             Numpy array of shape ``(H, W)`` or ``(H, W, C)`` per image.
