@@ -1,11 +1,12 @@
 """Common helper functions."""
 
 import os
-import oslex2
 import subprocess
 import sys
 from collections.abc import Generator
 from pathlib import Path
+
+import oslex2
 
 from .terminal_utils import iprint, iprint_fail, iprint_pass, iprint_warn
 
@@ -80,7 +81,7 @@ def get_git_root_directory() -> Path:
     return directory
 
 
-def list_files_of_suffix(directory: Path, file_suffix: str, recurse: bool = True) -> list[Path]:
+def list_files_of_suffix(directory: Path, file_suffix: str, *, recurse: bool = True) -> list[Path]:
     """Return a list of python files in a directory."""
 
     def get_python_files(currdir: Path) -> Generator[Path, None, None]:
@@ -102,9 +103,9 @@ def load_ignore() -> None:
     """Load list of directories and files to ignore."""
     if not ignore_list:
         git_root = get_git_root_directory()
-        with open(IGNORE_FILE, "r", encoding="utf-8") as file:
-            for line in file:
-                line = line.strip()
+        with Path(IGNORE_FILE).open(encoding="utf-8") as file:
+            for raw_line in file:
+                line = raw_line.strip()
                 if not line or line[0] == "#":
                     continue
                 ignore_filepath = git_root / line

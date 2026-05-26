@@ -23,7 +23,7 @@ def check_basic(directory: Path) -> int:
     return return_code
 
 
-def check_markdown(directory: Path, recurse: bool = True) -> int:
+def check_markdown(directory: Path, *, recurse: bool = True) -> int:
     """Check markdown files."""
     return_code = 0
     markdown_files = list_files_of_suffix(directory, ".md", recurse=recurse)
@@ -41,7 +41,7 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
 def validate_article_metadata(directory: Path) -> int:
     """Check that the required yaml fields exist."""
     try:
-        with open(directory.joinpath("article.yml"), encoding="utf-8") as stream:
+        with directory.joinpath("article.yml").open(encoding="utf-8") as stream:
             meta = yaml.safe_load(stream)
 
         required_fields = {
@@ -50,7 +50,7 @@ def validate_article_metadata(directory: Path) -> int:
             "category": str,
             "picture": str,
         }
-    except Exception:
+    except Exception:  # noqa: BLE001
         return 1
 
     for field, field_type in required_fields.items():

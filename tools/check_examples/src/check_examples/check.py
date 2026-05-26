@@ -42,7 +42,7 @@ def main() -> None:
     print("*** Check example directories ***")
 
     arguments = sys.argv[1:]
-    args = docopt(__doc__, argv=arguments)
+    args = docopt(str(__doc__), argv=arguments)
 
     load_ignore()
 
@@ -85,7 +85,7 @@ def cmd_check_all(args: Args) -> int:
         iprint(f"Found '{example}'", 2)
 
     for example in example_directories:
-        return_code |= check_example(example, fix)
+        return_code |= check_example(example, fix=fix)
     return return_code
 
 
@@ -133,7 +133,7 @@ def cmd_check_changed(args: Args) -> int:
     if changed_examples:
         print("=== Check changed examples ===")
         for example in changed_examples:
-            return_code |= check_example(example, fix)
+            return_code |= check_example(example, fix=fix)
     return return_code
 
 
@@ -168,7 +168,7 @@ def cmd_check_self(args: Args) -> int:
     print()
     print(f"--- Self-check: {self_directory} ---")
     return_code |= check_markdown(self_directory)
-    return_code |= check_python(self_directory, fix)
+    return_code |= check_python(self_directory, fix=fix)
     print()
     return return_code
 
@@ -189,11 +189,11 @@ def cmd_check_examples(args: Args) -> int:
         return 1
     git_root = get_git_root_directory()
     example_to_check = git_root / EXAMPLE_DIR / match_example
-    return_code |= check_example(example_to_check, fix)
+    return_code |= check_example(example_to_check, fix=fix)
     return return_code
 
 
-def list_example_directories(ignore: bool = True) -> list[Path]:
+def list_example_directories(*, ignore: bool = True) -> list[Path]:
     """Return a list of example directories."""
     git_root_directory = get_git_root_directory()
     list_filepaths = list(git_root_directory.joinpath(EXAMPLE_DIR).iterdir())
@@ -211,11 +211,10 @@ def list_changed_files() -> list[Path]:
     result = subprocess.run(["git", "status", "-su"], capture_output=True, text=True, check=False)
     filenames_changed = result.stdout.rstrip().split("\n")
     filenames_changed = [x[3:] for x in filenames_changed]
-    filepaths_changed = [(Path.cwd() / filename).resolve() for filename in filenames_changed]
-    return filepaths_changed
+    return [(Path.cwd() / filename).resolve() for filename in filenames_changed]
 
 
-def check_example(directory: Path, fix: bool) -> int:
+def check_example(directory: Path, *, fix: bool) -> int:
     """Perform check on each example."""
     print()
     print(f"--- Checking: {directory.relative_to(directory.parent)} ---")
@@ -224,7 +223,7 @@ def check_example(directory: Path, fix: bool) -> int:
     return_code |= check_basic(directory)
     return_code |= check_markdown(directory)
     return_code |= validate_article_metadata(directory)
-    return_code |= check_python(directory, fix)
+    return_code |= check_python(directory, fix=fix)
     # Can add other languages here such as check_csharp(), check_html(), etc.
     return return_code
 

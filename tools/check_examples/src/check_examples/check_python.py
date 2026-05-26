@@ -14,7 +14,7 @@ from .common import (
 from .terminal_utils import iprint_fail, iprint_pass, iprint_warn
 
 
-def check_python(directory: Path, fix: bool) -> int:
+def check_python(directory: Path, *, fix: bool) -> int:
     """Check python code."""
     # List python files
     python_files = list_files_of_suffix(directory, ".py")
@@ -28,25 +28,25 @@ def check_python(directory: Path, fix: bool) -> int:
 
     if file_exists(python_directory, "pdm.lock"):
         iprint_pass("pdm.lock found: use PDM", 1)
-        return check_python_pdm(python_directory, fix)
+        return check_python_pdm(python_directory, fix=fix)
 
     if file_exists(python_directory, "Pipfile"):
         iprint_pass("Pipfile found: use pipenv.", 1)
-        return check_python_pipenv(python_directory, fix)
+        return check_python_pipenv(python_directory, fix=fix)
 
     if file_exists(python_directory, "requirements.txt"):
         iprint_pass("requirements.txt found: use venv and pip.", 1)
-        return check_python_requirements(python_directory, fix)
+        return check_python_requirements(python_directory, fix=fix)
 
     if file_exists(python_directory, "uv.lock"):
         iprint_pass("uv.lock found: use uv.", 1)
-        return check_python_uv(python_directory, fix)
+        return check_python_uv(python_directory, fix=fix)
 
     iprint_fail("Missing Pipfile or requirements.txt", 1)
     return 1
 
 
-def check_python_pdm(directory: Path, fix: bool) -> int:
+def check_python_pdm(directory: Path, *, fix: bool) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
     return_code |= execute(["pdm", "install", "--dev"], directory)
@@ -56,14 +56,15 @@ def check_python_pdm(directory: Path, fix: bool) -> int:
     #     iprint_warn("zaber-motion will update to the latest version", 1)
     #     return_code |= execute(["pdm", "update", "-u", "--save-exact", "zaber-motion"], directory)
 
-    return_code |= run_legacy_linters(["pdm", "run"], directory, fix)
+    return_code |= run_legacy_linters(["pdm", "run"], directory, fix=fix)
     return return_code
 
 
-def check_python_pipenv(directory: Path, fix: bool) -> int:
+def check_python_pipenv(directory: Path, *, fix: bool) -> int:
     """Check python using pipenv if example provides Pipfile."""
     return_code = 0
     return_code |= execute(["pipenv", "clean"], directory)
+    # TODO: why do we have this?
     # needs_update = execute_and_get_output(["pipenv", "update", "--outdated"], directory)
     # if "'zaber_motion'" in needs_update:
     #     iprint_warn("zaber-motion will update to the latest version", 1)
@@ -71,11 +72,11 @@ def check_python_pipenv(directory: Path, fix: bool) -> int:
 
     return_code |= execute(["pipenv", "install", "--dev"], directory)
 
-    return_code |= run_legacy_linters(["pipenv", "run"], directory, fix)
+    return_code |= run_legacy_linters(["pipenv", "run"], directory, fix=fix)
     return return_code
 
 
-def check_python_requirements(directory: Path, fix: bool) -> int:
+def check_python_requirements(directory: Path, *, fix: bool) -> int:
     """Check python using pip and venv if example provides requirements.txt."""
     return_code = 0
     return_code |= execute(["rm", "-rf", ".venv"], directory)
@@ -92,12 +93,12 @@ def check_python_requirements(directory: Path, fix: bool) -> int:
         directory,
     )
 
-    return_code |= run_legacy_linters([".venv/bin/python3", "-m"], directory, fix)
+    return_code |= run_legacy_linters([".venv/bin/python3", "-m"], directory, fix=fix)
 
     return return_code
 
 
-def check_python_uv(directory: Path, fix: bool) -> int:
+def check_python_uv(directory: Path, *, fix: bool) -> int:
     """Check python using uv if example provides uv.lock."""
     return_code = 0
     return_code |= check_uv_tooling_config(directory)
@@ -108,7 +109,7 @@ def check_python_uv(directory: Path, fix: bool) -> int:
         iprint_warn("zaber-motion will update to the latest version", 1)
         return_code |= execute(["uv", "lock", "--upgrade-package", "zaber-motion"], directory)
 
-    return_code |= run_uv_linters(["uv", "run"], directory, fix)
+    return_code |= run_uv_linters(["uv", "run"], directory, fix=fix)
     return return_code
 
 
@@ -155,7 +156,8 @@ def check_uv_tooling_config(directory: Path) -> int:
 
         if not pyright_extends:
             iprint_fail(
-                f"pyproject.toml [tool.pyright] missing 'extends'. Must point to {expected_pyright}",
+                f"pyproject.toml [tool.pyright] missing 'extends'.\
+                Must point to {expected_pyright}",
                 1,
             )
             return_code = 1
@@ -172,7 +174,7 @@ def check_uv_tooling_config(directory: Path) -> int:
     return return_code
 
 
-def run_legacy_linters(command_prefix: list[str], directory: Path, fix: bool) -> int:
+def run_legacy_linters(command_prefix: list[str], directory: Path, *, fix: bool) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
 
@@ -194,7 +196,7 @@ def run_legacy_linters(command_prefix: list[str], directory: Path, fix: bool) ->
     return return_code
 
 
-def run_uv_linters(command_prefix: list[str], directory: Path, fix: bool) -> int:
+def run_uv_linters(command_prefix: list[str], directory: Path, *, fix: bool) -> int:
     """Run a set of linters in the appropriate virtual environment."""
     return_code = 0
 
