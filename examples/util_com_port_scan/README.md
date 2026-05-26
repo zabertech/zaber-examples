@@ -8,7 +8,7 @@ This script quickly scans all active ports and displays which device is connecte
 
 The script uses `pdm` to manage virtual environment and dependencies:
 
-Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
+Instructions on how to install it can be found on the official [`pdm` project page](https://github.com/pdm-project/pdm).
 
 The dependencies are listed in `pyproject.toml`.
 

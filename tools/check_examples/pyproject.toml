@@ -27,6 +27,10 @@ dev = [
     "ruff~=0.14.0",
     "pyright>=1.1.0",
     "types-PyYAML>=6.0.12.20250402",
+    # "black>=24.4.2",
+    # "pylint>=3.2.5",
+    # "pydocstyle>=6.3.0",
+    # "mypy>=1.10.0",
 ]
 
 [tool.ruff]

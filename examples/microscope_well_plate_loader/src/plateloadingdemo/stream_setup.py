@@ -2,7 +2,7 @@
 
 import re
 
-from zaber_motion import Library, Measurement
+from zaber_motion import Measurement
 from zaber_motion.ascii import Connection, DigitalOutputAction
 
 from .utilities import MM, TS
@@ -48,7 +48,9 @@ def main() -> None:
         stream.setup_store(stream_buffer, 1, 2)
 
         for row_count in range(row_num):
-            stream.line_absolute(Measurement(col_start, MM), Measurement((row_start + (pitch * row_count)), MM))
+            stream.line_absolute(
+                Measurement(col_start, MM), Measurement((row_start + (pitch * row_count)), MM)
+            )
             stream.io.set_digital_output(pin, D_ON)  # set DO high
             stream.wait(dwell_time, TS)
             stream.io.set_digital_output(pin, D_OFF)  # set DO low

@@ -164,7 +164,6 @@ def home_all(machine: Machine) -> None:
 
 def initialize_machine(robot: mdr.Robot, devices: List[Device]) -> Machine:
     """Finds and initializes the Zaber devices and combines them and the robot arm in a data structure."""
-
     # Search for Zaber devices within daisy-chain
     # Note they're all expected to be on the same serial port.
     # This approach to identifying the devices works because every component of the machine
@@ -199,7 +198,9 @@ def initialize_machine(robot: mdr.Robot, devices: List[Device]) -> Machine:
     tower1, tower2 = sca_init(sca)
 
     # Select and initialize the Zaber motion axes.
-    zaber_stages = Stages(LRQ.get_axis(1), LSQ.get_axis(1), VSR.get_axis(1), ADR.get_axis(1), ADR.get_axis(2), ADR)
+    zaber_stages = Stages(
+        LRQ.get_axis(1), LSQ.get_axis(1), VSR.get_axis(1), ADR.get_axis(1), ADR.get_axis(2), ADR
+    )
     init_zaber_stages(zaber_stages)
 
     # Select and initialize illuminator LEDs. Note the channel numbers here depend on what order the LEDs are

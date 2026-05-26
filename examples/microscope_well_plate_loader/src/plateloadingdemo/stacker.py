@@ -5,7 +5,6 @@ from time import sleep
 from typing import Literal
 import mecademicpy.robot as mdr
 
-from zaber_motion import Library
 from zaber_motion.ascii import Connection
 
 from .settings import ROBOT_ADDRESS, SCAN_SPEED, ProcessControllerSettings, SpeedSettings, PORT
@@ -25,7 +24,6 @@ from .utilities import (
     pounce,
     robot_init,
 )
-
 
 # ===== XY SCAN FUNCTIONS =====
 
@@ -129,7 +127,7 @@ def extend_stacker_fingers(tower: Tower) -> None:
 
 
 def goto_xaxis_exchange_position(robot: mdr.Robot, stages: Stages, num_trays_on_vsr: int) -> None:
-    """Gets LRQ (robot axis), LSQ (X axis), and robot into position for dropping off / picking up plates from VSR"""
+    """Gets LRQ (robot axis), LSQ (X axis), and robot into position for dropping off / picking up plates from VSR."""
     p = StackerPosition
 
     if num_trays_on_vsr == 2:
@@ -185,7 +183,9 @@ def xy_stage_plate_dropoff(robot: mdr.Robot, stages: Stages, num_trays: int) -> 
 
 # VSR, gripper, and tower controls for loading and unloading plates into towers
 # Tower number refers to the left (1) or right (2) tower
-def tower_load(plate_type: Literal["first", "last", "standard"], machine: Machine, tower_number: int) -> None:
+def tower_load(
+    plate_type: Literal["first", "last", "standard"], machine: Machine, tower_number: int
+) -> None:
     p = StackerPosition
     v_pos = VsrPositions
     s = SpeedSettings
@@ -344,7 +344,9 @@ def stack(machine: Machine, starting_plates: int) -> None:
 
         # CASE 3 - Processed plate in holder, but no plates remain in Tower 1 (1 lid left)
         #   Action: return to Tower 1 and pick up lid only, deliver completed plate + lid directly to Tower 2
-        elif holder_plates > 0 and tower1_plates == 0 or tower1_lids == 1:  # Only one lid remains in Tower 1
+        elif (
+            holder_plates > 0 and tower1_plates == 0 or tower1_lids == 1
+        ):  # Only one lid remains in Tower 1
             tower_load("last", machine, 1)
             holder_lid += 1
             tower1_lids -= 1
@@ -355,9 +357,13 @@ def stack(machine: Machine, starting_plates: int) -> None:
             holder_lid -= 1
             holder_plates -= 1
 
-    machine.stages.x.move_absolute(p.LOADER_PICKUP_POS, MM)  # Move to robot loading position once complete
+    machine.stages.x.move_absolute(
+        p.LOADER_PICKUP_POS, MM
+    )  # Move to robot loading position once complete
     print("\n ----- Unloading test sequence (with lids) complete. ----- \n")
-    print(f"{tower2_plates} microplates and lids have been processed and are now ready for pickup in Tower 2.\n")
+    print(
+        f"{tower2_plates} microplates and lids have been processed and are now ready for pickup in Tower 2.\n"
+    )
 
     sleep(1)
 

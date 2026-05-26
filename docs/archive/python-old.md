@@ -17,7 +17,7 @@ with [pymarkdownlnt](https://github.com/jackdewinter/pymarkdown).
   to help write more readable docstrings according to [PEP 257](https://peps.python.org/pep-0257/).
     - `pydocstyle <filename.py>`
 
-The [CI script](../.github/workflows/check_examples.yml) will automatically call
-the [`check_example` script](../tools/check_examples/) to activate [supported virtual environments](python-virtual-environment.md)
-and run the linters.  The [`check_example` script](../tools/check_examples/) can be called manually before
+The [CI script](../../.github/workflows/check_examples.yml) will automatically call
+the [`check_example` script](../../tools/check_examples/) to activate [supported virtual environments](python-virtual-environment.md)
+and run the linters.  The [`check_example` script](../../tools/check_examples/) can be called manually before
 committing changes or doing a pull request.  All of the linters must pass before contribution can be merged.

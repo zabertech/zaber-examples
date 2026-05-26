@@ -17,7 +17,7 @@ explanation of the theory, and intent behind the central concept of the code to 
 
 To insert a [link to a code snippet](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-a-permanent-link-to-a-code-snippet), link to a specific commit and not to a branch. Also, enclose the link in angle brackets. For example:
 
-```
+```markdown
 <https://github.com/zabertech/zaber-examples/blob/9b7440e22bfcfd4096441dc03ddff4fd122cb0a4/examples/motion_tracking/src/motion_tracking/main.py#L17-L32>
 ```
 
