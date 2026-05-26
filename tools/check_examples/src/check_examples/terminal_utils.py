@@ -21,8 +21,7 @@ class AnsiEscape(Enum):
 
 
 def color_text(string: str, color: AnsiEscape) -> str:
-    """
-    Color text using terminal escape code.
+    """Color text using terminal escape code.
 
     Args:
         string: String to color

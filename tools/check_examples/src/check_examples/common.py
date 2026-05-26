@@ -1,11 +1,12 @@
 """Common helper functions."""
 
-from typing import Generator
-import sys
 import os
 import subprocess
+import sys
+from collections.abc import Generator
 from pathlib import Path
-from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_warn
+
+from .terminal_utils import iprint, iprint_fail, iprint_pass, iprint_warn
 
 IGNORE_FILE = "ignore.txt"
 
@@ -54,17 +55,13 @@ def execute_and_get_output(command: list[str], cwd: Path) -> str:
 def file_exists(directory: Path, filename: str) -> bool:
     """Check if a file exists in a directory."""
     filepath = directory / filename
-    if filepath.exists() and filepath.is_file():
-        return True
-    return False
+    return bool(filepath.exists() and filepath.is_file())
 
 
 def subdirectory_exists(directory: Path, subdirectory: str) -> bool:
     """Check if a subdirectory exists in a directory."""
     filepath = directory / subdirectory
-    if filepath.exists() and filepath.is_dir():
-        return True
-    return False
+    return bool(filepath.exists() and filepath.is_dir())
 
 
 def get_git_root_directory() -> Path:
@@ -128,6 +125,4 @@ def filter_not_ignored(filepath: Path) -> bool:
     """Check if a file or directory is in ignore.txt or should be ignored otherwise."""
     if filepath in ignore_list:
         return False
-    if "node_module" in str(filepath):
-        return False
-    return True
+    return "node_module" not in str(filepath)

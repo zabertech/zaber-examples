@@ -1,5 +1,4 @@
-"""
-Check example directories.
+"""Check example directories.
 
 This script may also be called by .github/workflows/check_examples.yml
 
@@ -19,15 +18,17 @@ Options:
 For more information see README.md
 """
 
-from typing import Any
-import sys
 import subprocess
+import sys
 from pathlib import Path
+from typing import Any
+
 from docopt import docopt
-from .common import filter_not_ignored, load_ignore, get_git_root_directory
-from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_info, match_string
-from .check_python import check_python
+
 from .check_basic import check_basic, check_markdown, validate_article_metadata
+from .check_python import check_python
+from .common import filter_not_ignored, get_git_root_directory, load_ignore
+from .terminal_utils import iprint, iprint_fail, iprint_info, iprint_pass, match_string
 
 EXAMPLE_DIR = "examples"
 TOOLS_DIR = "tools"

@@ -34,12 +34,3 @@ jobs:
           npm install
           uv sync --locked --dev
           uv run check all
-      - name: Upload lock files
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lock-files
-          path: |
-            examples/**/Pipfile.lock
-            examples/**/pdm.lock
-            examples/**/uv.lock

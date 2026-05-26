@@ -205,12 +205,9 @@ def run_uv_linters(command_prefix: list[str], directory: Path, fix: bool) -> int
 
     if fix:
         return_code |= lint_files(["ruff", "format"])
-    else:
-        return_code |= lint_files(["ruff", "format", "--check"])
-
-    if fix:
         return_code |= lint_files(["ruff", "check", "--fix"])
     else:
+        return_code |= lint_files(["ruff", "format", "--check"])
         return_code |= lint_files(["ruff", "check"])
 
     return_code |= lint_files(["pyright", str(directory)])

@@ -5,9 +5,9 @@ from pathlib import Path
 
 import yaml
 
-from .common import file_exists, list_files_of_suffix, execute, get_git_root_directory
-from .terminal_utils import iprint_fail, iprint_pass
+from .common import execute, file_exists, get_git_root_directory, list_files_of_suffix
 from .markdown_links import check_links_in_markdown
+from .terminal_utils import iprint_fail, iprint_pass
 
 
 def check_basic(directory: Path) -> int:
@@ -40,8 +40,8 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
 
 def validate_article_metadata(directory: Path) -> int:
     """Check that the required yaml fields exist."""
-    try: 
-        with open(directory.joinpath("article.yml"), "r", encoding="utf-8") as stream:
+    try:
+        with open(directory.joinpath("article.yml"), encoding="utf-8") as stream:
             meta = yaml.safe_load(stream)
 
         required_fields = {
@@ -61,7 +61,7 @@ def validate_article_metadata(directory: Path) -> int:
             iprint_fail(f"article.yml {field} field is not of type {field_type.__name__}.", 1)
             return 1
 
-    picture_path = directory.joinpath(*str.split(meta["picture"], '/'))
+    picture_path = directory.joinpath(*str.split(meta["picture"], "/"))
     if not picture_path.exists():
         iprint_fail(f"Picture not found at path {picture_path}.", 1)
         return 1

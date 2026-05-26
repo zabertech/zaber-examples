@@ -2,7 +2,8 @@
 
 import re
 from pathlib import Path
-from .terminal_utils import iprint, iprint_pass, iprint_fail
+
+from .terminal_utils import iprint, iprint_fail, iprint_pass
 
 LINKS_REGEX = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 HEADING_REGEX = re.compile(r"^#+ (.*)")
@@ -11,7 +12,7 @@ HEADING_REGEX = re.compile(r"^#+ (.*)")
 class MarkdownLink:
     """Contains information about a markdown link."""
 
-    def __init__(self, filepath: Path, line: int, link_text: str, link_url: str):
+    def __init__(self, filepath: Path, line: int, link_text: str, link_url: str) -> None:
         """Create a MarkdownLink object."""
         self.filepath = filepath
         self.line = line
@@ -108,9 +109,8 @@ def check_internal_link(link: MarkdownLink) -> list[str]:
 
     if not target_filepath.exists():
         return [f"{link.location} - '{str(target_filepath)}' does not exist"]
-    if link.anchor:
-        if not anchor_exists(target_filepath, link.anchor):
-            return [f"{link.location} - invalid anchor '{link.anchor}' in link '{link.url}'"]
+    if link.anchor and not anchor_exists(target_filepath, link.anchor):
+        return [f"{link.location} - invalid anchor '{link.anchor}' in link '{link.url}'"]
     return []
 
 
