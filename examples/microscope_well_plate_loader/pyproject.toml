@@ -24,9 +24,10 @@ lint = { composite = ["format", "ruff", "pyright"] }
 
 [dependency-groups]
 dev = [
-    "ruff>=0.9.6",
-    "pylint>=3.3.4",
-    "pyright>=1.1.394",
+    "mypy>=1.9.0",
+    "pylint>=3.1.0",
+    "black>=24.4.0",
+    "pydocstyle>=6.3.0",
 ]
 
 [tool.ruff]
