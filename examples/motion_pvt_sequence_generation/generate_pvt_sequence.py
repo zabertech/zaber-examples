@@ -70,7 +70,9 @@ def main() -> None:
             # Write the file with the same name plus a _generated suffix
             base, extension = filename.rsplit(".", 1)
             output_filename = f"{base}_generated.{extension}"
-            PvtSequence.save_sequence_data(sequence_data, os.path.join(OUTPUT_DIRECTORY, output_filename))
+            PvtSequence.save_sequence_data(
+                sequence_data, os.path.join(OUTPUT_DIRECTORY, output_filename)
+            )
 
 
 if __name__ == "__main__":

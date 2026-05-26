@@ -32,6 +32,7 @@ from scipy.optimize import bisect, newton  # type: ignore
 
 import pvt
 
+
 def generate_times_and_velocities(  # pylint: disable=too-many-locals
     position_sequences: list[list[float]],
     target_speed: float,
@@ -126,7 +127,9 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
                     segment_index += 1
                     reversals.setdefault(segment_index, [])
                     reversals[segment_index].append(d)
-                    u_calc = u_calc[:segment_index] + [u_insert] + u_calc[segment_index:]
+                    u_calc = (
+                        u_calc[:segment_index] + [u_insert] + u_calc[segment_index:]
+                    )
             segment_index += 1
         return u_calc, reversals
 
@@ -134,7 +137,8 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
 
     # Calculate speed limits from end point
     segment_lengths = [
-        geo_path.segment_length(u_calc[i], u_calc[i + 1]) for i in range(len(u_calc) - 1)
+        geo_path.segment_length(u_calc[i], u_calc[i + 1])
+        for i in range(len(u_calc) - 1)
     ]
     speed_limits = [target_speed for _ in u_calc]
     speed_limits[0] = speed_limits[-1] = 0
@@ -150,7 +154,9 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
         elif (
             denominator := sum(d2xi_dl2**2 for d2xi_dl2 in geo_path.d2x_dl2(u_calc[i]))
         ) != 0:
-            speed_limits[i] = min(speed_limits[i], (target_accel**2 / denominator) ** (1 / 4))
+            speed_limits[i] = min(
+                speed_limits[i], (target_accel**2 / denominator) ** (1 / 4)
+            )
 
     # Calculate speed limits from start point and assemble sequence
     time = 0.0
@@ -166,7 +172,8 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
         # Calculate the speed limit from max acceleration over the path length
         speed_limits[i] = min(
             speed_limits[i],
-            (speed_limits[i - 1] ** 2 + 2 * target_accel * segment_lengths[i - 1]) ** 0.5,
+            (speed_limits[i - 1] ** 2 + 2 * target_accel * segment_lengths[i - 1])
+            ** 0.5,
         )
         if (average_speed := sum(speed_limits[i - 1 : i + 1]) / 2) == 0:
             time += (segment_lengths[i - 1] / target_accel) ** 0.5
@@ -183,6 +190,7 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
             next_sample_index += 1
 
     return generated_sequence
+
 
 def generate_velocities(
     time_sequence: list[float],
@@ -230,20 +238,23 @@ def generate_velocities(
             gen_start_index = None
             for point_index in range(1, sequence_length - 1):
                 # Check for the first undefined velocity in a sequence of undefined velocities
-                if gen_start_index is None and velocity_sequences[dim][point_index] is None:
+                if (
+                    gen_start_index is None
+                    and velocity_sequences[dim][point_index] is None
+                ):
                     gen_start_index = point_index - 1
                 # Check for the end of a sequence of undefined velocities
                 if (
                     gen_start_index is not None
                     and velocity_sequences[dim][point_index + 1] is not None
                 ):
-                    velocity_sequences[dim][
-                        gen_start_index : point_index + 2
-                    ] = generate_velocities_continuous_acceleration(
-                        position_sequences[dim][gen_start_index : point_index + 2],
-                        time_sequence[gen_start_index : point_index + 2],
-                        velocity_sequences[dim][gen_start_index],  # type: ignore
-                        velocity_sequences[dim][point_index + 1],  # type: ignore
+                    velocity_sequences[dim][gen_start_index : point_index + 2] = (
+                        generate_velocities_continuous_acceleration(
+                            position_sequences[dim][gen_start_index : point_index + 2],
+                            time_sequence[gen_start_index : point_index + 2],
+                            velocity_sequences[dim][gen_start_index],  # type: ignore
+                            velocity_sequences[dim][point_index + 1],  # type: ignore
+                        )
                     )
                     gen_start_index = None
     # Append the points
@@ -253,6 +264,7 @@ def generate_velocities(
         time = time_sequence[point_index]
         generated_sequence.append_point(pvt.Point(positions, velocities, time))  # type: ignore
     return generated_sequence
+
 
 def generate_positions(
     time_sequence: list[float],
@@ -286,11 +298,16 @@ def generate_positions(
 
     # Append the points
     for point_index in range(sequence_length):
-        positions = tuple(position_sequences[i][point_index] for i in range(sequence_dim))
-        velocities = tuple(velocity_sequences[i][point_index] for i in range(sequence_dim))
+        positions = tuple(
+            position_sequences[i][point_index] for i in range(sequence_dim)
+        )
+        velocities = tuple(
+            velocity_sequences[i][point_index] for i in range(sequence_dim)
+        )
         time = time_sequence[point_index]
         generated_sequence.append_point(pvt.Point(positions, velocities, time))
     return generated_sequence
+
 
 class GeometricPath:
     """An N-directional geometric path constructed from a sequence of position keypoints."""
@@ -382,7 +399,8 @@ class GeometricPath:
         dx_dl = self.dx_dl(u)
         d2x_dl2 = self.d2x_dl2(u)
         return tuple(
-            speed**2 * d2x_dl2_i + accel * dx_dl_i for dx_dl_i, d2x_dl2_i in zip(dx_dl, d2x_dl2)
+            speed**2 * d2x_dl2_i + accel * dx_dl_i
+            for dx_dl_i, d2x_dl2_i in zip(dx_dl, d2x_dl2)
         )
 
     def _calculate_segment_length(self, u0: float, uf: float) -> float:
@@ -401,7 +419,9 @@ class GeometricPath:
         :param u0: The start point of the measurement, in parameterized units.
         :param uf: The end point of the measurement, in parameterized units.
         """
-        first_index_after_u0 = next((i for i, u in enumerate(self._u) if u >= u0), len(self._u) - 1)
+        first_index_after_u0 = next(
+            (i for i, u in enumerate(self._u) if u >= u0), len(self._u) - 1
+        )
         last_index_before_uf = next(
             (i - 1 for i, u in enumerate(self._u) if u > uf), len(self._u) - 1
         )
@@ -409,11 +429,14 @@ class GeometricPath:
             return self._calculate_segment_length(u0, uf)
 
         length = self._calculate_segment_length(u0, self._u[first_index_after_u0])
-        length += self._length_at_u[last_index_before_uf] - self._length_at_u[first_index_after_u0]
+        length += (
+            self._length_at_u[last_index_before_uf]
+            - self._length_at_u[first_index_after_u0]
+        )
         length += self._calculate_segment_length(self._u[last_index_before_uf], uf)
-        assert (uf >= u0) == (
-            length >= 0
-        ), f"{u0} {uf} {first_index_after_u0} {last_index_before_uf}"
+        assert (uf >= u0) == (length >= 0), (
+            f"{u0} {uf} {first_index_after_u0} {last_index_before_uf}"
+        )
         return length
 
     def calc_u_at_length(self, length: float) -> float:
@@ -424,7 +447,9 @@ class GeometricPath:
         """
         # Find an estimate of u via linear interpolation
         u_estimate = np.interp(length, self._length_at_u, self._u)
-        i0 = next((i - 1 for i, u in enumerate(self._u) if u > u_estimate), len(self._u) - 1)
+        i0 = next(
+            (i - 1 for i, u in enumerate(self._u) if u > u_estimate), len(self._u) - 1
+        )
         u0 = self._u[i0]
 
         # Calculate u using an optimization algorithm
@@ -500,7 +525,8 @@ class GeometricPath:
             return tuple(0 for _ in dx_du)
         d2u_dl2 = -d2l_du2 / dl_du**3
         return tuple(
-            d2x_du2_i / dl_du**2 + dx_du_i * d2u_dl2 for dx_du_i, d2x_du2_i in zip(dx_du, d2x_du2)
+            d2x_du2_i / dl_du**2 + dx_du_i * d2u_dl2
+            for dx_du_i, d2x_du2_i in zip(dx_du, d2x_du2)
         )
 
 
@@ -538,21 +564,38 @@ def generate_velocities_continuous_acceleration(
     b[0] = vel_start
     for segment_index in range(num_segments):
         delta_time = time_sequence[segment_index + 1] - time_sequence[segment_index]
-        delta_pos = position_sequence[segment_index + 1] - position_sequence[segment_index]
+        delta_pos = (
+            position_sequence[segment_index + 1] - position_sequence[segment_index]
+        )
         # Position equation for segment
         row_start = segment_index * 3 + 1
         col_start = segment_index * 3
-        A[row_start, col_start : col_start + 3] = [delta_time, delta_time**2, delta_time**3]
+        A[row_start, col_start : col_start + 3] = [
+            delta_time,
+            delta_time**2,
+            delta_time**3,
+        ]
         b[row_start] = delta_pos
         if segment_index < num_segments - 1:
             # Middle segments, where velocity is unknown and accelerations are continuous
-            A[row_start + 1, col_start + 1 : col_start + 4] = [delta_time, 2 * delta_time**2, -1]
+            A[row_start + 1, col_start + 1 : col_start + 4] = [
+                delta_time,
+                2 * delta_time**2,
+                -1,
+            ]
             b[row_start + 1] = -delta_pos / delta_time
-            A[row_start + 2, col_start + 2 : col_start + 5] = [delta_time, 1 / delta_time, -1]
+            A[row_start + 2, col_start + 2 : col_start + 5] = [
+                delta_time,
+                1 / delta_time,
+                -1,
+            ]
             b[row_start + 2] = delta_pos / delta_time**2
         else:
             # Final segment
-            A[row_start + 1, col_start + 1 : col_start + 3] = [delta_time, 2 * delta_time**2]
+            A[row_start + 1, col_start + 1 : col_start + 3] = [
+                delta_time,
+                2 * delta_time**2,
+            ]
             b[row_start + 1] = vel_end - delta_pos / delta_time
     # Get banded form of matrix
     ab = np.array(
@@ -597,7 +640,9 @@ def generate_positions_continuous_acceleration(
     3. acceleration at the start of the sequence is zero
     """
 
-    def calculate_delta_position(c1: float, c2: float, c3: float, delta_time: float) -> float:
+    def calculate_delta_position(
+        c1: float, c2: float, c3: float, delta_time: float
+    ) -> float:
         """Calculate the position delta of a segment from its coefficients."""
         return float(c1 * delta_time + c2 * delta_time**2 + c3 * delta_time**3)
 
@@ -608,14 +653,22 @@ def generate_positions_continuous_acceleration(
     A[0, 0] = 1
     for segment_index in range(num_segments):
         delta_time = time_sequence[segment_index + 1] - time_sequence[segment_index]
-        delta_vel = velocity_sequence[segment_index + 1] - velocity_sequence[segment_index]
+        delta_vel = (
+            velocity_sequence[segment_index + 1] - velocity_sequence[segment_index]
+        )
         # Position equation for segment
         block_index = segment_index * 2
-        A[block_index + 1, block_index : block_index + 2] = [2 * delta_time, 3 * delta_time**2]
+        A[block_index + 1, block_index : block_index + 2] = [
+            2 * delta_time,
+            3 * delta_time**2,
+        ]
         b[block_index + 1] = delta_vel
         if segment_index < num_segments - 1:
             # Middle segments, where accelerations are continuous
-            A[block_index + 2, block_index + 1 : block_index + 3] = [3 * delta_time / 2, -1]
+            A[block_index + 2, block_index + 1 : block_index + 3] = [
+                3 * delta_time / 2,
+                -1,
+            ]
             b[block_index + 2] = -delta_vel / (2 * delta_time)
     # Get banded form of matrix
     ab = np.array(

@@ -12,17 +12,22 @@ import csv
 from dataclasses import dataclass
 from enum import Enum, auto
 
-import numpy as np
-
 from zaber_motion import Measurement
 from zaber_motion.ascii import PvtPartialPoint, PvtPoint, PvtSequence
 
+
 def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
-    """ Helper function for sequience_data_from_csv. """
-    assert len(point.positions) > 0 , "Point is missing position data."
-    assert all(pos is not None for pos in point.positions), "Point has null position data entries."
-    assert len(point.velocities) == len(point.positions), "Point has different quantities of positions and velocities."
-    assert all(vel is not None for vel in point.velocities), "Point has null velocity data entries."
+    """Helper function for sequience_data_from_csv."""
+    assert len(point.positions) > 0, "Point is missing position data."
+    assert all(pos is not None for pos in point.positions), (
+        "Point has null position data entries."
+    )
+    assert len(point.velocities) == len(point.positions), (
+        "Point has different quantities of positions and velocities."
+    )
+    assert all(vel is not None for vel in point.velocities), (
+        "Point has null velocity data entries."
+    )
     assert point.time is not None, "Point is missing time data."
     return PvtPoint(
         positions=point.positions,
@@ -34,7 +39,9 @@ def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
 
 @staticmethod
 def sequence_data_from_csv(
-    filename: str, target_speed: Measurement | None = None, target_accel: Measurement | None = None
+    filename: str,
+    target_speed: Measurement | None = None,
+    target_accel: Measurement | None = None,
 ) -> list[PvtPoint] | None:
     """
     Return a PVT sequence loaded from CSV.
@@ -86,11 +93,11 @@ def sequence_data_from_csv(
     # so we only need to check the first point for those.
     first_point = data.sequence_data[0]
     contains_time_data = first_point.time is not None
-    contains_position_data = (
-        len(first_point.positions) > 0 and all(pos is not None for pos in first_point.positions)
+    contains_position_data = len(first_point.positions) > 0 and all(
+        pos is not None for pos in first_point.positions
     )
-    contains_velocity_data = (
-        len(first_point.velocities) > 0 and all(vel is not None for vel in first_point.velocities)
+    contains_velocity_data = len(first_point.velocities) > 0 and all(
+        vel is not None for vel in first_point.velocities
     )
 
     gen_type = GenerationType.NONE
@@ -112,8 +119,9 @@ def sequence_data_from_csv(
             "velocity and time must both be specified"
         )
 
-    # Note all of the sample data files in this project have relative times. If loading a file
-    # with absolute times, you must convert to relative times before calling the generation functions:
+    # Note all of the sample data files in this project have relative times.
+    # If loading a file with absolute times, you must convert to relative
+    # times before calling the generation functions:
     # data.sequence_data = PvtSequence.convert_times_absolute_to_relative_partial(data.sequence_data)
 
     # Call the appropriate generation function
@@ -137,6 +145,7 @@ def sequence_data_from_csv(
         case _:
             assert False, "BUG: Unhandled generation case."
 
+
 @dataclass(frozen=True)
 class Point:
     """A position-velocity-time point."""
@@ -155,7 +164,9 @@ class Point:
 
     def __post_init__(self) -> None:
         """Complete initialization of the point."""
-        assert self.dim == len(self.velocity), "Position must have the same dimension as velocity."
+        assert self.dim == len(self.velocity), (
+            "Position must have the same dimension as velocity."
+        )
 
 
 class Segment:
@@ -168,7 +179,9 @@ class Segment:
         :param start_point: The start point of the sequence.
         :param end_point: The end point of the sequence.
         """
-        assert start_point.dim == end_point.dim, "Points must have the same number of dimensions."
+        assert start_point.dim == end_point.dim, (
+            "Points must have the same number of dimensions."
+        )
         self._start_point = start_point
         self._end_point = end_point
         self._calculate_coefficients()
@@ -210,7 +223,8 @@ class Segment:
         self._validate_time(time)
         delta_time = time - self.start_point.time
         return tuple(
-            c[1] + 2 * c[2] * delta_time + 3 * c[3] * delta_time**2 for c in self._coefficients
+            c[1] + 2 * c[2] * delta_time + 3 * c[3] * delta_time**2
+            for c in self._coefficients
         )
 
     def acceleration(self, time: float) -> tuple[float, ...]:
@@ -227,21 +241,33 @@ class Segment:
         """Calculate the polynomial coefficients."""
 
         def calculate_coefficients_1d(
-            delta_time: float, pos_start: float, pos_end: float, vel_start: float, vel_end: float
+            delta_time: float,
+            pos_start: float,
+            pos_end: float,
+            vel_start: float,
+            vel_end: float,
         ) -> tuple[float, float, float, float]:
             """Calculate the coefficients in a single dimension."""
             delta_pos = pos_end - pos_start
             c0 = pos_start
             c1 = vel_start
             if delta_time > 0:
-                c2 = 3 * delta_pos / delta_time**2 - (2 * vel_start + vel_end) / delta_time
-                c3 = -2 * delta_pos / delta_time**3 + (vel_start + vel_end) / delta_time**2
+                c2 = (
+                    3 * delta_pos / delta_time**2
+                    - (2 * vel_start + vel_end) / delta_time
+                )
+                c3 = (
+                    -2 * delta_pos / delta_time**3
+                    + (vel_start + vel_end) / delta_time**2
+                )
             else:
                 c2 = c3 = 0
             return (c0, c1, c2, c3)
 
         delta_time = self.end_point.time - self.start_point.time
-        assert delta_time >= 0, "The time at point 2 must be greater than the time at point 1"
+        assert delta_time >= 0, (
+            "The time at point 2 must be greater than the time at point 1"
+        )
         self._coefficients = [
             calculate_coefficients_1d(
                 delta_time,
@@ -261,9 +287,9 @@ class Segment:
         """
         time_min = self.start_point.time
         time_max = self.end_point.time
-        assert (
-            time_min <= time <= time_max + 1e-14
-        ), f"Time {time} is outside of segment range ({time_min}, {time_max})"
+        assert time_min <= time <= time_max + 1e-14, (
+            f"Time {time} is outside of segment range ({time_min}, {time_max})"
+        )
 
 
 class CSVData:
@@ -285,7 +311,9 @@ class CSVData:
     @property
     def contains_time_data(self) -> bool:
         """Return whether the data contains time values."""
-        return self._time_index is not None and any(t is not None for t in self._time_sequence)
+        return self._time_index is not None and any(
+            t is not None for t in self._time_sequence
+        )
 
     @property
     def contains_position_data(self) -> bool:
@@ -374,7 +402,9 @@ class CSVData:
         # Read velocity. This must support None values.
         for dim_index, vel_column_index in enumerate(self._velocity_indices):
             val = row[vel_column_index]
-            self._velocity_sequences[dim_index].append(float(val) if val != "" else None)
+            self._velocity_sequences[dim_index].append(
+                float(val) if val != "" else None
+            )
 
 
 class Sequence:
@@ -490,9 +520,9 @@ class Sequence:
         assert len(self._points) > 0, "There are no points in the sequence"
         time_min = self._points[0].time
         time_max = self._points[-1].time
-        assert (
-            time_min <= time <= time_max + 1e-14
-        ), f"Time {time} is outside of sequence range ({time_min}, {time_max})"
+        assert time_min <= time <= time_max + 1e-14, (
+            f"Time {time} is outside of sequence range ({time_min}, {time_max})"
+        )
 
     def _get_segment_at_time(self, time: float) -> Segment:
         """
@@ -503,7 +533,10 @@ class Sequence:
         self._validate_time(time)
         if time < self._points[-1].time:
             # Return the index of the last point whose time is less than or equal to the given time
-            index = next(i for i in range(len(self._points)) if time < self._points[i].time) - 1
+            index = (
+                next(i for i in range(len(self._points)) if time < self._points[i].time)
+                - 1
+            )
         else:
             # Return the index of the last segment
             index = len(self._segments) - 1
@@ -528,7 +561,7 @@ class Sequence:
         if times_relative:
             data = PvtSequence.convert_time_relative_to_absolute(data)
 
-        for i in range(len(data)):
+        for [i, _] in enumerate(data):
             point: Point = Point(
                 position=tuple(ms.value for ms in data[i].positions),
                 velocity=tuple(ms.value for ms in data[i].velocities),
