@@ -101,7 +101,7 @@ def check_python_uv(directory: Path, fix: bool) -> int:
     """Check python using uv if example provides uv.lock."""
     return_code = 0
     return_code |= check_uv_tooling_config(directory)
-    return_code |= execute(["uv", "sync", "--dev"], directory)
+    return_code |= execute(["uv", "sync", "--frozen"], directory)
 
     needs_update = execute_and_get_output(["uv", "pip", "list", "--outdated"], directory)
     if "zaber-motion" in needs_update:
