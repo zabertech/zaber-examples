@@ -107,7 +107,6 @@ def check_python_uv(directory: Path, fix: bool) -> int:
     if "zaber-motion" in needs_update:
         iprint_warn("zaber-motion will update to the latest version", 1)
         return_code |= execute(["uv", "lock", "--upgrade-package", "zaber-motion"], directory)
-        return_code |= execute(["uv", "sync", "--dev"], directory)
 
     return_code |= run_uv_linters(["uv", "run"], directory, fix)
     return return_code
