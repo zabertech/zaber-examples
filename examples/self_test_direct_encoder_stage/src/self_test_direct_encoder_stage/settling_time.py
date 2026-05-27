@@ -194,7 +194,7 @@ def wait_for_stability(stage: Axis) -> None:
         for _ in range(50):
             stable_check.append(stage.settings.get("encoder.pos"))
         if unstable_count > 20:
-            print("WARNING - Did not reach stability after moving to start position!, " "moving on to next point")
+            print("WARNING - Did not reach stability after moving to start position!, moving on to next point")
             stable_check = [0]
     time.sleep(0.5)
 

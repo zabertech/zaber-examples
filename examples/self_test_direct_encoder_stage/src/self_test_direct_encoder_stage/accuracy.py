@@ -16,7 +16,7 @@ AXIS = 1
 # Accuracy test settings
 AccTestSettings = namedtuple(
     "AccTestSettings",
-    "test type n_points_override bi_directional repetitions " "pause_before_measure_s allowable_encoder_variation",
+    "test type n_points_override bi_directional repetitions pause_before_measure_s allowable_encoder_variation",
 )
 ACC_SETTINGS = AccTestSettings(
     test=True,
