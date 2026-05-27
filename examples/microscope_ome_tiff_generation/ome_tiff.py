@@ -17,8 +17,9 @@ class OMETiffWriter:
     data, updates the provided OME-XML to match, and writes a multi-frame OME-TIFF.
 
     Args:
-        metadata: Path to the source .ome.xml file.
-        image_dir: Directory containing acquisition images.
+        metadata: .ome.xml file path.
+        image_dir: Acquisition directory.
+        output_directory (Optional): Output directory.
     """
 
     IMAGE_FORMAT_PATTERNS: Final = ["*.jpg", "*.bmp", "*.png", "*.tif"]
@@ -36,16 +37,18 @@ class OMETiffWriter:
 
     NUM_CHANNELS_GREYSCALE: Final = 2
 
-    def __init__(self, metadata: Path, image_dir: Path, output_ome_tiff: Path | None) -> None:
+    def __init__(self, metadata: Path, image_dir: Path, output_directory: Path | None) -> None:
         self.metadata = metadata
         self.image_dir = image_dir
-        self.output_ome_tiff = output_ome_tiff
+        self.output_directory = output_directory
 
     def write_ome_tiff(self) -> None:
         """Write a OME-TIFF file."""
-        ome_tiff_file = self.output_ome_tiff or self.metadata.with_suffix(".tiff")
+        ome_tiff_dir = self.output_directory or self.metadata.parent
 
-        with TiffWriter(ome_tiff_file, ome=False, shaped=False) as tif:
+        with TiffWriter(
+            ome_tiff_dir / self.metadata.with_suffix(".tiff").name, ome=False, shaped=False
+        ) as tif:
             for index, frame in enumerate(self.get_acquisition_images()):
                 if index == 0:
                     metadata_str = self.modify_metadata(frame)
@@ -114,30 +117,48 @@ class OMETiffWriter:
     "--ome-metadata",
     help="Path to the .ome.xml metadata file.",
     required=True,
-    type=click.Path(file_okay=True, readable=True, resolve_path=True),
+    type=click.Path(
+        exists=True,
+        dir_okay=False,
+        file_okay=True,
+        readable=True,
+        resolve_path=True,
+        path_type=Path,
+    ),
 )
 @click.option(
-    "-d,",
+    "-d",
     "--acquisition-dir",
     help="Directory containing acquisition images.",
     required=True,
-    type=click.Path(dir_okay=True, file_okay=False, readable=True, resolve_path=True),
+    type=click.Path(
+        exists=True,
+        dir_okay=True,
+        file_okay=False,
+        readable=True,
+        resolve_path=True,
+        path_type=Path,
+    ),
 )
 @click.option(
-    "-m,",
-    "--output-file",
-    help="Output file path.",
+    "-o",
+    "--output-directory",
+    help="Output file directory.",
     required=False,
-    type=click.Path(dir_okay=False, file_okay=True, writable=True, resolve_path=True),
+    type=click.Path(
+        exists=True,
+        dir_okay=True,
+        file_okay=False,
+        writable=True,
+        resolve_path=True,
+        path_type=Path,
+    ),
 )
-def generate(ome_metadata: Path, acquisition_dir: Path, output_file: Path | None) -> None:
+def generate(ome_metadata: Path, acquisition_dir: Path, output_directory: Path | None) -> None:
     if not (ome_metadata.name.endswith(".ome.xml")):
-        raise click.BadParameter("must be .ome.xml file.")
+        raise click.BadParameter("must have extension .ome.xml", param_hint="--ome-metadata")
 
-    if output_file is not None and not (output_file.name.endswith(".ome.tiff")):
-        raise click.BadParameter("must be .ome.tiff file.")
-
-    OMETiffWriter(ome_metadata, acquisition_dir, output_file).write_ome_tiff()
+    OMETiffWriter(ome_metadata, acquisition_dir, output_directory).write_ome_tiff()
 
 
 if __name__ == "__main__":
