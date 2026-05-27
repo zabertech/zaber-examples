@@ -10,7 +10,7 @@ There are several supported option for package manager and virtual environment:
 - [Pipenv](https://pipenv.pypa.io/en/latest/)
 - `requirements.txt` and [venv](https://docs.python.org/3/library/venv.html)
 
-The [`check_example` script](../tools/check_examples/) invoked by the CI will automatically
+The [`check_example` script](../../tools/check_examples/) invoked by the CI will automatically
 recognize the presence of the above-mentioned options, activate each virtual environment,
 install dependencies, and run linters accordingly.
 
@@ -20,7 +20,7 @@ We recommend using [PDM](https://pdm-project.org/en/stable/) as the
 virtual environment and package manager of choice for example projects.
 There are many different ways to install PDM according to instructions on the website.
 
-See [microscope_tiling_basler_camera](../examples/microscope_tiling_basler_camera/) as an example
+See [microscope_tiling_basler_camera](../../examples/microscope_tiling_basler_camera/) as an example
 of how PDM is used to manage packages and virtual environment.
 
 PDM uses a [src layout](https://packaging.python.org/en/latest/discussions/src-layout-vs-flat-layout/)
@@ -32,7 +32,7 @@ To add packages, for example, [Zaber Motion Library](https://software.zaber.com/
 
     pdm add zaber-motion
 
-Be sure to install all of the linters required by the [`check_example` script](../tools/check_examples/)
+Be sure to install all of the linters required by the [`check_example` script](../../tools/check_examples/)
 as development packages in PDM:
 
     pdm add --dev black pylint pydocstyle mypy
@@ -51,7 +51,7 @@ Tutorials on Pipenv:
 
 - [Pipenv: A Guide to the New Python Packaging Tool](https://realpython.com/pipenv-guide/)
 
-An example of using Pipenv has been set up in [example template](../examples/_template/python_pipenv/).
+An example of using Pipenv has been set up in [example template](../../examples/_template/python_pipenv/).
 
 Our recommended way to install Pipenv:
 
@@ -67,7 +67,7 @@ Mac:
 
     brew install pipenv
 
-Be sure to install all of the linters required by the [`check_example` script](../tools/check_examples/)
+Be sure to install all of the linters required by the [`check_example` script](../../tools/check_examples/)
 as development packages in Pipenv:
 
     pipenv install --dev black pylint pydocstyle mypy
@@ -91,7 +91,7 @@ Adding these lines ensure that when `Pipfile.lock` is generated, it will include
 for all platforms.  Otherwise, the checked-in `Pipfile.lock` will only work
 on the OS where the lock file was generated.
 
-Please see example [`Pipfile`](../examples/_template/python_pipenv/Pipfile) for more detail.
+Please see example [`Pipfile`](../../examples/_template/python_pipenv/Pipfile) for more detail.
 
 This section will be deleted when all examples are updated to use the latest version of Zaber Motion Library.
 

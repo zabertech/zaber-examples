@@ -58,9 +58,7 @@ class ShapedAxis:
 
         # Grab the current deceleration so we can reset it back to this value later if we want.
         if isinstance(self.axis, Lockstep):
-            self._original_deceleration = self.get_setting_from_lockstep_axes(
-                "motion.decelonly", Units.NATIVE
-            )
+            self._original_deceleration = self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE)
         else:
             self._original_deceleration = [self.axis.settings.get("motion.decelonly", Units.NATIVE)]
 
@@ -74,9 +72,7 @@ class ShapedAxis:
         :param unit: The value will be returned in these units.
         :return: The velocity limit.
         """
-        return self._primary_axis.settings.convert_from_native_units(
-            "maxspeed", self._max_speed_limit, unit
-        )
+        return self._primary_axis.settings.convert_from_native_units("maxspeed", self._max_speed_limit, unit)
 
     def set_max_speed_limit(self, value: float, unit: Units = Units.NATIVE) -> None:
         """
@@ -85,9 +81,7 @@ class ShapedAxis:
         :param value: The velocity limit.
         :param unit: The units of the velocity limit value.
         """
-        self._max_speed_limit = self._primary_axis.settings.convert_to_native_units(
-            "maxspeed", value, unit
-        )
+        self._max_speed_limit = self._primary_axis.settings.convert_to_native_units("maxspeed", value, unit)
 
     def reset_max_speed_limit(self) -> None:
         """Reset the velocity limit for shaped moves to the device's existing maxspeed setting."""
@@ -99,9 +93,7 @@ class ShapedAxis:
     def reset_deceleration(self) -> None:
         """Reset the trajectory deceleration to the value stored when the class was created."""
         if isinstance(self.axis, Lockstep):
-            self.set_lockstep_axes_setting(
-                "motion.decelonly", self._original_deceleration, Units.NATIVE
-            )
+            self.set_lockstep_axes_setting("motion.decelonly", self._original_deceleration, Units.NATIVE)
         else:
             self.axis.settings.set("motion.decelonly", self._original_deceleration[0], Units.NATIVE)
 
@@ -116,9 +108,7 @@ class ShapedAxis:
                 return False
         return True
 
-    def get_setting_from_lockstep_axes(
-        self, setting: str, unit: Units = Units.NATIVE
-    ) -> list[float]:
+    def get_setting_from_lockstep_axes(self, setting: str, unit: Units = Units.NATIVE) -> list[float]:
         """
         Get setting values from axes in the lockstep group.
 
@@ -131,9 +121,7 @@ class ShapedAxis:
             values.append(axis.settings.get(setting, unit))
         return values
 
-    def set_lockstep_axes_setting(
-        self, setting: str, values: list[float], unit: Units = Units.NATIVE
-    ) -> None:
+    def set_lockstep_axes_setting(self, setting: str, values: list[float], unit: Units = Units.NATIVE) -> None:
         """
         Set settings for all axes in the lockstep group.
 
@@ -185,9 +173,7 @@ class ShapedAxis:
         """
         # Convert all to values to the same units
         position_native = self._primary_axis.settings.convert_to_native_units("pos", position, unit)
-        accel_native = self._primary_axis.settings.convert_to_native_units(
-            "accel", acceleration, acceleration_unit
-        )
+        accel_native = self._primary_axis.settings.convert_to_native_units("accel", acceleration, acceleration_unit)
 
         if acceleration == 0:  # Get the acceleration if it wasn't specified
             if isinstance(self.axis, Lockstep):
@@ -217,18 +203,11 @@ class ShapedAxis:
         )
 
         if isinstance(self.axis, Lockstep):
-            if (
-                min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE))
-                != deceleration_native
-            ):
-                self.set_lockstep_axes_setting(
-                    "motion.decelonly", [max(1, deceleration_native)], Units.NATIVE
-                )
+            if min(self.get_setting_from_lockstep_axes("motion.decelonly", Units.NATIVE)) != deceleration_native:
+                self.set_lockstep_axes_setting("motion.decelonly", [max(1, deceleration_native)], Units.NATIVE)
         else:
             if self.axis.settings.get("motion.decelonly", Units.NATIVE) != deceleration_native:
-                self.axis.settings.set(
-                    "motion.decelonly", max(1, deceleration_native), Units.NATIVE
-                )
+                self.axis.settings.set("motion.decelonly", max(1, deceleration_native), Units.NATIVE)
 
         # Perform the move
         self.axis.move_relative(
@@ -259,9 +238,7 @@ class ShapedAxis:
         :param acceleration_unit: The units for the acceleration value.
         """
         current_position = self.axis.get_position(unit)
-        self.move_relative(
-            position - current_position, unit, wait_until_idle, acceleration, acceleration_unit
-        )
+        self.move_relative(position - current_position, unit, wait_until_idle, acceleration, acceleration_unit)
 
     def move_max(
         self,
@@ -286,9 +263,7 @@ class ShapedAxis:
             end_position = self.axis.settings.get("limit.max", Units.NATIVE)
             largest_possible_move = end_position - current_position
 
-        self.move_relative(
-            largest_possible_move, Units.NATIVE, wait_until_idle, acceleration, acceleration_unit
-        )
+        self.move_relative(largest_possible_move, Units.NATIVE, wait_until_idle, acceleration, acceleration_unit)
 
     def move_min(
         self,
@@ -312,6 +287,4 @@ class ShapedAxis:
             current_position = self.axis.get_position(Units.NATIVE)
             end_position = self.axis.settings.get("limit.min", Units.NATIVE)
             largest_possible_move = end_position - current_position
-        self.move_relative(
-            largest_possible_move, Units.NATIVE, wait_until_idle, acceleration, acceleration_unit
-        )
+        self.move_relative(largest_possible_move, Units.NATIVE, wait_until_idle, acceleration, acceleration_unit)

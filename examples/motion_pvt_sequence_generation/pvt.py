@@ -12,14 +12,13 @@ import csv
 from dataclasses import dataclass
 from enum import Enum, auto
 
-import numpy as np
-
 from zaber_motion import Measurement
 from zaber_motion.ascii import PvtPartialPoint, PvtPoint, PvtSequence
 
+
 def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
-    """ Helper function for sequience_data_from_csv. """
-    assert len(point.positions) > 0 , "Point is missing position data."
+    """Helper function for sequience_data_from_csv."""
+    assert len(point.positions) > 0, "Point is missing position data."
     assert all(pos is not None for pos in point.positions), "Point has null position data entries."
     assert len(point.velocities) == len(point.positions), "Point has different quantities of positions and velocities."
     assert all(vel is not None for vel in point.velocities), "Point has null velocity data entries."
@@ -34,7 +33,9 @@ def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
 
 @staticmethod
 def sequence_data_from_csv(
-    filename: str, target_speed: Measurement | None = None, target_accel: Measurement | None = None
+    filename: str,
+    target_speed: Measurement | None = None,
+    target_accel: Measurement | None = None,
 ) -> list[PvtPoint] | None:
     """
     Return a PVT sequence loaded from CSV.
@@ -86,34 +87,27 @@ def sequence_data_from_csv(
     # so we only need to check the first point for those.
     first_point = data.sequence_data[0]
     contains_time_data = first_point.time is not None
-    contains_position_data = (
-        len(first_point.positions) > 0 and all(pos is not None for pos in first_point.positions)
-    )
-    contains_velocity_data = (
-        len(first_point.velocities) > 0 and all(vel is not None for vel in first_point.velocities)
-    )
+    contains_position_data = len(first_point.positions) > 0 and all(pos is not None for pos in first_point.positions)
+    contains_velocity_data = len(first_point.velocities) > 0 and all(vel is not None for vel in first_point.velocities)
 
     gen_type = GenerationType.NONE
     if not contains_time_data:
         gen_type = GenerationType.TIME_AND_VELOCITY
         assert not contains_velocity_data and contains_position_data, (
-            "Invalid csv structure. Time can only be generated if position is specified and "
-            "velocity is unspecified."
+            "Invalid csv structure. Time can only be generated if position is specified and " "velocity is unspecified."
         )
     elif not contains_velocity_data:
         gen_type = GenerationType.VELOCITY
-        assert contains_position_data, (
-            "Invalid csv structure. If velocity is unspecified, position must be specified."
-        )
+        assert contains_position_data, "Invalid csv structure. If velocity is unspecified, position must be specified."
     elif not contains_position_data:
         gen_type = GenerationType.POSITION
         assert contains_velocity_data, (
-            "Invalid csv structure. If position is unspecified, "
-            "velocity and time must both be specified"
+            "Invalid csv structure. If position is unspecified, " "velocity and time must both be specified"
         )
 
-    # Note all of the sample data files in this project have relative times. If loading a file
-    # with absolute times, you must convert to relative times before calling the generation functions:
+    # Note all of the sample data files in this project have relative times.
+    # If loading a file with absolute times, you must convert to relative
+    # times before calling the generation functions:
     # data.sequence_data = PvtSequence.convert_times_absolute_to_relative_partial(data.sequence_data)
 
     # Call the appropriate generation function
@@ -122,9 +116,9 @@ def sequence_data_from_csv(
             # This assumes there are no non-point actions in the CSV files.
             return [partial_to_complete_point(point) for point in data.sequence_data]
         case GenerationType.TIME_AND_VELOCITY:
-            assert target_speed is not None and target_accel is not None, (
-                "Target speed and accel must be defined to generate velocities and times"
-            )
+            assert (
+                target_speed is not None and target_accel is not None
+            ), "Target speed and accel must be defined to generate velocities and times"
             return PvtSequence.generate_velocities_and_times(
                 data.sequence_data,
                 target_speed,
@@ -136,6 +130,7 @@ def sequence_data_from_csv(
             return PvtSequence.generate_velocities(data.sequence_data)
         case _:
             assert False, "BUG: Unhandled generation case."
+
 
 @dataclass(frozen=True)
 class Point:
@@ -196,10 +191,7 @@ class Segment:
         """
         self._validate_time(time)
         delta_time = time - self.start_point.time
-        return tuple(
-            c[0] + c[1] * delta_time + c[2] * delta_time**2 + c[3] * delta_time**3
-            for c in self._coefficients
-        )
+        return tuple(c[0] + c[1] * delta_time + c[2] * delta_time**2 + c[3] * delta_time**3 for c in self._coefficients)
 
     def velocity(self, time: float) -> tuple[float, ...]:
         """
@@ -209,9 +201,7 @@ class Segment:
         """
         self._validate_time(time)
         delta_time = time - self.start_point.time
-        return tuple(
-            c[1] + 2 * c[2] * delta_time + 3 * c[3] * delta_time**2 for c in self._coefficients
-        )
+        return tuple(c[1] + 2 * c[2] * delta_time + 3 * c[3] * delta_time**2 for c in self._coefficients)
 
     def acceleration(self, time: float) -> tuple[float, ...]:
         """
@@ -227,7 +217,11 @@ class Segment:
         """Calculate the polynomial coefficients."""
 
         def calculate_coefficients_1d(
-            delta_time: float, pos_start: float, pos_end: float, vel_start: float, vel_end: float
+            delta_time: float,
+            pos_start: float,
+            pos_end: float,
+            vel_start: float,
+            vel_end: float,
         ) -> tuple[float, float, float, float]:
             """Calculate the coefficients in a single dimension."""
             delta_pos = pos_end - pos_start
@@ -261,9 +255,7 @@ class Segment:
         """
         time_min = self.start_point.time
         time_max = self.end_point.time
-        assert (
-            time_min <= time <= time_max + 1e-14
-        ), f"Time {time} is outside of segment range ({time_min}, {time_max})"
+        assert time_min <= time <= time_max + 1e-14, f"Time {time} is outside of segment range ({time_min}, {time_max})"
 
 
 class CSVData:
@@ -352,12 +344,8 @@ class CSVData:
             (i for i, col_name in enumerate(header) if "time" in col_name.lower()),
             None,
         )
-        self._position_indices = [
-            i for i, col_name in enumerate(header) if "pos" in col_name.lower()
-        ]
-        self._velocity_indices = [
-            i for i, col_name in enumerate(header) if "vel" in col_name.lower()
-        ]
+        self._position_indices = [i for i, col_name in enumerate(header) if "pos" in col_name.lower()]
+        self._velocity_indices = [i for i, col_name in enumerate(header) if "vel" in col_name.lower()]
         # Setup sequence arrays
         self._time_sequence = []
         self._position_sequences = [[] for _ in self._position_indices]
@@ -528,7 +516,7 @@ class Sequence:
         if times_relative:
             data = PvtSequence.convert_time_relative_to_absolute(data)
 
-        for i in range(len(data)):
+        for [i, _] in enumerate(data):
             point: Point = Point(
                 position=tuple(ms.value for ms in data[i].positions),
                 velocity=tuple(ms.value for ms in data[i].velocities),

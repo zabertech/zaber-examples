@@ -5,9 +5,9 @@ from pathlib import Path
 
 import yaml
 
-from .common import file_exists, list_files_of_suffix, execute, get_git_root_directory
-from .terminal_utils import iprint_fail, iprint_pass
+from .common import execute, file_exists, get_git_root_directory, list_files_of_suffix
 from .markdown_links import check_links_in_markdown
+from .terminal_utils import iprint_fail, iprint_pass
 
 
 def check_basic(directory: Path) -> int:
@@ -23,7 +23,7 @@ def check_basic(directory: Path) -> int:
     return return_code
 
 
-def check_markdown(directory: Path, recurse: bool = True) -> int:
+def check_markdown(directory: Path, *, recurse: bool = True) -> int:
     """Check markdown files."""
     return_code = 0
     markdown_files = list_files_of_suffix(directory, ".md", recurse=recurse)
@@ -31,24 +31,25 @@ def check_markdown(directory: Path, recurse: bool = True) -> int:
     config_path = Path("../../.markdownlint.jsonc")
     for file in markdown_files:
         filename = str(file)
-        return_code |= execute(
-            ["npx", "markdownlint-cli2", filename, "--config", str(config_path)], tool_path
-        )
+        return_code |= execute(["npx", "markdownlint-cli2", filename, "--config", str(config_path)], tool_path)
         return_code |= check_links_in_markdown(file)
     return return_code
 
 
 def validate_article_metadata(directory: Path) -> int:
     """Check that the required yaml fields exist."""
-    with open(directory.joinpath("article.yml"), "r", encoding="utf-8") as stream:
-        meta = yaml.safe_load(stream)
+    try:
+        with directory.joinpath("article.yml").open(encoding="utf-8") as stream:
+            meta = yaml.safe_load(stream)
 
-    required_fields = {
-        "date": date,
-        "updated_date": date,
-        "category": str,
-        "picture": str,
-    }
+        required_fields = {
+            "date": date,
+            "updated_date": date,
+            "category": str,
+            "picture": str,
+        }
+    except Exception:  # noqa: BLE001
+        return 1
 
     for field, field_type in required_fields.items():
         if field not in meta:
@@ -58,7 +59,7 @@ def validate_article_metadata(directory: Path) -> int:
             iprint_fail(f"article.yml {field} field is not of type {field_type.__name__}.", 1)
             return 1
 
-    picture_path = directory.joinpath(*str.split(meta["picture"], '/'))
+    picture_path = directory.joinpath(*str.split(meta["picture"], "/"))
     if not picture_path.exists():
         iprint_fail(f"Picture not found at path {picture_path}.", 1)
         return 1

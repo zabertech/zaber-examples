@@ -57,9 +57,7 @@ def main() -> None:
     """Generate complete PVT sequences from underdefined input data."""
     for filename in FILENAMES:
         # Generate the sequence
-        sequence_data = pvt.sequence_data_from_csv(
-            os.path.join(DATA_DIRECTORY, filename), TARGET_SPEED, TARGET_ACCEL
-        )
+        sequence_data = pvt.sequence_data_from_csv(os.path.join(DATA_DIRECTORY, filename), TARGET_SPEED, TARGET_ACCEL)
         if sequence_data is None:
             return
 

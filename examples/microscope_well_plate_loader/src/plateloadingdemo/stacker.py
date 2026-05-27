@@ -5,7 +5,6 @@ from time import sleep
 from typing import Literal
 import mecademicpy.robot as mdr
 
-from zaber_motion import Library
 from zaber_motion.ascii import Connection
 
 from .settings import ROBOT_ADDRESS, SCAN_SPEED, ProcessControllerSettings, SpeedSettings, PORT
@@ -25,7 +24,6 @@ from .utilities import (
     pounce,
     robot_init,
 )
-
 
 # ===== XY SCAN FUNCTIONS =====
 
@@ -129,7 +127,7 @@ def extend_stacker_fingers(tower: Tower) -> None:
 
 
 def goto_xaxis_exchange_position(robot: mdr.Robot, stages: Stages, num_trays_on_vsr: int) -> None:
-    """Gets LRQ (robot axis), LSQ (X axis), and robot into position for dropping off / picking up plates from VSR"""
+    """Gets LRQ (robot axis), LSQ (X axis), and robot into position for dropping off / picking up plates from VSR."""
     p = StackerPosition
 
     if num_trays_on_vsr == 2:

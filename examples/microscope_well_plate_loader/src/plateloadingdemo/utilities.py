@@ -164,7 +164,6 @@ def home_all(machine: Machine) -> None:
 
 def initialize_machine(robot: mdr.Robot, devices: List[Device]) -> Machine:
     """Finds and initializes the Zaber devices and combines them and the robot arm in a data structure."""
-
     # Search for Zaber devices within daisy-chain
     # Note they're all expected to be on the same serial port.
     # This approach to identifying the devices works because every component of the machine

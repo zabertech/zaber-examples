@@ -19,9 +19,7 @@ class UiMainWindow:
         main_window.setObjectName("MainWindow")
         main_window.resize(1333, 793)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap("images/gui_icon.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off
-        )
+        icon.addPixmap(QtGui.QPixmap("images/gui_icon.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         main_window.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(parent=main_window)
         self.centralwidget.setObjectName("centralwidget")

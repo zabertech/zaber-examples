@@ -64,13 +64,9 @@ def main() -> None:  # pylint: disable=too-many-statements
                 DigitalOutputAction.OFF,
                 max(PROTOCOL["exposure"] / 1000, 1),
             )  # Trigger the camera
-            stream.line_relative_on(
-                [scan_axis.axis_number - 1], [Measurement(direction * trigger_dist, MM)]
-            )
+            stream.line_relative_on([scan_axis.axis_number - 1], [Measurement(direction * trigger_dist, MM)])
 
-        def continuous_mode(
-            stream: Stream, scan_axis: Axis, direction: int, trigger_dist: float
-        ) -> None:
+        def continuous_mode(stream: Stream, scan_axis: Axis, direction: int, trigger_dist: float) -> None:
             """Add stream segments required for continuous scan imaging."""
             stream.io.set_digital_output(1, DigitalOutputAction.ON)  # Trigger the camera
             stream.line_relative_on(
@@ -83,9 +79,7 @@ def main() -> None:  # pylint: disable=too-many-statements
                 [Measurement(direction * trigger_dist / 2, MM)],
             )
 
-        def generate_snake(
-            protocol: dict[str, Any], scan_speed: float, focus_map: NDArray[Any] | None = None
-        ) -> None:
+        def generate_snake(protocol: dict[str, Any], scan_speed: float, focus_map: NDArray[Any] | None = None) -> None:
             """Set stream buffers for a fast scan.
 
             Modes:

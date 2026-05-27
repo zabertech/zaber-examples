@@ -1,3 +1,7 @@
+[build-system]
+requires = ["uv_build>=0.11.14,<0.12"]
+build-backend = "uv_build"
+
 [project]
 name = "check_examples"
 version = "0.1.0"
@@ -7,24 +11,36 @@ authors = [
 ]
 dependencies = [
     "docopt-ng>=0.9.0",
+    "oslex2>=1.0.0",
     "pyyaml>=6.0.2",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
 license = {text = "MIT"}
+classifiers = ["Private :: Do Not Upload"]
 
-
-[tool.pdm]
-distribution = false
-
-[tool.pdm.scripts]
-check = {call="src.check_examples.check:main"}
+[project.scripts]
+check = "check_examples.check:main"
 
 [dependency-groups]
 dev = [
-    "black>=24.4.2",
-    "pylint>=3.2.5",
-    "pydocstyle>=6.3.0",
-    "mypy>=1.10.0",
+    "ruff~=0.14.0",
+    "pyright>=1.1.0",
     "types-PyYAML>=6.0.12.20250402",
 ]
+
+[tool.ruff]
+extend = "../tooling_config/zaber-ruff.toml"
+
+[tool.ruff.lint]
+ignore = [
+    "S101",   # allow assert
+    "TRY003", # allow error messages outside exception class
+    "C901",   # allow complex functions
+    "ERA001", # allow commented-out code
+    "S602",   # allow shell=True (intentional for cross-platform support)
+]
+
+[tool.pyright]
+extends = "../tooling_config/zaber-pyright.toml"
+reportMissingTypeStubs = "none"

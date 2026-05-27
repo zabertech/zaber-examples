@@ -93,7 +93,7 @@ shaped_axis_var = ShapedAxis(axis, plant)
 ```
 
 - The `axis` parameter is the [`Axis`](https://software.zaber.com/motion-library/api/py/ascii/axis) or [`Lockstep`](https://software.zaber.com/motion-library/api/py/ascii/lockstep) class instance that the `ShapedAxis` class will perform input shaped moves on.
-- See [here](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize the `Axis` class.
+- See [the ZML getting started guide](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize the `Axis` class.
 - The `plant` parameter is an instance of the `Plant` class which defines the vibration that the input shaper is targeting.
   - The `Plant` class has `resonant_frequency` and `damping_ratio` properties that define the target vibration frequency in Hz and damping ratio at which the input shaping algorithm will remove vibration.
 
@@ -139,7 +139,7 @@ shaped_axis_var = ShapedAxisStream(axis, plant, ShaperType.ZV, stream_id)
 ```
 
 - The axis parameter is the [`Axis`](https://software.zaber.com/motion-library/api/py/ascii/axis) or [`Lockstep`](https://software.zaber.com/motion-library/api/py/ascii/lockstep) class instance that the `ShapedAxisStream` class will perform input shaped moves on.
-- See [here](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize the `Axis` class.
+- See [the ZML getting started guide](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize the `Axis` class.
 - The `plant` parameter is an instance of the `Plant` class which defines the vibration that the input shaper is targeting.
   - The `Plant` class has `resonant_frequency` and `damping_ratio` properties that define the target vibration frequency in Hz and damping ratio at which the input shaping algorithm will remove vibration.
 

@@ -48,9 +48,7 @@ def convert_length_to_microns(length: float, unit: UnitsAndLiterals) -> float:
     return ret
 
 
-def convert_point_to_microns(
-    point: NDArray[np.float64], units: UnitsAndLiterals
-) -> NDArray[np.float64]:
+def convert_point_to_microns(point: NDArray[np.float64], units: UnitsAndLiterals) -> NDArray[np.float64]:
     """
         Convert 2d point to microns.
 
@@ -107,9 +105,7 @@ def try_stitch_images(tiles: list[MatLike], file_name: str, scale: float = 1.0) 
         print(f"cv2.Stitcher failed with error code: {status}: {CV2_ERR_DICT[status]}.")
 
 
-def join_tiles(
-    tiles: list[list[MatLike]], num_rows: int, file_name: str, scale: float = 1.0
-) -> None:
+def join_tiles(tiles: list[list[MatLike]], num_rows: int, file_name: str, scale: float = 1.0) -> None:
     """
         Join tiles into single image.
 

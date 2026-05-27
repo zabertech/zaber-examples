@@ -4,8 +4,11 @@
 [metadata]
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
-lock_version = "4.4.1"
-content_hash = "sha256:0e084965c2616c056d3381b47d7f2d3a776bb3805d9be11cc29229c4cda622a1"
+lock_version = "4.5.0"
+content_hash = "sha256:5f6c0782564b7d8ff9790165ec17b86f031aa061b2c493c1180468627e4a03b8"
+
+[[metadata.targets]]
+requires_python = "==3.12.*"
 
 [[package]]
 name = "astroid"

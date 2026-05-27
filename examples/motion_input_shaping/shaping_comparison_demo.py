@@ -162,9 +162,7 @@ if __name__ == "__main__":
 
         # Get the second dataset with shaping
         print("Performing shaped move.")
-        step_response_data_shaped = StepResponseData(
-            SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES
-        )
+        step_response_data_shaped = StepResponseData(SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES)
 
         step_response_data_shaped.capture_data(
             shaped_axis.axis,
@@ -184,9 +182,7 @@ if __name__ == "__main__":
 
         step_response_data_shaped_stream.capture_data(
             shaped_axis.axis,
-            lambda: shaped_axis_stream.move_relative(
-                MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False
-            ),
+            lambda: shaped_axis_stream.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False),
             True,
         )
 

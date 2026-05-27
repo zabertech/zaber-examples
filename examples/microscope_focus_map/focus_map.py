@@ -42,19 +42,12 @@ def generate_random_points(num_points: int) -> list[Point]:
     for _ in range(num_points):
         temp_x = rng.uniform(-EXTENTS, EXTENTS)
         temp_y = rng.uniform(-EXTENTS, EXTENTS)
-        temp_z = (
-            temp_x * TARGET_X_SLOPE
-            + temp_y * TARGET_Y_SLOPE
-            + TARGET_OFFSET
-            + rng.normal(scale=NOISE)
-        )
+        temp_z = temp_x * TARGET_X_SLOPE + temp_y * TARGET_Y_SLOPE + TARGET_OFFSET + rng.normal(scale=NOISE)
         points.append(Point(temp_x, temp_y, temp_z))
     return points
 
 
-def plot_points_and_best_fit(
-    points: list[Point], best_fit: Callable[[float, float], float]
-) -> None:
+def plot_points_and_best_fit(points: list[Point], best_fit: Callable[[float, float], float]) -> None:
     """Plot both the randomly generated points, generate best-fit function with a function."""
     fig = plt.figure()
     axes: Axes3D = fig.add_subplot(111, projection="3d")

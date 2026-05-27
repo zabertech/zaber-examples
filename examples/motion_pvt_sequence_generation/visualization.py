@@ -51,9 +51,7 @@ def _plot_points(
     :param color: The line color, or None to choose automatically.
     :param label: The legend-entry label, or None to leave blank.
     """
-    return axis.plot(
-        x_data, y_data, "o", mew=MARKER_EDGE_WIDTH, ms=MARKER_SIZE, color=color, label=label
-    )[0]
+    return axis.plot(x_data, y_data, "o", mew=MARKER_EDGE_WIDTH, ms=MARKER_SIZE, color=color, label=label)[0]
 
 
 def _plot_discontinuity(
@@ -188,9 +186,7 @@ def plot_pvt_path(
         # Use at most 3 dimensions
         axis_indices = list(range(min(sequence.dim, 3)))
     else:
-        assert (
-            2 <= len(axis_indices) <= 3
-        ), "Invalid number of indices provided. Can only plot in 2 or 3 dimensions."
+        assert 2 <= len(axis_indices) <= 3, "Invalid number of indices provided. Can only plot in 2 or 3 dimensions."
 
     # Setup plots
     if axis is None:
@@ -214,9 +210,7 @@ def plot_pvt_path(
     sampled_times = list(np.linspace(sequence.start_time, sequence.end_time, num_samples))
 
     # Plot position
-    sampled_positions = [
-        [sequence.position(t)[axis_index] for t in sampled_times] for axis_index in axis_indices
-    ]
+    sampled_positions = [[sequence.position(t)[axis_index] for t in sampled_times] for axis_index in axis_indices]
     line = axis.plot(*sampled_positions, label="generated path")[0]
     point_positions = [[p.position[axis_index] for p in points] for axis_index in axis_indices]
     axis.plot(*point_positions, "o", mew=MARKER_EDGE_WIDTH, ms=MARKER_SIZE, color=line.get_color())
@@ -285,9 +279,7 @@ def plot_path_and_trajectory(
         "TopLeft": fig.add_subplot(gs[0, :trajectory_ratio]),
         "MiddleLeft": fig.add_subplot(gs[1, :trajectory_ratio]),
         "BottomLeft": fig.add_subplot(gs[2, :trajectory_ratio]),
-        "Right": fig.add_subplot(
-            gs[:, trajectory_ratio:], projection="3d" if sequence.dim > 2 else None
-        ),
+        "Right": fig.add_subplot(gs[:, trajectory_ratio:], projection="3d" if sequence.dim > 2 else None),
     }
     for subplot_key in ("TopLeft", "MiddleLeft"):
         # Remove ticks since they are shared with BottomLeft
@@ -297,9 +289,7 @@ def plot_path_and_trajectory(
     plot_pvt_trajectory(
         sequence,
         num_samples=num_samples,
-        axes=[
-            subplots[key].axes for key in ("TopLeft", "MiddleLeft", "BottomLeft")  # type: ignore
-        ],
+        axes=[subplots[key].axes for key in ("TopLeft", "MiddleLeft", "BottomLeft")],  # type: ignore
         show=False,
     )
     plot_pvt_path(
