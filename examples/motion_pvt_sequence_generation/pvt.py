@@ -17,7 +17,11 @@ from zaber_motion.ascii import PvtPartialPoint, PvtPoint, PvtSequence
 
 
 def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
-    """Helper function for sequience_data_from_csv."""
+    """
+    Convert partial point to complete.
+
+    Helper function for sequence_data_from_csv.
+    """
     assert len(point.positions) > 0, "Point is missing position data."
     assert all(pos is not None for pos in point.positions), "Point has null position data entries."
     assert len(point.velocities) == len(point.positions), "Point has different quantities of positions and velocities."

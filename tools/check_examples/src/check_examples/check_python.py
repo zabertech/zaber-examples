@@ -167,7 +167,7 @@ def run_legacy_linters(command_prefix: list[str], directory: Path, *, fix: bool)
         return_code |= lint_files(["black", "-l120"])
     else:
         return_code |= lint_files(["black", "-l120", "--check"])
-    return_code |= lint_files(["pylint", "--score=n"])
+    return_code |= lint_files(["pylint", "--max-line-length=120", "--score=n"])
     return_code |= lint_files(["pydocstyle"])
     return_code |= lint_files(["mypy", "--strict"])
 

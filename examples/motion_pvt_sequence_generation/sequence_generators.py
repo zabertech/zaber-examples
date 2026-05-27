@@ -1,6 +1,7 @@
 """
-These functions have now been ported to Zaber Motion Library,
-so the calls to them in this example code have been replaced by
+Use the Zaber Motion Library equivalents instead of these functions.
+
+The calls to them in this example code have been replaced by
 equivalent calls to equivalent functions on zaber_motion.ascii.PvtSequence
 class.
 
@@ -213,7 +214,9 @@ def generate_velocities(
         velocity_sequences = []
         for dim in range(sequence_dim):
             velocity_sequences.append(
-                generate_velocities_continuous_acceleration(position_sequences[dim], time_sequence, 0, 0)  # type: ignore
+                generate_velocities_continuous_acceleration(
+                    position_sequences[dim], time_sequence, 0, 0
+                )  # type: ignore
             )
     else:
         # Generate some velocities
