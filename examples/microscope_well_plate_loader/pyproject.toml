@@ -24,10 +24,34 @@ lint = { composite = ["format", "ruff", "pyright"] }
 
 [dependency-groups]
 dev = [
-    "ruff>=0.9.6",
-    "pylint>=3.3.4",
-    "pyright>=1.1.394",
+    "mypy>=1.9.0",
+    "pylint>=3.1.0",
+    "black>=24.4.0",
+    "pydocstyle>=6.3.0",
 ]
 
 [tool.ruff]
 line-length = 120
+
+[tool.pylint]
+disable = [
+    "invalid-name", 
+    "too-many-instance-attributes",
+    "line-too-long",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "too-many-branches", 
+    "too-many-statements"
+]
+
+[tool.pydocstyle]
+ignore = [
+    "D100", # Missing docstring in public module
+    "D103", # Missing docstring in public function
+    "D401", # First line should be in imperative mood 
+    "D203", # 1 blank line required before class docstring
+    "D404" #First word of the docstring should not be `This`
+    ]
+
+[tool.mypy]
+disable_error_code = ["import-not-found", "import-untyped", "call-overload"]

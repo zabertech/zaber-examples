@@ -99,9 +99,7 @@ if __name__ == "__main__":
         else:
             zaber_object = device.get_lockstep(LOCKSTEP_INDEX)
 
-        plant_var = Plant(
-            RESONANT_FREQUENCY, DAMPING_RATIO
-        )  # Initialize a Plant class with the frequency and damping ratio
+        plant_var = Plant(RESONANT_FREQUENCY, DAMPING_RATIO)  # Initialize a Plant class with the frequency and damping ratio
 
         # Initialize both input shaping axis classes
         shaped_axis_decel = ShapedAxis(zaber_object, plant_var)

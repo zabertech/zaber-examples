@@ -100,9 +100,7 @@ class Calibration:
         for n_x in range(self.x_count):
             for n_y in range(self.y_count):
                 point_pair = self.points[n_x][n_y]
-                temp_xy_matrix.append(
-                    self._make_xy_row(point_pair.expected.x, point_pair.expected.y)
-                )
+                temp_xy_matrix.append(self._make_xy_row(point_pair.expected.x, point_pair.expected.y))
                 temp_x_actual.append(point_pair.actual.x)
                 temp_y_actual.append(point_pair.actual.y)
         xy_matrix = np.matrix(temp_xy_matrix)
@@ -124,12 +122,10 @@ class Calibration:
         """Check the polynomial orders to make sure we have enough points for the computation."""
         if self.x_order >= self.x_count:
             raise ValueError(
-                f"X-axis polynomial order ({self.x_order}) "
-                f"must be less than the number of points ({self.x_count})."
+                f"X-axis polynomial order ({self.x_order}) " f"must be less than the number of points ({self.x_count})."
             )
 
         if self.y_order >= self.y_count:
             raise ValueError(
-                f"Y-axis polynomial order ({self.y_order}) "
-                f"must be less than the number of points ({self.y_count})."
+                f"Y-axis polynomial order ({self.y_order}) " f"must be less than the number of points ({self.y_count})."
             )

@@ -41,9 +41,7 @@ def optimal_scanning(
         # Single move across the sample for TDI / continuous
         scan_time = trap_move(protocol["area"][0], x_accel, protocol["scanning_speed"])
     else:
-        scan_time = trap_move(scan_height, x_accel, 1000) * math.ceil(
-            protocol["area"][0] / scan_height
-        )
+        scan_time = trap_move(scan_height, x_accel, 1000) * math.ceil(protocol["area"][0] / scan_height)
     n_scans_x = math.ceil(protocol["area"][1] / scan_width)
     stepover_time = trap_move(scan_width, y_accel, 1000)
 
@@ -54,9 +52,7 @@ def optimal_scanning(
         # Single move across the sample for TDI / continuous
         scan_time = trap_move(protocol["area"][1], y_accel, protocol["scanning_speed"])
     else:
-        scan_time = trap_move(scan_height, y_accel, 1000) * math.ceil(
-            protocol["area"][1] / scan_height
-        )
+        scan_time = trap_move(scan_height, y_accel, 1000) * math.ceil(protocol["area"][1] / scan_height)
     n_scans_y = math.ceil(protocol["area"][0] / scan_width)
     stepover_time = trap_move(scan_width, x_accel, 1000)
 

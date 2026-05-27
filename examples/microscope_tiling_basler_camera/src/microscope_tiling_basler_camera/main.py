@@ -71,9 +71,7 @@ def main() -> None:
             camera.get_frame_width(),
             camera.get_frame_height(),
         )
-        tiling_path = path_builder.get_path_snake(
-            TOP_LEFT, BOTTOM_RIGHT, POINTS_UNITS, OVERLAP_H, OVERLAP_V
-        )
+        tiling_path = path_builder.get_path_snake(TOP_LEFT, BOTTOM_RIGHT, POINTS_UNITS, OVERLAP_H, OVERLAP_V)
 
         tiles = capture_images(tiling_path, camera, plate)
         num_rows: int = len(tiling_path)
@@ -162,9 +160,7 @@ def check_user_specified_params() -> None:
     """Verify that user-specified params are valid and provide feedback."""
     assert TOP_LEFT[0] <= BOTTOM_RIGHT[0], "It must be that TOP_LEFT.x <= BOTTOM_RIGHT.x"
     assert TOP_LEFT[1] >= BOTTOM_RIGHT[1], "It must be that TOP_LEFT.y >= BOTTOM_RIGHT.y"
-    assert (
-        np.abs(CAMERA_ROTATION_RAD) <= np.pi / 4.0
-    ), "CAMERA_ROTATION_RAD should not be greater than 45°. Please adjust camera."
+    assert np.abs(CAMERA_ROTATION_RAD) <= np.pi / 4.0, "CAMERA_ROTATION_RAD should not be greater than 45°. Please adjust camera."
 
     assert PIXEL_WIDTH_MICRONS > 0.0, "PIXEL_WIDTH_MICRONS must be greater than 0"
     assert PIXEL_HEIGHT_MICRONS > 0.0, "PIXEL_WIDTH_MICRONS must be greater than 0"

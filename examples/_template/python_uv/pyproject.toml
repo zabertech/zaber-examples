@@ -1,0 +1,22 @@
+[project]
+name = "python-uv"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    {name = "Author Name", email = "author@zaber.com"},
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "ruff~=0.14.0",
+    "pyright>=1.1.0",
+]
+
+[tool.ruff]
+extend = "../../../tools/tooling_config/zaber-ruff.toml" # Update relative path for your example
+
+[tool.pyright]
+extends = "../../../tools/tooling_config/zaber-pyright.toml" # Update relative path for your example

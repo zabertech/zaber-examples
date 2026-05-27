@@ -31,10 +31,7 @@ class ZeroVibrationShaper:
 
     def get_impulse_amplitudes(self) -> list[float]:
         """Get the unitless magnitude of both impulses to perform the input shaping."""
-        k = math.exp(
-            (-2 * math.pi * self._n * self.plant.damping_ratio)
-            / math.sqrt(1 - self.plant.damping_ratio**2)
-        )
+        k = math.exp((-2 * math.pi * self._n * self.plant.damping_ratio) / math.sqrt(1 - self.plant.damping_ratio**2))
 
         a1 = 1 / (1 + k)
         a2 = k / (1 + k)
@@ -56,9 +53,7 @@ class ZeroVibrationShaper:
         a1, a2 = self.get_impulse_amplitudes()
         t1 = self.get_impulse_times()[1]
 
-        return (
-            2 * distance / ((t1**2) * (1 + (a1 / a2)))
-        )  # minimum acceleration needed to complete move
+        return 2 * distance / ((t1**2) * (1 + (a1 / a2)))  # minimum acceleration needed to complete move
 
     def get_deceleration(self, acceleration: float) -> float:
         """
@@ -116,9 +111,7 @@ class ZeroVibrationShaper:
 
         return self._n
 
-    def shape_trapezoidal_motion(
-        self, distance: float, acceleration: float, max_speed_limit: float = -1
-    ) -> list[float]:
+    def shape_trapezoidal_motion(self, distance: float, acceleration: float, max_speed_limit: float = -1) -> list[float]:
         """
         Calculate trajectory max speed and deceleration needed for input shaping.
 
@@ -151,13 +144,11 @@ if __name__ == "__main__":
     decel, speed = shaper.shape_trapezoidal_motion(DIST, ACCEL)
 
     print(
-        f"Shaped Move 1: Distance: {DIST:.2f}, Acceleration: {ACCEL:.2f}, "
-        f"Deceleration: {decel:.2f}, Max Speed: {speed:.2f}"
+        f"Shaped Move 1: Distance: {DIST:.2f}, Acceleration: {ACCEL:.2f}, " f"Deceleration: {decel:.2f}, Max Speed: {speed:.2f}"
     )
 
     decel, speed = shaper.shape_trapezoidal_motion(DIST, ACCEL, 10)
 
     print(
-        f"Shaped Move 2: Distance: {DIST:.2f}, Acceleration: {ACCEL:.2f}, "
-        f"Deceleration: {decel:.2f}, Max Speed: {speed:.2f}"
+        f"Shaped Move 2: Distance: {DIST:.2f}, Acceleration: {ACCEL:.2f}, " f"Deceleration: {decel:.2f}, Max Speed: {speed:.2f}"
     )

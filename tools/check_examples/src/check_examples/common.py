@@ -1,11 +1,14 @@
 """Common helper functions."""
 
-from typing import Generator
-import sys
 import os
 import subprocess
+import sys
+from collections.abc import Generator
 from pathlib import Path
-from .terminal_utils import iprint, iprint_pass, iprint_fail, iprint_warn
+
+import oslex2
+
+from .terminal_utils import iprint, iprint_fail, iprint_pass, iprint_warn
 
 IGNORE_FILE = "ignore.txt"
 
@@ -15,9 +18,9 @@ ignore_list: list[Path] = []
 def execute(command: list[str], cwd: Path) -> int:
     """Execute subprocess.run and print appropriate message."""
     env = dict(os.environ)
-    del env["VIRTUAL_ENV"]
+    env.pop("VIRTUAL_ENV", None)
     result = subprocess.run(
-        command,
+        oslex2.join(command),
         cwd=str(cwd),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -37,9 +40,9 @@ def execute(command: list[str], cwd: Path) -> int:
 def execute_and_get_output(command: list[str], cwd: Path) -> str:
     """Execute subprocess.run and return output."""
     env = dict(os.environ)
-    del env["VIRTUAL_ENV"]
+    env.pop("VIRTUAL_ENV", None)
     result = subprocess.run(
-        command,
+        oslex2.join(command),
         cwd=str(cwd),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -54,17 +57,13 @@ def execute_and_get_output(command: list[str], cwd: Path) -> str:
 def file_exists(directory: Path, filename: str) -> bool:
     """Check if a file exists in a directory."""
     filepath = directory / filename
-    if filepath.exists() and filepath.is_file():
-        return True
-    return False
+    return bool(filepath.exists() and filepath.is_file())
 
 
 def subdirectory_exists(directory: Path, subdirectory: str) -> bool:
     """Check if a subdirectory exists in a directory."""
     filepath = directory / subdirectory
-    if filepath.exists() and filepath.is_dir():
-        return True
-    return False
+    return bool(filepath.exists() and filepath.is_dir())
 
 
 def get_git_root_directory() -> Path:
@@ -82,7 +81,7 @@ def get_git_root_directory() -> Path:
     return directory
 
 
-def list_files_of_suffix(directory: Path, file_suffix: str, recurse: bool = True) -> list[Path]:
+def list_files_of_suffix(directory: Path, file_suffix: str, *, recurse: bool = True) -> list[Path]:
     """Return a list of python files in a directory."""
 
     def get_python_files(currdir: Path) -> Generator[Path, None, None]:
@@ -104,9 +103,9 @@ def load_ignore() -> None:
     """Load list of directories and files to ignore."""
     if not ignore_list:
         git_root = get_git_root_directory()
-        with open(IGNORE_FILE, "r", encoding="utf-8") as file:
-            for line in file:
-                line = line.strip()
+        with Path(IGNORE_FILE).open(encoding="utf-8") as file:
+            for raw_line in file:
+                line = raw_line.strip()
                 if not line or line[0] == "#":
                     continue
                 ignore_filepath = git_root / line
@@ -118,9 +117,7 @@ def load_ignore() -> None:
                         if ignore_filepath.is_file():
                             iprint_warn(f"Ignoring file: '{ignore_filepath}'", 1)
                 else:
-                    iprint_fail(
-                        f"Ignoring '{line.rstrip()}' in {IGNORE_FILE} not found, unable to ignore."
-                    )
+                    iprint_fail(f"Ignoring '{line.rstrip()}' in {IGNORE_FILE} not found, unable to ignore.")
         print()
 
 
@@ -128,6 +125,4 @@ def filter_not_ignored(filepath: Path) -> bool:
     """Check if a file or directory is in ignore.txt or should be ignored otherwise."""
     if filepath in ignore_list:
         return False
-    if "node_module" in str(filepath):
-        return False
-    return True
+    return "node_module" not in str(filepath)

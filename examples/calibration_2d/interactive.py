@@ -12,14 +12,14 @@ For more information see README.md
 """
 
 import sys
+
 import numpy as np
 from docopt import docopt
+from zaber_motion import Units
+from zaber_motion.ascii import Axis, AxisType, Connection
 
 from calibration import Point, PointPair, Calibration
 from calibrate import plot
-
-from zaber_motion import Units
-from zaber_motion.ascii import Axis, AxisType, Connection
 
 
 def main() -> None:
@@ -38,7 +38,7 @@ def main() -> None:
         order = int(np.sqrt(len(raw_points))) - 1
         points = []
         for y in range(0, order + 1):
-            row = raw_points[y * (order + 1):(y + 1) * (order + 1)]
+            row = raw_points[y * (order + 1) : (y + 1) * (order + 1)]
             points.append(row)
 
         # Perform the calibration
@@ -50,7 +50,7 @@ def main() -> None:
         do_moves(x_axis, y_axis, calibration)
 
 
-def select_axes(connection: Connection) -> tuple:
+def select_axes(connection: Connection) -> tuple[Axis, Axis]:
     """Select the axes to calibrate."""
     devices = connection.detect_devices()
     print("Detected linear motion axes:")
@@ -58,7 +58,7 @@ def select_axes(connection: Connection) -> tuple:
     for device in devices:
         for i in range(1, device.axis_count + 1):
             axis = device.get_axis(i)
-            if (axis.axis_type == AxisType.LINEAR):
+            if axis.axis_type == AxisType.LINEAR:
                 # The calibration will also work with non-linear stages but this example allows
                 # only linear stages so as to eliminate extra code for selecting the right units.
                 axes.append(axis)
@@ -91,14 +91,16 @@ def select_axes(connection: Connection) -> tuple:
 
 def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
     """Collect points for calibration."""
-    points = []
+    points: list[PointPair] = []
     print()
     print("--- Collecting data points for calibration ---")
     print()
     print("Move the axes using the knobs, or if you started Zaber Launcher before running this")
     print("script, you can use the Basic Controls or Terminal apps to move the axes.")
     print()
-    print("You must enter 4, 9, 16 or 25 points in a square grid pattern; the quantity controls the type of interpolation used.")
+    print(
+        "You must enter 4, 9, 16 or 25 points in a square grid pattern; " "the quantity controls the type of interpolation used."
+    )
     print()
     while True:
         input(f"Move the axes to point {len(points) + 1} and press Enter.")
@@ -107,7 +109,7 @@ def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
         actual = Point(x_position, y_position)
         for point in points:
             if distance(point.actual, actual) < 0.01:
-                print("Current location is too close to an already-recorded point. Please move to a new position.")
+                print("Current location is too close to an already-recorded point. " "Please move to a new position.")
                 continue
 
         print(f"Current device position reads as X: {x_position:.3f}mm, Y: {y_position:.3f}mm")
@@ -129,7 +131,7 @@ def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
 
                 break
 
-            x_expected, y_expected = map(float, line.replace(',', ' ').split())
+            x_expected, y_expected = map(float, line.replace(",", " ").split())
 
         except ValueError:
             print("Invalid input. Please try again.")
@@ -153,14 +155,17 @@ def do_moves(x_axis: Axis, y_axis: Axis, calibration: Calibration) -> None:
             if line == "":
                 break
 
-            x_requested, y_requested = map(float, line.replace(',', ' ').split())
+            x_requested, y_requested = map(float, line.replace(",", " ").split())
 
         except ValueError:
             print("Invalid input. Please try again.")
             continue
 
         target = calibration.map(Point(x_requested, y_requested))
-        print(f"Requested position of X: {x_requested:.3f}mm, Y: {y_requested:.3f}mm maps to calibrated position of X: {target.x:.3f}mm, Y: {target.y:.3f}mm")
+        print(
+            f"Requested position of X: {x_requested:.3f}mm, Y: {y_requested:.3f}mm "
+            f"maps to calibrated position of X: {target.x:.3f}mm, Y: {target.y:.3f}mm"
+        )
         x_axis.move_absolute(target.x, Units.LENGTH_MILLIMETRES, wait_until_idle=False)
         y_axis.move_absolute(target.y, Units.LENGTH_MILLIMETRES, wait_until_idle=False)
         x_axis.wait_until_idle()
@@ -171,7 +176,7 @@ def do_moves(x_axis: Axis, y_axis: Axis, calibration: Calibration) -> None:
 
 def distance(a: Point, b: Point) -> float:
     """Calculate the distance between two points."""
-    return np.sqrt((a.x - b.x)**2 + (a.y - b.y)**2)
+    return float(np.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2))
 
 
 if __name__ == "__main__":

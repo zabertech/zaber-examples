@@ -12,7 +12,7 @@ This example uses a Teledyne FLIR BFLY-U3-23S6M-C camera. The Spinnaker SDK, Spi
 
 ## Spinnaker SDK
 
-Download the latest version of the Spinnaker SKD and Spinnaker Python package which are available [here](https://flir.app.boxcn.net/v/SpinnakerSDK/folder/68522911814). Install the Spinnaker SDK, but do not install the Spinnaker Python package yet. Take note of the file name of the Spinnaker Python package you downloaded. At the time of writing, the most recent version is spinnaker_python-2.7.0.128-cp38-cp38-win_amd64.zip. The "cp38" in the file name indicates that this package is compatible with Python 3.8. This is the version of Python you should install in the next step. If you are currently using µManager software to control a microscope with a Point Grey Research or Teledyne FLIR camera, please be aware that recent versions of Spinnaker are not compatible with µManager. You will need to downgrade Spinnaker prior to using µManager.
+Download the latest version of the [Spinnaker SDK and Spinnaker Python package](https://flir.app.boxcn.net/v/SpinnakerSDK/folder/68522911814). Install the Spinnaker SDK, but do not install the Spinnaker Python package yet. Take note of the file name of the Spinnaker Python package you downloaded. At the time of writing, the most recent version is spinnaker_python-2.7.0.128-cp38-cp38-win_amd64.zip. The "cp38" in the file name indicates that this package is compatible with Python 3.8. This is the version of Python you should install in the next step. If you are currently using µManager software to control a microscope with a Point Grey Research or Teledyne FLIR camera, please be aware that recent versions of Spinnaker are not compatible with µManager. You will need to downgrade Spinnaker prior to using µManager.
 
 ## Python
 
@@ -23,9 +23,9 @@ It is recommended to install the version of Python matching the version of the S
 After installing the recommended version of Python, install the following python packages:
 
 - Spinnaker Python.
-- Zaber Motion Library. Detailed information on how to install Zaber Motion Library for Python is available [here](https://software.zaber.com/motion-library/docs/tutorials/install/py).
-- OpenCV. This package is a widely used library for computer vision. It is used here to analyze the images captured by the camera. Detailed information on how to install OpenCV for Python is available [here](https://pypi.org/project/opencv-python/).
-- Simple Pyspin. This package provides simple, streamlined commands for controlling the basic operations of Teledyne FLIR cameras. Detailed information on how to install Simple Pyspin is available [here](https://github.com/klecknerlab/simple_pyspin/).
+- Zaber Motion Library. Detailed information is available in the [Zaber Motion Library Python install guide](https://software.zaber.com/motion-library/docs/tutorials/install/py).
+- OpenCV. This package is a widely used library for computer vision. It is used here to analyze the images captured by the camera. Detailed information is available on the [opencv-python PyPI page](https://pypi.org/project/opencv-python/).
+- Simple Pyspin. This package provides simple, streamlined commands for controlling the basic operations of Teledyne FLIR cameras. Detailed information is available on the [simple_pyspin GitHub page](https://github.com/klecknerlab/simple_pyspin/).
 
 ## Parameters
 
@@ -94,7 +94,7 @@ All of these are standard functions in OpenCV, allowing this focus score functio
 
 This method is inspired by the article [Blur detection with OpenCV](https://pyimagesearch.com/2015/09/07/blur-detection-with-opencv/).
 
-See the complete Python example script [here](autofocus.py).
+See the [complete Python example script](autofocus.py).
 
 ## Troubleshooting Tips
 

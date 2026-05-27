@@ -19,9 +19,7 @@ class UiMainWindow:
         main_window.setObjectName("MainWindow")
         main_window.resize(1333, 793)
         icon = QtGui.QIcon()
-        icon.addPixmap(
-            QtGui.QPixmap("images/gui_icon.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off
-        )
+        icon.addPixmap(QtGui.QPixmap("images/gui_icon.ico"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         main_window.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(parent=main_window)
         self.centralwidget.setObjectName("centralwidget")
@@ -54,9 +52,7 @@ class UiMainWindow:
         self.message_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.message_label.setObjectName("message_label")
         self.vertical_layout.addWidget(self.message_label)
-        spacer_item = QtWidgets.QSpacerItem(
-            20, 20, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred
-        )
+        spacer_item = QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Preferred)
         self.vertical_layout.addItem(spacer_item)
         self.home_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.home_btn.setObjectName("home_btn")

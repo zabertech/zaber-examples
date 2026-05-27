@@ -65,13 +65,7 @@ class Wave(Trajectory):
 
     def velocity(self, time: float) -> list[float]:
         """Return the velocity at a given time."""
-        return [
-            2
-            * math.pi
-            * self._amplitude
-            / self._period
-            * math.cos(2 * math.pi / self._period * time)
-        ]
+        return [2 * math.pi * self._amplitude / self._period * math.cos(2 * math.pi / self._period * time)]
 
     @property
     def dim(self) -> int:
@@ -145,15 +139,11 @@ class TranslatingSpiral(Spiral):
 
     def position(self, time: float) -> list[float]:
         """Return the position at a given time."""
-        return super().position(time) + [
-            0.5 * self._amplitude * (1 - math.cos(self.angle(time) / 4))
-        ]
+        return super().position(time) + [0.5 * self._amplitude * (1 - math.cos(self.angle(time) / 4))]
 
     def velocity(self, time: float) -> list[float]:
         """Return the velocity at a given time."""
-        return super().velocity(time) + [
-            0.25 * self._amplitude * math.pi / self._period * math.sin(self.angle(time) / 4)
-        ]
+        return super().velocity(time) + [0.25 * self._amplitude * math.pi / self._period * math.sin(self.angle(time) / 4)]
 
     @property
     def dim(self) -> int:
@@ -161,9 +151,7 @@ class TranslatingSpiral(Spiral):
         return 3
 
 
-def generate_and_write(
-    filename: str, parameter_set: ParameterSet, trajectory: Trajectory, times: list[float]
-) -> None:
+def generate_and_write(filename: str, parameter_set: ParameterSet, trajectory: Trajectory, times: list[float]) -> None:
     """
     Generate a trajectory from the given model and write the values to a file.
 
@@ -220,9 +208,7 @@ def generate_wave_1d(parameter_set: ParameterSet) -> None:
     num_points = 6
     num_cycles = 2
     times = [i * period * num_cycles / num_points for i in range(num_points)]
-    generate_and_write(
-        f"{parameter_set.value}/wave_1d.csv", parameter_set, Wave(amplitude, period), times
-    )
+    generate_and_write(f"{parameter_set.value}/wave_1d.csv", parameter_set, Wave(amplitude, period), times)
 
 
 def generate_spiral_2d(parameter_set: ParameterSet) -> None:
@@ -233,9 +219,7 @@ def generate_spiral_2d(parameter_set: ParameterSet) -> None:
     num_points = 6
     num_cycles = 2
     times = [i * period * num_cycles / num_points for i in range(num_points)]
-    generate_and_write(
-        f"{parameter_set.value}/spiral_2d.csv", parameter_set, Spiral(amplitude, period), times
-    )
+    generate_and_write(f"{parameter_set.value}/spiral_2d.csv", parameter_set, Spiral(amplitude, period), times)
 
 
 def generate_spiral_3d(parameter_set: ParameterSet) -> None:

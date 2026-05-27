@@ -71,9 +71,7 @@ def main() -> None:
         )
 
 
-def polynomial_interpolation(
-    x_order: int, y_order: int, x_points: int, y_points: int, annotation: bool = False
-) -> None:
+def polynomial_interpolation(x_order: int, y_order: int, x_points: int, y_points: int, annotation: bool = False) -> None:
     """
     Interpolate with any order of polynomial.
 

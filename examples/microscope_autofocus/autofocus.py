@@ -75,9 +75,7 @@ def calculate_focus_score(image: Any, blur: int, position: float) -> float:
     return focus_score
 
 
-def find_best_focus(
-    start_mm: float, end_mm: float, step_size_mm: float, microscope_serial_port: str, blur: int
-) -> None:
+def find_best_focus(start_mm: float, end_mm: float, step_size_mm: float, microscope_serial_port: str, blur: int) -> None:
     """
     Find best focus by changing the focal distance and taking images with the camera.
 
@@ -143,18 +141,14 @@ if __name__ == "__main__":
         type=float,
         help="The position to end the search at, in mm",
     )
-    parser.add_argument(
-        "step", action="store", type=float, help="The granularity of the search, in mm"
-    )
+    parser.add_argument("step", action="store", type=float, help="The granularity of the search, in mm")
     parser.add_argument(
         "serial_port",
         action="store",
         type=str,
         help="The serial port to use to control the motor",
     )
-    parser.add_argument(
-        "--verbose", action="store_true", help="Log debug information to standard out"
-    )
+    parser.add_argument("--verbose", action="store_true", help="Log debug information to standard out")
     parser.add_argument(
         "--show-images",
         action="store_true",
@@ -175,8 +169,6 @@ if __name__ == "__main__":
     SHOW_STEP_IMAGES = args.show_images
 
     if args.blur % 2 != 1:
-        parser.error(
-            f"Bad value for blur, {args.blur} is not an odd number (required for median blurring)"
-        )
+        parser.error(f"Bad value for blur, {args.blur} is not an odd number (required for median blurring)")
 
     find_best_focus(args.start, args.end, args.step, args.serial_port, args.blur)

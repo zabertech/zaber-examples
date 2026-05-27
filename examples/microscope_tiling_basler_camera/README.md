@@ -14,7 +14,7 @@ The full example code experience requires a [Zaber microscope](https://www.zaber
 
 The script uses `pdm` to manage virtual environment and dependencies:
 
-Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
+Instructions on how to install it can be found on the [official `pdm` project page](https://github.com/pdm-project/pdm).
 
 The dependencies are listed in `pyproject.toml`.
 
@@ -38,13 +38,13 @@ __Note__: no matter the orientation of your camera and stage, it must be true th
 ### Optional Params
 
 - `SAVE_FOLDER`: the folder in which the tiled images will be saved
-- `RUN_BEST_EFFORT_STITCHING`: program will try to stitch tiles together using openCV's Stitcher class (more on openCV's high level stitching API [here](https://docs.opencv.org/4.x/d8/d19/tutorial_stitcher.html))
+- `RUN_BEST_EFFORT_STITCHING`: program will try to stitch tiles together using openCV's Stitcher class (more on [openCV's high level stitching API](https://docs.opencv.org/4.x/d8/d19/tutorial_stitcher.html))
 - `RUN_NAIVE_TILING`: concatenate tiles together into single image--this should only be used with 0 horizontal
 and vertical overlap
 
 ### Pixel Calibration
 
-This example doesn't attempt to perform any sort of automated pixel calibration, so the user must also provide pixel dimensions. More information on pixel calibration can be found [here](https://ibidi.com/img/cms/support/AN/AN22_Pixel_Size.pdf).
+This example doesn't attempt to perform any sort of automated pixel calibration, so the user must also provide pixel dimensions. More information on pixel calibration can be found on this [document](https://ibidi.com/img/cms/support/AN/AN22_Pixel_Size.pdf).
 
 ### Focus
 

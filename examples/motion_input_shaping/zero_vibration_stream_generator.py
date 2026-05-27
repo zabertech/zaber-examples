@@ -120,12 +120,8 @@ def calculate_acceleration_convolution(
     # for each impulse create a copy of the acceleration change delayed and scaled by the
     # impulse time and magnitude
     for n, impulse in enumerate(impulses):
-        shaped_time[n * num_rows : (num_rows + n * num_rows)] = (
-            np.array([unshaped_time]) + impulse_times[n]
-        )
-        accel_changes[n * num_rows : (num_rows + n * num_rows)] = (
-            np.array([unshaped_accel_changes]) * impulse
-        )
+        shaped_time[n * num_rows : (num_rows + n * num_rows)] = np.array([unshaped_time]) + impulse_times[n]
+        accel_changes[n * num_rows : (num_rows + n * num_rows)] = np.array([unshaped_accel_changes]) * impulse
 
     # sort acceleration changes by time
     sort_index = shaped_time.argsort()
@@ -166,9 +162,7 @@ def create_stream_trajectory(trajectory: list[AccelPoint]) -> list[StreamSegment
         current_accel = trajectory_acceleration[n]
         dt = trajectory_time[n + 1] - trajectory_time[n]  # dt
         current_velocity = previous_velocity + trajectory_acceleration[n] * dt  # velocity
-        current_position = (
-            previous_position + (current_velocity + previous_velocity) / 2 * dt
-        )  # position
+        current_position = previous_position + (current_velocity + previous_velocity) / 2 * dt  # position
 
         stream_segments.append(
             StreamSegment(
@@ -211,9 +205,7 @@ class ZeroVibrationStreamGenerator:
 
     def get_impulse_amplitudes(self) -> list[float]:
         """Get shaper impulse magnitudes."""
-        k = math.exp(
-            (-1 * math.pi * self.plant.damping_ratio) / math.sqrt(1 - self.plant.damping_ratio**2)
-        )  # Decay factor
+        k = math.exp((-1 * math.pi * self.plant.damping_ratio) / math.sqrt(1 - self.plant.damping_ratio**2))  # Decay factor
 
         match self.shaper_type:
             case ShaperType.ZV:
@@ -276,9 +268,7 @@ class ZeroVibrationStreamGenerator:
             max_speed_limit,
         )
 
-        shaped_trajectory = calculate_acceleration_convolution(
-            impulse_times, impulses, unshaped_trajectory
-        )
+        shaped_trajectory = calculate_acceleration_convolution(impulse_times, impulses, unshaped_trajectory)
 
         stream_segments = create_stream_trajectory(shaped_trajectory)
 

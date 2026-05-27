@@ -21,8 +21,7 @@ class AnsiEscape(Enum):
 
 
 def color_text(string: str, color: AnsiEscape) -> str:
-    """
-    Color text using terminal escape code.
+    """Color text using terminal escape code.
 
     Args:
         string: String to color
@@ -43,7 +42,7 @@ INDENT = " " * 4
 
 def iprint(message: str, indent: int) -> None:
     """Print with indent level."""
-    lines = message.splitlines(True)
+    lines = message.splitlines(keepends=True)
     indented_lines = [INDENT * indent + line for line in lines if line.strip()]
     block = "".join(indented_lines)
     if block.strip():

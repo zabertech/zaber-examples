@@ -2,7 +2,7 @@
 
 import re
 
-from zaber_motion import Library, Measurement
+from zaber_motion import Measurement
 from zaber_motion.ascii import Connection, DigitalOutputAction
 
 from .utilities import MM, TS

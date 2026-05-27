@@ -86,10 +86,7 @@ def update_vibration_parameter(
     else:
         return  # invalid parameter, don't update the plot
 
-    print(
-        f"Vibration Frequency: {damped_vibration.frequency:.3f}Hz, Damping Ratio: "
-        f"{damped_vibration.damping_ratio:.3f}"
-    )
+    print(f"Vibration Frequency: {damped_vibration.frequency:.3f}Hz, Damping Ratio: " f"{damped_vibration.damping_ratio:.3f}")
 
     update_vibration_plot(plot_series, damped_vibration)
 
@@ -142,13 +139,9 @@ def plot(data: StepResponseData) -> None:
     box_width = 0.2
 
     axbox1 = fig.add_axes((0.2, 0.01, box_width, box_height))  # Left, Bottom, Width, Height
-    axbox2 = fig.add_axes(
-        (0.2, 0.02 + box_height, box_width, box_height)
-    )  # Left, Bottom, Width, Height
+    axbox2 = fig.add_axes((0.2, 0.02 + box_height, box_width, box_height))  # Left, Bottom, Width, Height
     axbox3 = fig.add_axes((0.7, 0.01, box_width, box_height))  # Left, Bottom, Width, Height
-    axbox4 = fig.add_axes(
-        (0.7, 0.02 + box_height, box_width, box_height)
-    )  # Left, Bottom, Width, Height
+    axbox4 = fig.add_axes((0.7, 0.02 + box_height, box_width, box_height))  # Left, Bottom, Width, Height
 
     text_box_start = TextBox(
         axbox1,
@@ -176,18 +169,10 @@ def plot(data: StepResponseData) -> None:
     )
 
     # Setup the textbox callbacks for when the values get updated so the curve gets redrawn.
-    text_box_start.on_submit(
-        lambda v: update_vibration_parameter(v, "start_time", theor_plot, vibration_theoretical)
-    )
-    text_box_amplitude.on_submit(
-        lambda v: update_vibration_parameter(v, "amplitude", theor_plot, vibration_theoretical)
-    )
-    text_box_period.on_submit(
-        lambda v: update_vibration_parameter(v, "period", theor_plot, vibration_theoretical)
-    )
-    text_box_damping_ratio.on_submit(
-        lambda v: update_vibration_parameter(v, "DAMPING_RATIO", theor_plot, vibration_theoretical)
-    )
+    text_box_start.on_submit(lambda v: update_vibration_parameter(v, "start_time", theor_plot, vibration_theoretical))
+    text_box_amplitude.on_submit(lambda v: update_vibration_parameter(v, "amplitude", theor_plot, vibration_theoretical))
+    text_box_period.on_submit(lambda v: update_vibration_parameter(v, "period", theor_plot, vibration_theoretical))
+    text_box_damping_ratio.on_submit(lambda v: update_vibration_parameter(v, "DAMPING_RATIO", theor_plot, vibration_theoretical))
 
     print("Displaying plot...")
     axes.legend(loc="lower right")
@@ -223,12 +208,8 @@ if __name__ == "__main__":
         # Capture the data
         print("Performing move.")
 
-        step_response_data = StepResponseData(
-            SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES
-        )
-        step_response_data.capture_data(
-            axis, lambda: axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False), True
-        )
+        step_response_data = StepResponseData(SCOPE_TIMEBASE, Units.TIME_MILLISECONDS, Units.LENGTH_MICROMETRES)
+        step_response_data.capture_data(axis, lambda: axis.move_relative(MOVE_DISTANCE, Units.LENGTH_MILLIMETRES, False), True)
 
         print("Capture Complete.")
 
