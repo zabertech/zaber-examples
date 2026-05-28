@@ -54,7 +54,7 @@ class OMETiffWriter:
                 else:
                     tif.write(frame, contiguous=True)
 
-    def get_acquisition_order(self, acquisition_filenames: list[str]) -> list[str]:
+    def get_acquisition_order(self, acquisition_filenames: list[Path]) -> list[Path]:
         """Sorts acquisition image file names by acquisition order.
 
         Assumes alphabetically sorted image file names correspond to order of acquisition.
