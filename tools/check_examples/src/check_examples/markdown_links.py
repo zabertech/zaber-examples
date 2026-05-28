@@ -2,7 +2,8 @@
 
 import re
 from pathlib import Path
-from .terminal_utils import iprint, iprint_pass, iprint_fail
+
+from .terminal_utils import iprint, iprint_fail, iprint_pass
 
 LINKS_REGEX = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
 HEADING_REGEX = re.compile(r"^#+ (.*)")
@@ -11,7 +12,7 @@ HEADING_REGEX = re.compile(r"^#+ (.*)")
 class MarkdownLink:
     """Contains information about a markdown link."""
 
-    def __init__(self, filepath: Path, line: int, link_text: str, link_url: str):
+    def __init__(self, filepath: Path, line: int, link_text: str, link_url: str) -> None:
         """Create a MarkdownLink object."""
         self.filepath = filepath
         self.line = line
@@ -65,7 +66,7 @@ def check_links_in_markdown(markdown_filename: Path) -> int:
 def get_links(markdown_filename: Path) -> list[MarkdownLink]:
     """Return a list of links found in a markdown file."""
     markdown_links: list[MarkdownLink] = []
-    with open(markdown_filename, encoding="utf8") as file:
+    with markdown_filename.open(encoding="utf8") as file:
         markdown = file.readlines()
         for line_number, line_text in enumerate(markdown):
             links = list(LINKS_REGEX.findall(line_text))
@@ -107,17 +108,16 @@ def check_internal_link(link: MarkdownLink) -> list[str]:
         target_filepath = link.filepath
 
     if not target_filepath.exists():
-        return [f"{link.location} - '{str(target_filepath)}' does not exist"]
-    if link.anchor:
-        if not anchor_exists(target_filepath, link.anchor):
-            return [f"{link.location} - invalid anchor '{link.anchor}' in link '{link.url}'"]
+        return [f"{link.location} - '{target_filepath!s}' does not exist"]
+    if link.anchor and not anchor_exists(target_filepath, link.anchor):
+        return [f"{link.location} - invalid anchor '{link.anchor}' in link '{link.url}'"]
     return []
 
 
 def anchor_exists(filepath: Path, anchor: str) -> bool:
     """Check whether an anchor link exists."""
     heading_anchors: list[str] = []
-    with open(filepath, encoding="utf8") as file:
+    with filepath.open(encoding="utf8") as file:
         markdown = file.readlines()
         for line in markdown:
             result = HEADING_REGEX.findall(line)
@@ -134,5 +134,4 @@ def check_external_link(url: str) -> list[str]:
 
 def normalize(header: str) -> str:
     """Normalize a header string for comparing against anchor text."""
-    new_header = re.sub(r"[-_ ]+", "-", header.strip().replace("`", "")).lower()
-    return new_header
+    return re.sub(r"[-_ ]+", "-", header.strip().replace("`", "")).lower()

@@ -2,22 +2,22 @@
 
 This is a checklist for contributing Python example code to this repository.
 
-- [ ] Ideally examples are compatible with Python 3.10 and above.
-- [ ] Ideally the `README.md` and all other markdown documents should pass linting
+- [ ] The code example should compatible with Python 3.10 and above.
+- [ ] The `README.md` and all other markdown documents should pass linting
 with [pymarkdownlnt](https://github.com/jackdewinter/pymarkdown).
-- [ ] The code example should use some form of [package manager and virtual environment](python-virtual-environment.md).
+- [ ] The code example should use [uv](https://docs.astral.sh/uv/).
 - [ ] The code must pass the following linter / type checkers:
-  - [ ] Use [Black code formatter](https://black.readthedocs.io) with override of line length of 100.
-    - `black -l100 <filename.py>`
-  - [ ] Use [Pylint](https://pypi.org/project/pylint/) with default configuration.
-    - `pylint <filename.py>`
-  - [ ] Use [mypy](https://mypy-lang.org/) with strict configuration.
-    - `mypy --strict <filename.py>`
-  - [ ] Use [pydocstyle](https://www.pydocstyle.org/en/stable/)
-  to help write more readable docstrings according to [PEP 257](https://peps.python.org/pep-0257/).
-    - `pydocstyle <filename.py>`
+  - [ ] Use [Ruff](https://docs.astral.sh/ruff/tutorial/) with the Zaber recommended configuration.
+    - The `.pyproject.toml` file for the directory must extend the [Zaber Ruff config](../tools/tooling_config/zaber-ruff.toml). An example can found in the [templates folder](../examples/_template/python_uv/pyproject.toml).
+    - `uv run ruff format <filename.py> # format the code`
+    - `uv run ruff check <filename.py> # lint the code`
+  - [ ] Use [Pyright](https://microsoft.github.io/pyright/#/) with the recommended Zaber Configuration for type-checking
+    - The `.pyproject.toml` file for the directory must extend the [Zaber Pyright config](../tools/tooling_config/zaber-pyright.toml). An example can found in the [templates folder](../examples/_template/python_uv/pyproject.toml).
+    - `uv run pyright <filename.py>`
 
-The [CI script](../.github/workflows/check_examples.yml) will automatically call
-the [`check_example` script](../tools/check_examples/) to activate [supported virtual environments](python-virtual-environment.md)
-and run the linters.  The [`check_example` script](../tools/check_examples/) can be called manually before
-committing changes or doing a pull request.  All of the linters must pass before contribution can be merged.
+The [CI script](../.github/workflows/check_examples.yml) will automatically call the [`check_example` script](../tools/check_examples/) to run the linters. The [`check_example` script](../tools/check_examples/) can be called manually using `uv run check` before
+committing changes or doing a pull request.  All of the checks must pass before contribution can be merged.
+
+## Note For Older Examples
+
+This repo previously used a different set up of package managers and linting/formatting tools. As a result, the older examples in this repo may not conform the checklist above. Read the [old checklist](./archive/python-old.md) for more details.

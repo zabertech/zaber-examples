@@ -1,6 +1,6 @@
 # Well Plate Loading Demo
 
-_*By Alex Canan and Albert David*_
+*By Alex Canan and Albert David*
 
 ![Image of demo machine](img/well_plate_loader.jpg)
 
@@ -11,22 +11,20 @@ towers that use an X-SCA Process Controller to control solenoids that restrain t
 
 The main demo code is in [`stacker.py`](src/plateloadingdemo/stacker.py) - the other files contain support functions, types and constants.
 
-
 ## Hardware Requirements
 
 This example is very specific to the hardware assembly seen in the above video, and will need modification to work
 with variations in the devices used in your own setup. An article about this demo machine will be provided
 on the Zaber website under [Resources / Articles](https://www.zaber.com/articles).
 
-
 ## Dependencies / Software Requirements / Prerequisites
 
 Setup:
+
 - Install PDM if you don't already have it.
 - `pdm install`
 - Optional: `pdm run stream` to configure the plate scan stream, if using that option
    (selected by modifying code in [stacker.py](src/plateloadingdemo/stacker.py)).
-
 
 ## Configuration / Parameters
 
@@ -34,8 +32,8 @@ Edit [settings.py](src/plateloadingdemo/settings.py) and change the `PORT` globa
 name of the serial port the Zaber stages are connected to, and change `ROBOT_ADDRESS` to the IP address
 of the Mecademic robot arm.
 
-
 ## Running the Script
 
 Running the program:
+
 - `pdm run demo` to run the main demo.

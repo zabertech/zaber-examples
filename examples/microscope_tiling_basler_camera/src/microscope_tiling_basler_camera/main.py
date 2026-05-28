@@ -71,9 +71,7 @@ def main() -> None:
             camera.get_frame_width(),
             camera.get_frame_height(),
         )
-        tiling_path = path_builder.get_path_snake(
-            TOP_LEFT, BOTTOM_RIGHT, POINTS_UNITS, OVERLAP_H, OVERLAP_V
-        )
+        tiling_path = path_builder.get_path_snake(TOP_LEFT, BOTTOM_RIGHT, POINTS_UNITS, OVERLAP_H, OVERLAP_V)
 
         tiles = capture_images(tiling_path, camera, plate)
         num_rows: int = len(tiling_path)

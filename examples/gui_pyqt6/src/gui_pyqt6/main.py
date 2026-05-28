@@ -128,22 +128,16 @@ class MyProgram:
         connection = Connection.open_serial_port(SERIAL_PORT)
         devices = connection.detect_devices()
         stage = devices[0].get_axis(AXIS_NUM)
-        stage_units = (
-            Units.ANGLE_DEGREES if stage.axis_type is AxisType.ROTARY else Units.LENGTH_MILLIMETRES
-        )
+        stage_units = Units.ANGLE_DEGREES if stage.axis_type is AxisType.ROTARY else Units.LENGTH_MILLIMETRES
         return stage, stage_units
 
     def _determine_relevant_stage_travel_limits(self) -> tuple[float, float]:
         """Determine appropriate limits of stage travel to use as bounds for the slider."""
         limit_min = (
-            0
-            if self.stage.axis_type is AxisType.ROTARY
-            else self.stage.settings.get("limit.min", self.stage_units)
+            0 if self.stage.axis_type is AxisType.ROTARY else self.stage.settings.get("limit.min", self.stage_units)
         )
         limit_max = (
-            360
-            if self.stage.axis_type is AxisType.ROTARY
-            else self.stage.settings.get("limit.max", self.stage_units)
+            360 if self.stage.axis_type is AxisType.ROTARY else self.stage.settings.get("limit.max", self.stage_units)
         )
         return limit_min, limit_max
 

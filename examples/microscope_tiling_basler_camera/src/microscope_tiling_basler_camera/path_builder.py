@@ -59,12 +59,8 @@ class PathBuilder:
         """
         frame_width_um: float = self._pixel_w_um * self._frame_width
         frame_height_um: float = self._pixel_h_um * self._frame_height
-        sample_area_width_um: float = convert_length_to_microns(
-            bottom_right[0] - top_left[0], units
-        )
-        sample_area_height_um: float = convert_length_to_microns(
-            top_left[1] - bottom_right[1], units
-        )
+        sample_area_width_um: float = convert_length_to_microns(bottom_right[0] - top_left[0], units)
+        sample_area_height_um: float = convert_length_to_microns(top_left[1] - bottom_right[1], units)
 
         # get num steps and compute horizontal and vertical coverage
         step_x_um: float = (1.0 - overlap_h) * frame_width_um

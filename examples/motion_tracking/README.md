@@ -6,9 +6,7 @@ It calculates the error between a desired setpoint and a measured process variab
 In Zaber's case, the controller can move the stage to track the setpoint of the analog input signal.
 Zaber only supports the PI controller, which is a simplified version of the PID controller without derivative term.
 
-The following video demonstrates the concept:
-
-https://github.com/user-attachments/assets/07edae8d-5f73-4bfc-bec9-fb10752e4269
+This [video](https://github.com/user-attachments/assets/07edae8d-5f73-4bfc-bec9-fb10752e4269) demonstrates the concept:
 
 In the video above there is a load cell mounted on a Zaber stage.
 The stage is tracking the analog input signal from the load cell keeping a constant tension on the spring.
@@ -20,7 +18,7 @@ When disrupted, the stage moves to compensate for the change in the force until 
 
 The script uses `pdm` to manage the virtual environment and dependencies:
 
-Instructions on how to install it can be found on the official `pdm` project page [here](https://github.com/pdm-project/pdm).
+Instructions on how to install it can be found on the official [`pdm` project page](https://github.com/pdm-project/pdm).
 
 The dependencies are listed in `pyproject.toml`.
 

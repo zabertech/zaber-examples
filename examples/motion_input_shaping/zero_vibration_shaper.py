@@ -31,10 +31,7 @@ class ZeroVibrationShaper:
 
     def get_impulse_amplitudes(self) -> list[float]:
         """Get the unitless magnitude of both impulses to perform the input shaping."""
-        k = math.exp(
-            (-2 * math.pi * self._n * self.plant.damping_ratio)
-            / math.sqrt(1 - self.plant.damping_ratio**2)
-        )
+        k = math.exp((-2 * math.pi * self._n * self.plant.damping_ratio) / math.sqrt(1 - self.plant.damping_ratio**2))
 
         a1 = 1 / (1 + k)
         a2 = k / (1 + k)
@@ -56,9 +53,7 @@ class ZeroVibrationShaper:
         a1, a2 = self.get_impulse_amplitudes()
         t1 = self.get_impulse_times()[1]
 
-        return (
-            2 * distance / ((t1**2) * (1 + (a1 / a2)))
-        )  # minimum acceleration needed to complete move
+        return 2 * distance / ((t1**2) * (1 + (a1 / a2)))  # minimum acceleration needed to complete move
 
     def get_deceleration(self, acceleration: float) -> float:
         """

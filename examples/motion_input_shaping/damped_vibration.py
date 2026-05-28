@@ -70,9 +70,7 @@ class DampedVibration:
     def damping_ratio(self, value: float) -> None:
         """Set the vibration damping ratio."""
         if value < 0:
-            raise ValueError(
-                f"Invalid damping ratio: {value}. Value must be greater than or equal to 0."
-            )
+            raise ValueError(f"Invalid damping ratio: {value}. Value must be greater than or equal to 0.")
 
         self._damping_ratio = value
 
@@ -131,13 +129,9 @@ class DampedVibration:
         :param time_x: The absolute time in seconds.
         """
         rel_time = time_x - self.start_time
-        return (
-            self.amplitude * math.sin(self.omega * rel_time) * self.get_exponent_decay(rel_time)
-        ) + self.offset
+        return (self.amplitude * math.sin(self.omega * rel_time) * self.get_exponent_decay(rel_time)) + self.offset
 
-    def get_plot_points(
-        self, number_periods: float, number_points: int
-    ) -> tuple[list[float], list[float]]:
+    def get_plot_points(self, number_periods: float, number_points: int) -> tuple[list[float], list[float]]:
         """
         Get a list of times and magnitudes for a given number of vibration periods.
 
@@ -161,9 +155,7 @@ class DampedVibration:
         rel_time = time_x - self.start_time
         return (self.amplitude * self.get_exponent_decay(rel_time)) + self.offset
 
-    def get_decay_plot_points(
-        self, number_periods: float, number_points: int
-    ) -> tuple[list[float], list[float]]:
+    def get_decay_plot_points(self, number_periods: float, number_points: int) -> tuple[list[float], list[float]]:
         """
         Get a list of times and decay curve magnitudes for a given number of vibration periods.
 

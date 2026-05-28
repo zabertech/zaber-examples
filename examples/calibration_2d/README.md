@@ -120,7 +120,6 @@ pipenv run python calibrate.py -h
 For a more detailed explanation of the math behind the algorithm,
 please see [calibration_map.md](calibration_map.md).
 
-
 ### Interactive Script
 
 The interactive script `interactive.py` uses functions found in the other files and in the

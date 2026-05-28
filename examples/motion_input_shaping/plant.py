@@ -41,7 +41,5 @@ class Plant:
     def damping_ratio(self, value: float) -> None:
         """Set the system damping ratio for input shaping."""
         if value < 0:
-            raise ValueError(
-                f"Invalid damping ratio: {value}. Value must be greater than or equal to 0."
-            )
+            raise ValueError(f"Invalid damping ratio: {value}. Value must be greater than or equal to 0.")
         self._damping_ratio = value

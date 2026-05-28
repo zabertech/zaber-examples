@@ -19,7 +19,7 @@ distribution = false
 [tool.pdm.scripts]
 example = {call = "src.motion_tracking.main:main"}
 black = { cmd = "black -l 120 src" }
-mypy = { cmd = "mypy src" }
+mypy_check = { cmd = "mypy src" }
 check = { composite = ["black", "mypy"] }
 
 [tool.pdm.dev-dependencies]

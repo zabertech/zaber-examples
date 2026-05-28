@@ -144,9 +144,7 @@ class StepResponseData:
             return list(positions)
 
         final_position = self.target_positions[-1]
-        direction = (final_position - self.target_positions[0]) / abs(
-            final_position - self.target_positions[0]
-        )
+        direction = (final_position - self.target_positions[0]) / abs(final_position - self.target_positions[0])
 
         return [(x - final_position) * direction for x in positions]
 
@@ -167,9 +165,7 @@ class StepResponseData:
 
         return motion_end_index
 
-    def get_trajectory_settling_limits(
-        self, normalize: bool = False, buffer: float = 0.05
-    ) -> list[float]:
+    def get_trajectory_settling_limits(self, normalize: bool = False, buffer: float = 0.05) -> list[float]:
         """
         Calculate Y axis limits to center the plot on the axes' final position after moving.
 

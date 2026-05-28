@@ -32,9 +32,7 @@ def main() -> None:
             print("No LCA available")
             sys.exit()
 
-        def set_intensity(
-            channel: Axis, percent: float = 100, flux_watts: float | None = None
-        ) -> None:
+        def set_intensity(channel: Axis, percent: float = 100, flux_watts: float | None = None) -> None:
             """Set the intensity of MLR channels. Only do this once to minimize comms delays.
 
             :param channel: MLR lamp axis object

@@ -1,11 +1,11 @@
-"""This file contains constants for various Zaber stage and robot arm positions in the demo process."""
+"""Constants for various Zaber stage and robot arm positions in the demo process."""
 
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class AdrPosition:
-    """Robot position for pickup from microscope X-Y stage"""
+    """Robot position for pickup from microscope X-Y stage."""
 
     X: float = 185.31406
     Y: float = 68.01756
@@ -19,7 +19,7 @@ class AdrPosition:
 
 @dataclass(frozen=True)
 class StackerPosition:
-    """Robot position for pickup from loader X axis"""
+    """Robot position for pickup from loader X axis."""
 
     X: float = 171.89973
     Y: float = -79.55782
@@ -37,7 +37,7 @@ class StackerPosition:
 
 @dataclass(frozen=True)
 class PouncePositions:
-    """Robot intermediate position - defined as joint positions"""
+    """Robot intermediate position - defined as joint positions."""
 
     X: float = 110.66192
     Y: float = 5.3793
@@ -87,7 +87,9 @@ class VsrPositions:
     Z_TOP_APPROACH: float = 38.5  # Just below top, VSR slightly below contacting stack
     Z_LID: float = 31.9  # Position to catch lid for lowest microplate
     Z_LID_APPROACH: float = 30.4  # Transfer position for speed adjustment
-    Z_LID_TRANSFER: float = 23.4  # Position where weight is transferred gradually onto VSR - plate + lid approaching plate (bottom of Tower 2)
+    Z_LID_TRANSFER: float = (
+        23.4  # Position where weight is transferred gradually onto VSR - plate + lid approaching plate (bottom of Tower 2)
+    )
     Z_FINGER_APPROACH: float = 23  # Position where VSR can rapidly approach but does not yet contact the finger slopes
     Z_FINGER_APPROACH_WITH_LID: float = 19.5  # Same as line above, with offset for lid thickness
     Z_NEXT_PLATE_LID: float = 16  # Position to catch 2nd lid with plate + lid + plate 2 below

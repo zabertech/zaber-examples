@@ -1,5 +1,5 @@
 # Raster scan variables
-WELL_PLATES: dict = {
+WELL_PLATES: dict[str, dict[str, float | int]] = {
     "96": {
         "rows": 8,
         "columns": 12,
