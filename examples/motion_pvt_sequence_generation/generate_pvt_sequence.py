@@ -24,11 +24,10 @@ subdirectory "sample_data".
 """
 
 import os
-
-import pvt
-from visualization import plot_path_and_trajectory
 from zaber_motion import Measurement, Units
 from zaber_motion.ascii import PvtSequence
+import pvt
+from visualization import plot_path_and_trajectory
 
 # ------------------- Script Settings ----------------------
 

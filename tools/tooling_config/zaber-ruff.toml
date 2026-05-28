@@ -11,7 +11,7 @@ required-version = "~=0.14.0"
 
 # This is a default max line length.
 # It is largely a matter of team taste and can be modified.
-line-length = 130
+line-length = 120
 
 [format]
 # Format python code snippets in comments

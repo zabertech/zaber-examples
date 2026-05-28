@@ -67,7 +67,9 @@ class UpdateThread(QThread):
     update_ui_pos = pyqtSignal(float)  # noqa
     thread_exception = pyqtSignal(str)  # noqa
 
-    def __init__(self, stage: Axis, main_window: QMainWindow, stage_units: Units) -> None:
+    def __init__(
+        self, stage: Axis, main_window: QMainWindow, stage_units: Units
+    ) -> None:
         """Set up thread."""
         super().__init__(main_window)
         self.stage = stage
@@ -128,13 +130,25 @@ class MyProgram:
         connection = Connection.open_serial_port(SERIAL_PORT)
         devices = connection.detect_devices()
         stage = devices[0].get_axis(AXIS_NUM)
-        stage_units = Units.ANGLE_DEGREES if stage.axis_type is AxisType.ROTARY else Units.LENGTH_MILLIMETRES
+        stage_units = (
+            Units.ANGLE_DEGREES
+            if stage.axis_type is AxisType.ROTARY
+            else Units.LENGTH_MILLIMETRES
+        )
         return stage, stage_units
 
     def _determine_relevant_stage_travel_limits(self) -> tuple[float, float]:
         """Determine appropriate limits of stage travel to use as bounds for the slider."""
-        limit_min = 0 if self.stage.axis_type is AxisType.ROTARY else self.stage.settings.get("limit.min", self.stage_units)
-        limit_max = 360 if self.stage.axis_type is AxisType.ROTARY else self.stage.settings.get("limit.max", self.stage_units)
+        limit_min = (
+            0
+            if self.stage.axis_type is AxisType.ROTARY
+            else self.stage.settings.get("limit.min", self.stage_units)
+        )
+        limit_max = (
+            360
+            if self.stage.axis_type is AxisType.ROTARY
+            else self.stage.settings.get("limit.max", self.stage_units)
+        )
         return limit_min, limit_max
 
     def _setup_and_start_polling_thread(self) -> UpdateThread:

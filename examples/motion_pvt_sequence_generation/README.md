@@ -354,9 +354,6 @@ The class has the following methods:
 - `velocity(time)` - Return the position at any time in the sequence.
 - `acceleration(time)` - Return the position at any time in the sequence.
 - `save_to_file(filename)` - Save the sequence to a CSV file.
-
-#### Class Methods
-
 - `position(u)` - The position at the given parameterization length.
 - `direction(u)` - The unit vector describing the direction or tangent of the path at the given parameterization length.
 - `segment_length(u0, uf)` - The arc length between some starting and some final parameterization length.

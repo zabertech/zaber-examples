@@ -70,10 +70,20 @@ def check_python_requirements(directory: Path, *, fix: bool) -> int:
     if return_code:
         return return_code
 
-    return_code |= execute([".venv/bin/python3", "-m", "pip", "install", "--upgrade", "pip"], directory)
+    return_code |= execute(
+        [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "pip"], directory
+    )
 
     return_code |= execute(
-        [".venv/bin/python3", "-m", "pip", "install", "--upgrade", "-r", "requirements.txt"],
+        [
+            ".venv/bin/python3",
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "-r",
+            "requirements.txt",
+        ],
         directory,
     )
 
@@ -164,10 +174,10 @@ def run_legacy_linters(command_prefix: list[str], directory: Path, *, fix: bool)
         return execute(command_prefix + command + python_filenames, directory)
 
     if fix:
-        return_code |= lint_files(["black", "-l130"])
+        return_code |= lint_files(["black", "-l120"])
     else:
-        return_code |= lint_files(["black", "-l130", "--check"])
-    return_code |= lint_files(["pylint", "--score=n"])
+        return_code |= lint_files(["black", "-l120", "--check"])
+    return_code |= lint_files(["pylint", "--max-line-length=120", "--score=n"])
     return_code |= lint_files(["pydocstyle"])
     return_code |= lint_files(["mypy", "--strict"])
 
