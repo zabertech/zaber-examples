@@ -62,9 +62,7 @@ def select_axes(connection: Connection) -> tuple[Axis, Axis]:
                 # The calibration will also work with non-linear stages but this example allows
                 # only linear stages so as to eliminate extra code for selecting the right units.
                 axes.append(axis)
-                print(
-                    f"{len(axes)}: {device.name} axis {i} ({axis.identity.peripheral_name})"
-                )
+                print(f"{len(axes)}: {device.name} axis {i} ({axis.identity.peripheral_name})")
 
     if (len(axes)) < 2:
         print("At least two linear axes are required for this demo.")
@@ -97,9 +95,7 @@ def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
     print()
     print("--- Collecting data points for calibration ---")
     print()
-    print(
-        "Move the axes using the knobs, or if you started Zaber Launcher before running this"
-    )
+    print("Move the axes using the knobs, or if you started Zaber Launcher before running this")
     print("script, you can use the Basic Controls or Terminal apps to move the axes.")
     print()
     print(
@@ -114,17 +110,11 @@ def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
         actual = Point(x_position, y_position)
         for point in points:
             if distance(point.actual, actual) < 0.01:
-                print(
-                    "Current location is too close to an already-recorded point. Please move to a new position."
-                )
+                print("Current location is too close to an already-recorded point. Please move to a new position.")
                 continue
 
-        print(
-            f"Current device position reads as X: {x_position:.3f}mm, Y: {y_position:.3f}mm"
-        )
-        print(
-            "Enter the expected positions in mm as two numbers separated by a space or comma,"
-        )
+        print(f"Current device position reads as X: {x_position:.3f}mm, Y: {y_position:.3f}mm")
+        print("Enter the expected positions in mm as two numbers separated by a space or comma,")
         line = input("or just press enter to end input: ")
         print()
         try:
@@ -134,9 +124,7 @@ def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
                     continue
 
                 if np.sqrt(len(points)) % 1 != 0:
-                    print(
-                        "You must enter 4, 9, 16 or 25 points in a square grid pattern."
-                    )
+                    print("You must enter 4, 9, 16 or 25 points in a square grid pattern.")
                     continue
 
                 if len(points) > 25:
@@ -159,9 +147,7 @@ def collect_points(x_axis: Axis, y_axis: Axis) -> list[PointPair]:
 def do_moves(x_axis: Axis, y_axis: Axis, calibration: Calibration) -> None:
     """Move to user-entered points."""
     print()
-    print(
-        "Enter desired coordinates to move to, as two numbers separated by spaces or commas,"
-    )
+    print("Enter desired coordinates to move to, as two numbers separated by spaces or commas,")
     print("or press Enter to end the program.")
     print()
     while True:
@@ -185,9 +171,7 @@ def do_moves(x_axis: Axis, y_axis: Axis, calibration: Calibration) -> None:
         y_axis.move_absolute(target.y, Units.LENGTH_MILLIMETRES, wait_until_idle=False)
         x_axis.wait_until_idle()
         y_axis.wait_until_idle()
-        print(
-            "Move complete. Enter more coordinates or press Enter to end the program."
-        )
+        print("Move complete. Enter more coordinates or press Enter to end the program.")
         print()
 
 
