@@ -29,3 +29,4 @@ extend-ignore = [
 
 [tool.pyright]
 extends = "../../tools/tooling_config/zaber-pyright.toml"
+reportUnknownVariableType = false

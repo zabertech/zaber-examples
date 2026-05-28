@@ -4,7 +4,7 @@ from typing import Final
 
 import click
 import numpy as np
-from ome_types import from_xml  # pyright: ignore [reportUnknownVariableType]
+from ome_types import from_xml
 from ome_types.model import PixelType
 from PIL import Image
 from tifffile import TiffWriter
@@ -46,7 +46,7 @@ class OMETiffWriter:
         """Write a OME-TIFF file."""
         ome_tiff_dir = self.output_directory or self.metadata.parent
 
-        with TiffWriter(ome_tiff_dir / self.metadata.with_suffix(".tiff").name, ome=False, shaped=False) as tif:
+        with TiffWriter(ome_tiff_dir / self.metadata.with_suffix(".tiff").name, kind="generic") as tif:
             for index, frame in enumerate(self.get_acquisition_images()):
                 if index == 0:
                     metadata_str = self.modify_metadata(frame)
