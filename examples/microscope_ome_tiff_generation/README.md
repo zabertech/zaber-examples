@@ -31,7 +31,6 @@ To run the example:
 
 ```shell
 cd examples/microscope_ome_tiff_generation/
-uv sync
 uv run ome_tiff.py -m ./sample_data/xy.ome.xml -d ./sample_data -o ./output
 ```
 
