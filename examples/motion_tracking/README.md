@@ -1,4 +1,4 @@
-# Tracking Motion Using PID Controller
+# Translating Sensor Data to Motion with PID
 
 The example demonstrates how Zaber stages can track analog input signals using a PID controller.
 A PID controller is a control loop feedback mechanism widely used in industrial control systems.
