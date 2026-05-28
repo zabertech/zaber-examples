@@ -1,0 +1,8 @@
+# Define the number of dimensions we are working on
+dim = 2
+
+# Define the image coordinates
+xy.ome.tiff; ; (0.0, 0.0)
+xy.ome.tiff; ; (2471.0, -6.0)
+xy.ome.tiff; ; (4942.0, -12.0)
+xy.ome.tiff; ; (7414.0, -18.0)
