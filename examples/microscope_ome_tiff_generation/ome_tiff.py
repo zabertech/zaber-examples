@@ -74,9 +74,9 @@ class OMETiffWriter:
             pattern_filenames = self.image_dir.glob(pattern)
             filenames += list(pattern_filenames)
 
-        filenames.sort()
+        sorted_filenames = self.get_acquisition_order(filenames)
 
-        for filename in filenames:
+        for filename in sorted_filenames:
             yield np.asarray(Image.open(filename))
 
     def modify_metadata(self, sample: np.ndarray) -> str:
