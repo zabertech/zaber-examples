@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OME xmlns="http://www.openmicroscopy.org/Schemas/OME/2016-06" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06 https://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
+  <Instrument ID="Instrument:0">
+    <Objective ID="Objective:2"/>
+    <Filter ID="Filter:1"/>
+  </Instrument>
+  <Image ID="Image:0:2" Name="Image 0 2x, 0.1">
+    <AcquisitionDate>2026-05-13T17:34:49.824Z</AcquisitionDate>
+    <InstrumentRef ID="Instrument:0"/>
+    <ObjectiveSettings ID="Objective:2"/>
+    <StageLabel Name="Image 0 2x, 0.1" X="100346.71875" XUnit="µm" Y="48681.875" YUnit="µm"/>
+    <Pixels ID="Pixels:0:2" DimensionOrder="XYCZT" Type="int16" SizeY="2200" SizeX="3208" SizeZ="1" SizeC="1" SizeT="1" PhysicalSizeX="2.237" PhysicalSizeXUnit="µm" PhysicalSizeY="2.237" PhysicalSizeYUnit="µm">
+      <Channel ID="Channel:0:2:0" Name="Illuminator Configuration 1" ExcitationWavelength="473" ExcitationWavelengthUnit="nm">
+        <AnnotationRef ID="Annotation:IlluminatorConfig:0"/>
+        <LightPath>
+          <ExcitationFilterRef ID="Filter:1"/>
+        </LightPath>
+      </Channel>
+      <TiffData IFD="0" PlaneCount="1" FirstZ="0" FirstC="0" FirstT="0"/>
+      <Plane TheZ="0" TheC="0" TheT="0" DeltaT="431" DeltaTUnit="ms" PositionX="100346.71875" PositionXUnit="µm" PositionY="48681.875" PositionYUnit="µm" PositionZ="20195.075" PositionZUnit="µm"/>
+    </Pixels>
+  </Image>
+  <Image ID="Image:1:2" Name="Image 1 2x, 0.1">
+    <AcquisitionDate>2026-05-13T17:34:49.824Z</AcquisitionDate>
+    <InstrumentRef ID="Instrument:0"/>
+    <ObjectiveSettings ID="Objective:2"/>
+    <StageLabel Name="Image 1 2x, 0.1" X="105905.93749999999" XUnit="µm" Y="48681.875" YUnit="µm"/>
+    <Pixels ID="Pixels:1:2" DimensionOrder="XYCZT" Type="int16" SizeY="2200" SizeX="3208" SizeZ="1" SizeC="1" SizeT="1" PhysicalSizeX="2.237" PhysicalSizeXUnit="µm" PhysicalSizeY="2.237" PhysicalSizeYUnit="µm">
+      <Channel ID="Channel:1:2:0" Name="Illuminator Configuration 1" ExcitationWavelength="473" ExcitationWavelengthUnit="nm">
+        <AnnotationRef ID="Annotation:IlluminatorConfig:0"/>
+        <LightPath>
+          <ExcitationFilterRef ID="Filter:1"/>
+        </LightPath>
+      </Channel>
+      <TiffData IFD="1" PlaneCount="1" FirstZ="0" FirstC="0" FirstT="0"/>
+      <Plane TheZ="0" TheC="0" TheT="0" DeltaT="1757" DeltaTUnit="ms" PositionX="105905.93749999999" PositionXUnit="µm" PositionY="48681.875" PositionYUnit="µm" PositionZ="20195.075" PositionZUnit="µm"/>
+    </Pixels>
+  </Image>
+  <Image ID="Image:2:2" Name="Image 2 2x, 0.1">
+    <AcquisitionDate>2026-05-13T17:34:49.824Z</AcquisitionDate>
+    <InstrumentRef ID="Instrument:0"/>
+    <ObjectiveSettings ID="Objective:2"/>
+    <StageLabel Name="Image 2 2x, 0.1" X="111465.15625" XUnit="µm" Y="48681.875" YUnit="µm"/>
+    <Pixels ID="Pixels:2:2" DimensionOrder="XYCZT" Type="int16" SizeY="2200" SizeX="3208" SizeZ="1" SizeC="1" SizeT="1" PhysicalSizeX="2.237" PhysicalSizeXUnit="µm" PhysicalSizeY="2.237" PhysicalSizeYUnit="µm">
+      <Channel ID="Channel:2:2:0" Name="Illuminator Configuration 1" ExcitationWavelength="473" ExcitationWavelengthUnit="nm">
+        <AnnotationRef ID="Annotation:IlluminatorConfig:0"/>
+        <LightPath>
+          <ExcitationFilterRef ID="Filter:1"/>
+        </LightPath>
+      </Channel>
+      <TiffData IFD="2" PlaneCount="1" FirstZ="0" FirstC="0" FirstT="0"/>
+      <Plane TheZ="0" TheC="0" TheT="0" DeltaT="3082" DeltaTUnit="ms" PositionX="111465.15625" PositionXUnit="µm" PositionY="48681.875" PositionYUnit="µm" PositionZ="20195.075" PositionZUnit="µm"/>
+    </Pixels>
+  </Image>
+  <Image ID="Image:3:2" Name="Image 3 2x, 0.1">
+    <AcquisitionDate>2026-05-13T17:34:49.824Z</AcquisitionDate>
+    <InstrumentRef ID="Instrument:0"/>
+    <ObjectiveSettings ID="Objective:2"/>
+    <StageLabel Name="Image 3 2x, 0.1" X="117024.375" XUnit="µm" Y="48681.875" YUnit="µm"/>
+    <Pixels ID="Pixels:3:2" DimensionOrder="XYCZT" Type="int16" SizeY="2200" SizeX="3208" SizeZ="1" SizeC="1" SizeT="1" PhysicalSizeX="2.237" PhysicalSizeXUnit="µm" PhysicalSizeY="2.237" PhysicalSizeYUnit="µm">
+      <Channel ID="Channel:3:2:0" Name="Illuminator Configuration 1" ExcitationWavelength="473" ExcitationWavelengthUnit="nm">
+        <AnnotationRef ID="Annotation:IlluminatorConfig:0"/>
+        <LightPath>
+          <ExcitationFilterRef ID="Filter:1"/>
+        </LightPath>
+      </Channel>
+      <TiffData IFD="3" PlaneCount="1" FirstZ="0" FirstC="0" FirstT="0"/>
+      <Plane TheZ="0" TheC="0" TheT="0" DeltaT="4409" DeltaTUnit="ms" PositionX="117024.375" PositionXUnit="µm" PositionY="48681.875" PositionYUnit="µm" PositionZ="20195.075" PositionZUnit="µm"/>
+    </Pixels>
+  </Image>
+  <StructuredAnnotations>
+    <MapAnnotation ID="Annotation:IlluminatorConfig:0" Namespace="Zaber">
+      <Value>
+        <M K="name">473A Green</M>
+        <M K="hardwareChannelIndex">2</M>
+        <M K="wavelengthNm">473</M>
+        <M K="attenuationFraction">1</M>
+      </Value>
+    </MapAnnotation>
+  </StructuredAnnotations>
+</OME>
