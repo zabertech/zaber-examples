@@ -1,0 +1,86 @@
+# Documentation for creating CI pipelines: https://docs.gitlab.com/topics/build_your_application/.
+# An introduction to YAML (the language used here): https://learnxinyminutes.com/yaml/.
+
+stages:
+  - style
+  - test
+
+# Base configuration for all jobs.
+# This is a hidden job (has a leading `.`) and will not be run on its own.
+.prog-std-base:
+  image: $CI_REGISTRY/prog-std/containers/python:1.1.0
+  rules:
+    # Run the pipeline on every event except pushes. This will still run on pushes if the branch
+    # has a merge request.
+    - if: '$CI_PIPELINE_SOURCE != "push"'
+      when: always
+  tags:
+    - docker-executor
+  variables:
+    # Tell UV where to keep it's cache, so the runners can also cache it.
+    UV_CACHE_DIR: .uv-cache
+    # Make UV fail hard if the uv.lock file is not up to date (it should be committed)
+    UV_LOCKED: 1
+    # Locations to ignore when searching for python shebang scripts (comma separated)
+    EXCLUDES: $UV_CACHE_DIR,.ruff_cache
+  cache:
+    - key:
+        files:
+          - uv.lock
+      paths:
+        - $UV_CACHE_DIR
+      when: always
+  after_script:
+    - uv cache prune
+
+# Run ruff linter on *.py files
+Ruff:
+  extends: .prog-std-base
+  stage: style
+  needs: []
+  script:
+    # Run `ruff check` once to produce a code quality report and then run it again to produce a
+    # terminal log, but only if the first run failed (the terminal log is useless if it was
+    # successful).
+    - SHEBANG_SCRIPTS=$(/find-shebang-python-scripts --exclude="$EXCLUDES")
+    - uv run ruff check . $SHEBANG_SCRIPTS --output-format gitlab --output-file report-ruff.json || uv run ruff check . $SHEBANG_SCRIPTS
+  artifacts:
+    when: always
+    reports:
+      codequality:
+        - report-ruff.json
+
+# Check the formatting of *.py files
+Ruff format:
+  extends: .prog-std-base
+  stage: style
+  needs: []
+  script:
+    - uv run ruff format --diff
+
+# Run static type analysis on *.py files
+Pyright:
+  extends: .prog-std-base
+  stage: style
+  needs: []
+  script:
+    # Run `pyright` once to produce a code quality report and then run it again to produce a
+    # terminal log, but only if the first run failed (the terminal log is useless if it was
+    # successful).
+    - SHEBANG_SCRIPTS=$(/find-shebang-python-scripts --exclude="$EXCLUDES")
+    - uv run pyright . $SHEBANG_SCRIPTS --outputjson | uvx pyright-to-gitlab-ci --output report-pyright.json || uv run pyright . $SHEBANG_SCRIPTS
+  artifacts:
+    when: always
+    reports:
+      codequality:
+        - report-pyright.json
+
+# Run tests
+Pytest:
+  extends: .prog-std-base
+  stage: test
+  needs: []
+  script:
+    - uv run pytest -v
+
+# Build and publish steps coming soon
