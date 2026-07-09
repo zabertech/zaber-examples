@@ -13,6 +13,6 @@ LOAD_CELL_CONFIG = LoadCellSetup(
 # Please replace the values here based on your wiring to the controller
 XMCC_CONFIG = DeviceSetup(
     serial_port="COM5",  # Controller serial port (update as needed)
-    force_axis_index=2,  # Controller axis index for the force axis
-    translation_axis_index=1,  # Controller axis index for the translation axis
+    force_axis_index=2,  # Controller axis index for the force axis (1-based)
+    translation_axis_index=1,  # Controller axis index for the translation axis (1-based)
 )

@@ -29,7 +29,7 @@ operations for your own applications.
 
 ## Overview
 
-This project interfaces with a Zaber XMCC_CONFIG motion controller
+This project interfaces with a Zaber X-MCC motion controller
 equipped with:
 
 - A force-controlled Z-axis (vertical movement).
@@ -61,14 +61,14 @@ tracking.
 ## System Requirements
 
 - Python 3.12+
-- Zaber XMCC_CONFIG motion controller
-- Zaber motion library
+- Zaber X-MCC motion controller
+- Zaber Motion Library
 - Load Cell connected to analog input port 1
 - `matplotlib` & `numpy`
 
 ## Installation
 
-### Using uv (Recommended)
+### Using uv
 
 1. Clone or download this project.
 2. Install all dependencies with a single command:
@@ -84,15 +84,6 @@ tracking.
    *To also install development dependencies (pyright, pytest, ruff):*
    `uv sync --all-groups`
 
-### Manual Installation
-
-1. Clone or download this project.
-2. Install dependencies:
-
-   ```bash
-   pip install zaber-motion matplotlib numpy
-   ```
-
 ## Hardware Setup & Global Configuration
 
 Hardware connection details and global calibration constants are managed in
@@ -102,7 +93,7 @@ Hardware connection details and global calibration constants are managed in
 
    ```python
    XMCC_CONFIG = DeviceSetup(
-       serial_port="COM5",  # Change to your device's serial port
+       serial_port="COM5",  # Change to your device's serial port, device is assumed to be index=1 and no other Zaber device is connected
        force_axis_index=2,  # Axis connected to force control
        translation_axis_index=1,  # Axis connected to translation
        ...
