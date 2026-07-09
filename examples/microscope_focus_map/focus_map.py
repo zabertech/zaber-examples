@@ -21,9 +21,9 @@ import sys
 from typing import Callable
 from collections import namedtuple
 from docopt import docopt
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D  # type: ignore
+import numpy as np  # type: ignore[import-not-found] # pylint: disable=import-error
+import matplotlib.pyplot as plt  # type: ignore[import-not-found] # pylint: disable=import-error
+from mpl_toolkits.mplot3d import Axes3D  # type: ignore[import-not-found] # pylint: disable=import-error
 
 # Parameters affecting random point generation
 TARGET_X_SLOPE = 2

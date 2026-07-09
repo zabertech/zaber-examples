@@ -98,8 +98,12 @@ def check_uv_tooling_config(directory: Path) -> int:
         iprint_fail("pyproject.toml not found", 1)
         return 1
 
-    with Path.open(pyproject_path, "rb") as f:
-        config = tomllib.load(f)
+    with Path.open(pyproject_path, "rb") as f:  # pylint: disable=unspecified-encoding
+        try:
+            config = tomllib.load(f)
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            iprint_fail(f"Failed to parse {pyproject_path}: {e}", 1)
+            return 1
 
     tooling_config = get_git_root_directory() / "tools" / "tooling_config"
     expected_ruff = (tooling_config / "zaber-ruff.toml").resolve()

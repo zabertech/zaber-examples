@@ -1,7 +1,7 @@
 """The core math and functionality behind the calibration algorithm."""
 
 from typing import NamedTuple
-import numpy as np
+import numpy as np  # type: ignore[import-not-found] # pylint: disable=import-error
 
 
 class Point(NamedTuple):
@@ -38,12 +38,12 @@ class Calibration:
     @property
     def x_count(self) -> int:
         """Get the number of points for the x-axis."""
-        return np.array(self.points).shape[0]
+        return int(np.array(self.points).shape[0])
 
     @property
     def y_count(self) -> int:
         """Get the number of points for the y-axis."""
-        return np.array(self.points).shape[1]
+        return int(np.array(self.points).shape[1])
 
     @property
     def x_order(self) -> int:
