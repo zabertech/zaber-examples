@@ -17,8 +17,8 @@ For more information see README.md
 
 import sys
 from typing import Callable, NamedTuple
-import numpy as np  # type: ignore[import-not-found] # pylint: disable=import-error
-import matplotlib.pyplot as plt  # type: ignore[import-not-found] # pylint: disable=import-error
+import numpy as np  # pylint: disable=import-error
+import matplotlib.pyplot as plt  # pylint: disable=import-error
 from docopt import docopt
 from calibration import Point, PointPair, Calibration
 

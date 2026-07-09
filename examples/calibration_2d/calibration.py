@@ -1,7 +1,8 @@
 """The core math and functionality behind the calibration algorithm."""
 
 from typing import NamedTuple
-import numpy as np  # type: ignore[import-not-found] # pylint: disable=import-error
+import numpy as np  # pylint: disable=import-error
+import numpy.typing as npt  # pylint: disable=import-error
 
 
 class Point(NamedTuple):
@@ -29,8 +30,8 @@ class Calibration:
         self._points = points
 
         # Default values, to be overwritten by _fit_coefficients() function.
-        self._x_coeff = np.zeros((self.x_order + 1) * (self.y_order + 1))
-        self._y_coeff = np.zeros((self.x_order + 1) * (self.y_order + 1))
+        self._x_coeff: npt.NDArray[np.float64] = np.zeros((self.x_order + 1) * (self.y_order + 1))
+        self._y_coeff: npt.NDArray[np.float64] = np.zeros((self.x_order + 1) * (self.y_order + 1))
 
         # Validate the polynomial orders and fit the coefficients
         self._fit_coefficients()

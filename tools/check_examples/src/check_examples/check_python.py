@@ -13,8 +13,12 @@ from .common import (
 from .terminal_utils import iprint_fail, iprint_pass
 
 
-def check_python(directory: Path, *, fix: bool) -> int:
-    """Check python code."""
+def check_python(directory: Path, *, fix: bool, no_self: bool = False) -> int:
+    """Check python code.
+
+    Set ``no_self`` when checking this tool itself so PDM does not try to
+    reinstall the running ``check`` executable (which Windows locks).
+    """
     # List python files
     python_files = list_files_of_suffix(directory, ".py")
     if not python_files:
@@ -27,7 +31,7 @@ def check_python(directory: Path, *, fix: bool) -> int:
 
     if file_exists(python_directory, "pdm.lock"):
         iprint_pass("pdm.lock found: use PDM", 1)
-        return check_python_pdm(python_directory, fix=fix)
+        return check_python_pdm(python_directory, fix=fix, no_self=no_self)
 
     if file_exists(python_directory, "Pipfile"):
         iprint_pass("Pipfile found: use pipenv.", 1)
@@ -45,10 +49,15 @@ def check_python(directory: Path, *, fix: bool) -> int:
     return 1
 
 
-def check_python_pdm(directory: Path, *, fix: bool) -> int:
+def check_python_pdm(directory: Path, *, fix: bool, no_self: bool = False) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
-    return_code |= execute(["pdm", "install", "--dev"], directory)
+    install_command = ["pdm", "install", "--dev"]
+    if no_self:
+        # Skip reinstalling the project itself; on Windows this would fail with a
+        # PermissionError because the running ``check.exe`` console script is locked.
+        install_command.append("--no-self")
+    return_code |= execute(install_command, directory)
     return_code |= run_legacy_linters(["pdm", "run"], directory, fix=fix)
     return return_code
 

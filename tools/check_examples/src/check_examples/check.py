@@ -166,7 +166,7 @@ def cmd_check_self(args: Args) -> int:
     print()
     print(f"--- Self-check: {self_directory} ---")
     return_code |= check_markdown(self_directory)
-    return_code |= check_python(self_directory, fix=fix)
+    return_code |= check_python(self_directory, fix=fix, no_self=True)
     print()
     return return_code
 
