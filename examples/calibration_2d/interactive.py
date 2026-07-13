@@ -13,10 +13,10 @@ For more information see README.md
 
 import sys
 
-import numpy as np  # pylint: disable=import-error
+import numpy as np
 from docopt import docopt
-from zaber_motion import Units  # pylint: disable=import-error
-from zaber_motion.ascii import Axis, AxisType, Connection  # pylint: disable=import-error
+from zaber_motion import Units
+from zaber_motion.ascii import Axis, AxisType, Connection
 
 from calibration import Point, PointPair, Calibration
 from calibrate import plot

@@ -1,8 +1,7 @@
 """The core math and functionality behind the calibration algorithm."""
 
 from typing import NamedTuple
-import numpy as np  # pylint: disable=import-error
-import numpy.typing as npt  # pylint: disable=import-error
+import numpy as np
 
 
 class Point(NamedTuple):
@@ -30,8 +29,8 @@ class Calibration:
         self._points = points
 
         # Default values, to be overwritten by _fit_coefficients() function.
-        self._x_coeff: npt.NDArray[np.float64] = np.zeros((self.x_order + 1) * (self.y_order + 1))
-        self._y_coeff: npt.NDArray[np.float64] = np.zeros((self.x_order + 1) * (self.y_order + 1))
+        self._x_coeff = np.zeros((self.x_order + 1) * (self.y_order + 1))
+        self._y_coeff = np.zeros((self.x_order + 1) * (self.y_order + 1))
 
         # Validate the polynomial orders and fit the coefficients
         self._fit_coefficients()
@@ -39,12 +38,12 @@ class Calibration:
     @property
     def x_count(self) -> int:
         """Get the number of points for the x-axis."""
-        return int(np.array(self.points).shape[0])
+        return np.array(self.points).shape[0]
 
     @property
     def y_count(self) -> int:
         """Get the number of points for the y-axis."""
-        return int(np.array(self.points).shape[1])
+        return np.array(self.points).shape[1]
 
     @property
     def x_order(self) -> int:

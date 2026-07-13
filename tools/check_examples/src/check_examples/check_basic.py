@@ -48,7 +48,7 @@ def validate_article_metadata(directory: Path) -> int:
             "category": str,
             "picture": str,
         }
-    except Exception:  # noqa: BLE001, pylint: disable=broad-exception-caught
+    except Exception:  # noqa: BLE001
         return 1
 
     for field, field_type in required_fields.items():

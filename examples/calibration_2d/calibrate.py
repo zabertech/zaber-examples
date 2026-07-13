@@ -17,8 +17,8 @@ For more information see README.md
 
 import sys
 from typing import Callable, NamedTuple
-import numpy as np  # pylint: disable=import-error
-import matplotlib.pyplot as plt  # pylint: disable=import-error
+import numpy as np
+import matplotlib.pyplot as plt
 from docopt import docopt
 from calibration import Point, PointPair, Calibration
 
@@ -109,7 +109,7 @@ def generate_points(
         rng = np.random.default_rng()
         travel_range = travel.max - travel.min
         error_range = error_fraction * travel_range
-        return float(rng.uniform(-error_range, error_range))
+        return rng.uniform(-error_range, error_range)
 
     x_range = np.linspace(x_travel.min, x_travel.max, x_count)
     y_range = np.linspace(y_travel.min, y_travel.max, y_count)

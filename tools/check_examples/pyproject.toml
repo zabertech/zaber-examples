@@ -27,10 +27,6 @@ dev = [
     "ruff~=0.14.0",
     "pyright>=1.1.0",
     "types-PyYAML>=6.0.12.20250402",
-    "mypy>=2.2.0",
-    "black>=26.5.1",
-    "pylint>=4.0.6",
-    "pydocstyle>=6.3.0",
 ]
 
 [tool.ruff]
@@ -48,13 +44,3 @@ ignore = [
 [tool.pyright]
 extends = "../tooling_config/zaber-pyright.toml"
 reportMissingTypeStubs = "none"
-
-[tool.mypy]
-disable_error_code = "import-untyped"
-
-[[tool.mypy.overrides]]
-module = ["untyped_package.*"]
-follow_untyped_imports = true
-
-[tool.pylint.messages_control]
-disable = ["import-error"]

@@ -1,1 +1,0 @@
-"""Force mode demo package."""

@@ -13,12 +13,8 @@ from .common import (
 from .terminal_utils import iprint_fail, iprint_pass
 
 
-def check_python(directory: Path, *, fix: bool, no_self: bool = False) -> int:
-    """Check python code.
-
-    Set ``no_self`` when checking this tool itself so PDM does not try to
-    reinstall the running ``check`` executable (which Windows locks).
-    """
+def check_python(directory: Path, *, fix: bool) -> int:
+    """Check python code."""
     # List python files
     python_files = list_files_of_suffix(directory, ".py")
     if not python_files:
@@ -31,7 +27,7 @@ def check_python(directory: Path, *, fix: bool, no_self: bool = False) -> int:
 
     if file_exists(python_directory, "pdm.lock"):
         iprint_pass("pdm.lock found: use PDM", 1)
-        return check_python_pdm(python_directory, fix=fix, no_self=no_self)
+        return check_python_pdm(python_directory, fix=fix)
 
     if file_exists(python_directory, "Pipfile"):
         iprint_pass("Pipfile found: use pipenv.", 1)
@@ -49,15 +45,10 @@ def check_python(directory: Path, *, fix: bool, no_self: bool = False) -> int:
     return 1
 
 
-def check_python_pdm(directory: Path, *, fix: bool, no_self: bool = False) -> int:
+def check_python_pdm(directory: Path, *, fix: bool) -> int:
     """Check python using PDM if example provides pdm.lock."""
     return_code = 0
-    install_command = ["pdm", "install", "--dev"]
-    if no_self:
-        # Skip reinstalling the project itself; on Windows this would fail with a
-        # PermissionError because the running ``check.exe`` console script is locked.
-        install_command.append("--no-self")
-    return_code |= execute(install_command, directory)
+    return_code |= execute(["pdm", "install", "--dev"], directory)
     return_code |= run_legacy_linters(["pdm", "run"], directory, fix=fix)
     return return_code
 
@@ -107,12 +98,8 @@ def check_uv_tooling_config(directory: Path) -> int:
         iprint_fail("pyproject.toml not found", 1)
         return 1
 
-    with Path.open(pyproject_path, "rb") as f:  # pylint: disable=unspecified-encoding
-        try:
-            config = tomllib.load(f)
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            iprint_fail(f"Failed to parse {pyproject_path}: {e}", 1)
-            return 1
+    with Path.open(pyproject_path, "rb") as f:
+        config = tomllib.load(f)
 
     tooling_config = get_git_root_directory() / "tools" / "tooling_config"
     expected_ruff = (tooling_config / "zaber-ruff.toml").resolve()
