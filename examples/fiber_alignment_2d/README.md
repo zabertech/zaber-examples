@@ -72,12 +72,12 @@ fiber_alignment = FiberAlignment2D(zaber_axis_1, zaber_axis_2, analog_input)
   - The `num_samples` parameter specifies how many samples to take and average when calling the `get_signal` method to reduce noise. This parameter is optional and defaults to 1.
 - See [the ZML getting started guide](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize `Device` and `Axis` classes.
 
-The methods to perform fiber alignment in this class fall in to two categories. [First Light Search Methods](#first-light-search-methods) are used when there is no reliable signal and searches the space for a signal that is strong enough to reliably use a hill climb method. [Hill Climb Optimization Methods](#hill-climb-optimization-methods) perform final alignment by maximizing the signal strength with a hill climb routine.
+The methods to perform fiber alignment in this class fall in to two categories. [First-Light Search Methods](#first-light-search-methods) are used when there is no reliable signal and searches the space for a signal that is strong enough to reliably use a hill climb method. [Hill Climb Optimization Methods](#hill-climb-optimization-methods) perform final alignment by maximizing the signal strength with a hill climb routine.
 The methods return a instance of `AlignmentResult` and some also return an instance of `AlignmentSamples`. `AlignmentResult` contains the final positions, final signal strength, and boolean indicating whether it was sucessful. `AlignmentSamples` contains lists of the positions and signals from the samples taken during the process that can be used for plotting or further analysis.
 
-### First Light Search Methods
+### First-Light Search Methods
 
-`raster_scan()` and `spiral_scan()` methods take steps in a raster or spiral pattern and waits for the axes to stop and settle between measurements.
+`raster_scan()` and `spiral_scan()` methods performs steps in a raster or spiral pattern and waits for the axes to stop and settle before taking measurements.
 
 `streamed_spiral_scan()` performs continuous motion for higher speed scanning. This method does not return a instance of `AlignmentSamples`.
 
@@ -95,13 +95,15 @@ This method is similar to `raster_scan()` but performs a square spiral starting 
 
 #### streamed_spiral_scan()
 
-This methods performs a constant velocity circular spiral motion starting at the current position using [streams](https://software.zaber.com/motion-library/api/py/ascii/device#streams) and uses [triggers](https://software.zaber.com/motion-library/api/py/ascii/device#triggers) to stop when a signal is detected. This method is faster than `spiral_scan` since it is continously moving and monitoring the signal at high freqeuncy but can be less reliable if the power meter response is not fast enough or there is signal noise. Reliability can be improved by reducing the speed and acceleration.
+This methods performs a constant velocity circular spiral motion starting at the current position using [streams](https://software.zaber.com/motion-library/api/py/ascii/device#streams) and uses [triggers](https://software.zaber.com/motion-library/api/py/ascii/device#triggers) to stop when a signal is detected. This method is faster than `spiral_scan()` since it is continously moving and monitoring the signal at high freqeuncy but can be less reliable if the power meter response is not fast enough or there is signal noise.
 
 When `trigger_threshold` is exceeded, the current position is recorded and motion is stopped. After coming to a stop, the stages move back to the position recorded by the trigger, retakes the measurement, and compares it to `first_light_threshold` to ensure that the final signal is above the required threshold. The triggers can take up to a few milliseconds to record the position resulting in some error. `trigger_threshold` must be higher than `first_light_threshold` to account for this as well as other sources of error and noise.
 
 The recorded position is read from the axis setting specified by the `trigger_position_setting` property in `FiberAlignment2D`. By default, [`encoder.pos`](https://www.zaber.com/protocol-manual?protocol=ASCII#topic_setting_encoder_pos) will be used if the stages have built in encoders and [`pos`](https://www.zaber.com/protocol-manual?protocol=ASCII#topic_setting_pos) will be used otherwise.
 
-To change the max speed or acceleration used during streamed motion use the `set_stream_max_speed` and `set_stream_max_accel` methods in the instance of `FiberAlignment2D`.
+Reliability can be improved by reducing the speed and acceleration. To change the max speed or acceleration used during streamed motion use the `set_stream_max_speed` and `set_stream_max_accel` methods in the instance of `FiberAlignment2D`.
+
+If the scan is reliably detecting first-light but the system is not returning to that position accurately enough to get a signal above `first_light_threshold`, an alternative to slowing down the streamed motion is to perform a `spiral_scan()` afterwards. This combination would make use of `streamed_spiral_scan()` to quickly get close to a position where first-light can be detected and then use the slower but more reliable `spiral_scan()` find the first-light signal again.
 
 ### Hill Climb Optimization Methods
 
