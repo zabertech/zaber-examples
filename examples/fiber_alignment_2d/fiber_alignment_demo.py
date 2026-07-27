@@ -59,7 +59,11 @@ def main() -> None:
             Units.ACCELERATION_METRES_PER_SECOND_SQUARED,
         )
 
-        # Use streamed_spiral_scan() to perform high speed first light search.
+        # Search for first light.
+        # streamed_spiral_scan() is used to a perform high speed first light search and
+        # spiral_scan() is used as a backup in case it fails.
+        # If adapting this code for integrated devices without support for  streamed motion,
+        # only use the spiral_scan().
         print("Searching for first light...")
         first_light_result = fiber_alignment.streamed_spiral_scan(
             FIRST_LIGHT_THRESHOLD,
@@ -79,6 +83,7 @@ def main() -> None:
                 stop_at_threshold=True,
             )
 
+        # Check that first light serach has succeeded and perform hill-climb optimization
         if first_light_result.success:
             print("Starting hill climb optimization for fine-tuning...")
             # Using pattern_search() for optimization. gradient_search() can be used as an alternative.
