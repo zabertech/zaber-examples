@@ -41,12 +41,10 @@ def main() -> None:
         print(f"Found {len(device_list)} devices")
         zaber_device = connection.get_device(DEVICE_INDEX)
 
-        # Define analog input.
-        analog_input = DeviceAnalogInput(zaber_device, ANALOG_INPUT_INDEX, POWER_CONVERSION, NUM_SAMPLES)
-
+        # Initialize axes, inputs, and FiberAlignment2D class.
         zaber_axis_1 = zaber_device.get_axis(AXIS_1_INDEX)
         zaber_axis_2 = zaber_device.get_axis(AXIS_2_INDEX)
-
+        analog_input = DeviceAnalogInput(zaber_device, ANALOG_INPUT_INDEX, POWER_CONVERSION, NUM_SAMPLES)
         fiber_alignment = FiberAlignment2D(zaber_axis_1, zaber_axis_2, analog_input)
 
         # Change speed and accel for streamed movement.
@@ -56,6 +54,7 @@ def main() -> None:
             Units.ACCELERATION_METRES_PER_SECOND_SQUARED,
         )
 
+        # Use streamed_spiral_scan() to perform high speed first light search.
         print("Searching for first light...")
         first_light_result = fiber_alignment.streamed_spiral_scan(
             FIRST_LIGHT_THRESHOLD,
@@ -64,7 +63,6 @@ def main() -> None:
             STEP_SIZE,
             Units.LENGTH_MILLIMETRES,
         )
-
         if not (first_light_result.success):
             # If streamed scan fails, fall back to slower but more reliable step and measure search.
             print("Streamed first light search failed. Trying step and measure search...")
@@ -78,7 +76,7 @@ def main() -> None:
 
         if first_light_result.success:
             print("Starting hill climb optimization for fine-tuning...")
-            # Using pattern_search(). gradient_search() is an alternative.
+            # Using pattern_search() for optimization. gradient_search() can be used as an alternative.
             hill_climb_result, _ = fiber_alignment.pattern_search(STEP_SIZE, MIN_STEP_SIZE, Units.LENGTH_MILLIMETRES)
 
             print("Alignment complete!")
