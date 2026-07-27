@@ -633,14 +633,14 @@ class FiberAlignment2D:
                 print("Maximum number of iterations reached.")
                 print("Stopping Pattern Search...")
                 self._print_sample(c1, c2, current_signal)
-                result = AlignmentResult(c1, c2, current_signal, False)
+                result = AlignmentResult(c1, c2, current_signal, success=False)
                 return result, samples
 
         # Record final measurement
         samples.add_sample(c1, c2, current_signal)
         print("Pattern Search Complete.")
         self._print_sample(c1, c2, current_signal)
-        result = AlignmentResult(c1, c2, current_signal, True)
+        result = AlignmentResult(c1, c2, current_signal, success=True)
         return result, samples
 
     def gradient_search(
@@ -720,10 +720,10 @@ class FiberAlignment2D:
                 print("Maximum number of iterations reached.")
                 print("Stopping Gradient Search...")
                 self._print_sample(c1, c2, s_base)
-                result = AlignmentResult(c1, c2, s_base, False)
+                result = AlignmentResult(c1, c2, s_base, success=False)
                 return result, samples
 
         print("Gradient Search Complete.")
         self._print_sample(c1, c2, s_base)
-        result = AlignmentResult(c1, c2, s_base, True)
+        result = AlignmentResult(c1, c2, s_base, success=True)
         return result, samples
