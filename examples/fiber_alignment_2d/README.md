@@ -77,7 +77,7 @@ The methods return a instance of `AlignmentResult` and some also return an insta
 
 ### First Light Search Methods
 
-`raster_scan()` and `spiral_scan()` methods take steps in a raster or spiral pattern and waits for the axes to stop and settle between measurements. 
+`raster_scan()` and `spiral_scan()` methods take steps in a raster or spiral pattern and waits for the axes to stop and settle between measurements.
 
 `streamed_spiral_scan()` performs continuous motion for higher speed scanning. This method does not return a instance of `AlignmentSamples`.
 
@@ -97,7 +97,7 @@ This method is similar to `raster_scan()` but performs a square spiral starting 
 
 This methods performs a constant velocity circular spiral motion starting at the current position using [streams](https://software.zaber.com/motion-library/api/py/ascii/device#streams) and uses [triggers](https://software.zaber.com/motion-library/api/py/ascii/device#triggers) to stop when a signal is detected. This method is faster than `spiral_scan` since it is continously moving and monitoring the signal at high freqeuncy but can be less reliable if the power meter response is not fast enough or there is signal noise. Reliability can be improved by reducing the speed and acceleration.
 
-When `trigger_threshold` is exceeded, the current position is recorded and motion is stopped. After coming to a stop, the stages move back to the position recorded by the trigger, retakes the measurement, and compares it to `first_light_threshold` to ensure that the final signal is above the required threshold. The triggers can take up to a few milliseconds to record the position resulting in some error. `trigger_threshold` must be higher than `first_light_threshold` to account for this as well as other sources of error and noise. 
+When `trigger_threshold` is exceeded, the current position is recorded and motion is stopped. After coming to a stop, the stages move back to the position recorded by the trigger, retakes the measurement, and compares it to `first_light_threshold` to ensure that the final signal is above the required threshold. The triggers can take up to a few milliseconds to record the position resulting in some error. `trigger_threshold` must be higher than `first_light_threshold` to account for this as well as other sources of error and noise.
 
 The recorded position is read from the axis setting specified by the `trigger_position_setting` property in `FiberAlignment2D`. By default, [`encoder.pos`](https://www.zaber.com/protocol-manual?protocol=ASCII#topic_setting_encoder_pos) will be used if the stages have built in encoders and [`pos`](https://www.zaber.com/protocol-manual?protocol=ASCII#topic_setting_pos) will be used otherwise.
 
