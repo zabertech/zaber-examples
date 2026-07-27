@@ -510,7 +510,7 @@ class FiberAlignment2D:
         stream.uncork()
         stream.wait_until_idle()
         print("Stream complete. Returning to starting position...")
-        self.move_absolute(center_position[1], center_position[2])
+        self.move_absolute(center_position[0], center_position[1])
 
     def _create_streamed_scan_triggers(
         self,
