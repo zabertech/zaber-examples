@@ -34,7 +34,7 @@ The dependencies are listed in `pyproject.toml`.
 
 ### Configuration / Parameters
 
-Edit the script settings in [fiber_alignment_demo.py](fiber_alignment_demo.py) to fit your setup before running the script:
+Edit the script settings in [fiber_alignment_demo.py](fiber_alignment_demo.py) to fit your setup before running the script.
 
 `SERIAL_PORT` is the serial port that your Zaber device is connected to.
 For more information on how to identify the serial port,

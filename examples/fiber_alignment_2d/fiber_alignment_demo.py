@@ -2,6 +2,11 @@
 
 This sample code is for two Zaber peripherals controlled by an X-MCC controller.
 The optical power meter is connected to the same X-MCC through an analog input.
+Edit the script settings to fit your setup before running.
+
+This code can be adapted to work for Zaber stages with integrated controllers.
+The streamed_spiral_scan() method will not be compatible and should be replaced
+with spiral_scan(). The first-light search will be significantly slower.
 """
 
 from zaber_motion import Units
