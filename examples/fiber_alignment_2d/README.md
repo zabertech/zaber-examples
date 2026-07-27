@@ -32,6 +32,8 @@ The dependencies are listed in `pyproject.toml`.
 
 `fiber_alignment_2d.py` contains several methods for performing fiber alignment. The ideal choice will depend on the system and application it is being used for. Details on the purpose and benefits of each method are provided below in the [FiberAlignment2D Class](#fiberalignment2d-class) section.
 
+## Demo Script
+
 ### Configuration / Parameters
 
 Edit the script settings in [fiber_alignment_demo.py](fiber_alignment_demo.py) to fit your setup before running the script.
@@ -40,7 +42,7 @@ Edit the script settings in [fiber_alignment_demo.py](fiber_alignment_demo.py) t
 For more information on how to identify the serial port,
 see [Find the right serial port name](https://software.zaber.com/motion-library/docs/guides/communication/find_right_port).
 
-## Running the Script
+### Running the Script
 
 To run the example code:
 
