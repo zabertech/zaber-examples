@@ -387,13 +387,12 @@ class FiberAlignment2D:
         start_pos_2 = self.zaber_axis_2.get_position()
         current_signal = self.signal_input.get_signal()
 
-        center_position = [start_pos_1, start_pos_2]
-
         # Convert to native units using first axis
         search_distance_native = self.zaber_axis_1.settings.convert_to_native_units("pos", search_distance, length_unit)
         stepover_size_native = self.zaber_axis_1.settings.convert_to_native_units("pos", stepover_size, length_unit)
 
         if current_signal < trigger_threshold:
+            triggered = False
             trigger_1, trigger_2 = self._create_streamed_scan_triggers(zaber_device, trigger_threshold)
 
             stream = zaber_device.streams.get_stream(1)
@@ -401,22 +400,20 @@ class FiberAlignment2D:
             try:
                 self._streamed_spiral(
                     stream,
-                    center_position,
+                    [start_pos_1, start_pos_2],
                     search_distance_native,
                     stepover_size_native,
                 )
-
-                print("Stream complete. Returning to starting position...")
-                self.move_absolute(start_pos_1, start_pos_2)
             except StreamMovementInterruptedException:
-                print("Stream interrupted.")
-
                 if trigger_1.get_enabled_state().enabled:
                     # If trigger hasn't fired then the motion was stopped for an unknown reason.
                     # clean up and re-raise the exception.
                     trigger_1.disable()
                     trigger_2.disable()
                     raise
+
+                triggered = True
+                print("Stream interrupted by trigger.")
 
                 # Move back to triggered position after coming to stop
                 self.move_absolute(
@@ -437,14 +434,19 @@ class FiberAlignment2D:
                 trigger_1.disable()
                 trigger_2.disable()
 
+            current_signal = self.signal_input.get_signal()
+        else:
+            triggered = True
+
         c1 = self.zaber_axis_1.get_position(length_unit)
         c2 = self.zaber_axis_2.get_position(length_unit)
-        current_signal = self.signal_input.get_signal()
         self._print_sample(c1, c2, current_signal)
         if current_signal >= first_light_threshold:
-            print("Sucessfully found first light.")
+            print("Sucessfully found first-light.")
+        elif triggered:
+            print("First-light detected but final signal is below first_light_threshold.")
         else:
-            print("Did not find first light.")
+            print("Did not find first-light.")
 
         return AlignmentResult(c1, c2, current_signal, current_signal >= first_light_threshold)
 
@@ -507,6 +509,8 @@ class FiberAlignment2D:
 
         stream.uncork()
         stream.wait_until_idle()
+        print("Stream complete. Returning to starting position...")
+        self.move_absolute(center_position[1], center_position[2])
 
     def _create_streamed_scan_triggers(
         self,
