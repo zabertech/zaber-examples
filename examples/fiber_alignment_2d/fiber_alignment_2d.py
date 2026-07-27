@@ -631,15 +631,16 @@ class FiberAlignment2D:
 
             if i == max_iterations - 1:
                 print("Maximum number of iterations reached.")
+                print("Stopping Pattern Search...")
+                self._print_sample(c1, c2, current_signal)
+                result = AlignmentResult(c1, c2, current_signal, False)
+                return result, samples
 
         # Record final measurement
         samples.add_sample(c1, c2, current_signal)
-
         print("Pattern Search Complete.")
         self._print_sample(c1, c2, current_signal)
-
-        result = AlignmentResult(c1, c2, current_signal, success=True)
-
+        result = AlignmentResult(c1, c2, current_signal, True)
         return result, samples
 
     def gradient_search(
@@ -687,7 +688,7 @@ class FiberAlignment2D:
             improved = False
 
             if norm == 0:
-                print("  Gradient is zero. No improvement found.")
+                print("  Gradient is zero.")
             else:
                 # Move in the direction of the gradient
                 new1 = c1 + (grad1 / norm) * current_step
@@ -717,10 +718,12 @@ class FiberAlignment2D:
 
             if i == max_iterations - 1:
                 print("Maximum number of iterations reached.")
+                print("Stopping Gradient Search...")
+                self._print_sample(c1, c2, s_base)
+                result = AlignmentResult(c1, c2, s_base, False)
+                return result, samples
 
         print("Gradient Search Complete.")
         self._print_sample(c1, c2, s_base)
-
-        result = AlignmentResult(c1, c2, s_base, success=True)
-
+        result = AlignmentResult(c1, c2, s_base, True)
         return result, samples
