@@ -20,29 +20,6 @@ from zaber_motion.ascii import (
 from zaber_motion.exceptions import StreamMovementInterruptedException
 
 
-class MultipleDevicesError(Exception):
-    """Thrown when axes or IO are required to be on a single device but are not."""
-
-    def __init__(self) -> None:
-        """Initialize the class."""
-        super().__init__(
-            "Axes and IO must be controlled by the same device to support methods with streamed movements and triggers"
-        )
-
-
-class TriggerThresholdError(ValueError):
-    """Exception raised when trigger_threshold is not greater than first_light_threshold."""
-
-    def __init__(self, trigger_threshold: float, first_light_threshold: float) -> None:
-        """Initialize the class."""
-        message = (
-            "trigger_threshold must be greater than first_light_threshold "
-            f"(got trigger_threshold = {trigger_threshold}, "
-            f"first_light_threshold = {first_light_threshold})"
-        )
-        super().__init__(message)
-
-
 @dataclass
 class AlignmentResult:
     """A dataclass for alignment results."""
@@ -376,12 +353,19 @@ class FiberAlignment2D:
         :param length_unit: Units for `search_distance` and `stepover_size`
         """
         if trigger_threshold < first_light_threshold:
-            raise TriggerThresholdError(trigger_threshold, first_light_threshold)
+            raise ValueError(
+                "trigger_threshold must be greater than first_light_threshold "
+                f"(got trigger_threshold = {trigger_threshold}, "
+                f"first_light_threshold = {first_light_threshold})"
+            )
 
         if self._check_single_device():
             zaber_device = self.zaber_axis_1.device
         else:
-            raise MultipleDevicesError
+            raise ValueError(
+                "Axes and IO must be controlled by the same device to support methods with "
+                "streamed movements and triggers"
+            )
 
         start_pos_1 = self.zaber_axis_1.get_position()
         start_pos_2 = self.zaber_axis_2.get_position()
