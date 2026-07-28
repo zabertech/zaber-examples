@@ -353,7 +353,7 @@ class FiberAlignment2D:
         :param length_unit: Units for `search_distance` and `stepover_size`
         """
         if trigger_threshold < first_light_threshold:
-            raise ValueError(
+            raise ValueError(  # noqa: TRY003
                 "trigger_threshold must be greater than first_light_threshold "
                 f"(got trigger_threshold = {trigger_threshold}, "
                 f"first_light_threshold = {first_light_threshold})"
@@ -362,7 +362,7 @@ class FiberAlignment2D:
         if self._check_single_device():
             zaber_device = self.zaber_axis_1.device
         else:
-            raise ValueError(
+            raise ValueError(  # noqa: TRY003
                 "Axes and IO must be controlled by the same device to support methods with "
                 "streamed movements and triggers"
             )
