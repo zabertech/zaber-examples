@@ -72,20 +72,14 @@ fiber_alignment = FiberAlignment2D(zaber_axis_1, zaber_axis_2, analog_input)
   - The `analog_input_number` parameter specifies which analog input pin the power meter is connected to.
   - The `gain` parameter is a gain factor for converting the analog input voltage to power units. This parameter is optional and defaults to 1.
   - The `num_samples` parameter specifies how many samples to take and average when calling the `get_signal` method to reduce noise. This parameter is optional and defaults to 1.
-- See [the ZML getting started guide](https://software.zaber.com/motion-library/docs/tutorials/code) for a basic tutorial on how to initialize `Device` and `Axis` classes.
-
-The methods to perform fiber alignment in this class fall in to two categories. [First-Light Search Methods](#first-light-search-methods) are used when there is no reliable signal and searches the space for a signal that is strong enough to reliably use a hill climb method. [Hill Climb Optimization Methods](#hill-climb-optimization-methods) perform final alignment by maximizing the signal strength with a hill climb routine.
-The methods return a instance of `AlignmentResult` and some also return an instance of `AlignmentSamples`. `AlignmentResult` contains the final positions, final signal strength, and boolean indicating whether it was sucessful. `AlignmentSamples` contains lists of the positions and signals from the samples taken during the process that can be used for plotting or further analysis.
 
 ### First-Light Search Methods
 
-`raster_scan()` and `spiral_scan()` methods performs steps in a raster or spiral pattern and waits for the axes to stop and settle before taking measurements.
-
-`streamed_spiral_scan()` performs continuous motion for higher speed scanning. This method does not return a instance of `AlignmentSamples`.
+These methods are used to scan for an initial signal strong enough to reliably to use a hill climb optimization routine.
 
 #### raster_scan()
 
-Performs a raster scan of a square centered on the current position starting at one corner. The `search_distance` parameter defines the size of the square search area and the `resolution` parameter defines the step size between points.
+Performs a point-by-point raster scan of a square centered on the current position starting at one corner. The `search_distance` parameter defines the size of the square search area and the `resolution` parameter defines the step size between points.
 
 This is useful for covering a large area if `zaber_axis_2` is faster than `zaber_axis_1` since the slow axis can remain stationary during each line scan.
 
