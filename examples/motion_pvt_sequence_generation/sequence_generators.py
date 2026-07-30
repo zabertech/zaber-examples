@@ -18,10 +18,6 @@ sequences of 2 and 3 points whereas the python implementation can only
 handle sequences of 4 or more.
 """
 
-# SciPy's API is largely untyped, so unknown-type checks are disabled.
-# pyright: reportMissingTypeStubs=false, reportUnknownMemberType=false, reportUnknownVariableType=false
-# pyright: reportUnknownArgumentType=false, reportUnknownLambdaType=false
-
 import math
 from functools import partial
 from itertools import accumulate, pairwise

@@ -1,8 +1,5 @@
 """A collection of functions for plotting PVT sequence trajectories and paths."""
 
-# Matplotlib's API is partially typed (untyped **kwargs), so unknown-type checks are disabled.
-# pyright: reportUnknownMemberType=false, reportUnknownArgumentType=false
-
 from collections.abc import Sequence
 
 import matplotlib.pyplot as plt

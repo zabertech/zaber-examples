@@ -35,3 +35,20 @@ extend-ignore = [
 
 [tool.pyright]
 extends = "../../tools/tooling_config/zaber-pyright.toml"
+
+# Scipy's API is largely untyped.
+[[tool.pyright.executionEnvironments]]
+root = "sequence_generators.py"
+extraPaths = ["."]
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportUnknownLambdaType = false
+
+# Matplotlib is only partially typed.
+[[tool.pyright.executionEnvironments]]
+root = "visualization.py"
+extraPaths = ["."]
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
