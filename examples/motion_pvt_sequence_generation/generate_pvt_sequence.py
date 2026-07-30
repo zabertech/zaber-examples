@@ -1,5 +1,4 @@
-"""
-Generate the missing parameters for a given PVT sequence.
+"""Generate the missing parameters for a given PVT sequence.
 
 This script can be used to generate a fully-defined PVT sequence
 from position data, position-time data or velocity-time data.
@@ -23,15 +22,17 @@ can only be generated in the following three cases:
 subdirectory "sample_data".
 """
 
-import os
+from pathlib import Path
+
 from zaber_motion import Measurement, Units
 from zaber_motion.ascii import PvtSequence
+
 import pvt
 from visualization import plot_path_and_trajectory
 
 # ------------------- Script Settings ----------------------
 
-DATA_DIRECTORY = "sample_data/position_velocity_time_data/"
+DATA_DIRECTORY = Path("sample_data/position_velocity_time_data")
 """The directory of the input file(s)"""
 FILENAMES = ["wave_1d.csv", "spiral_2d.csv", "spiral_3d.csv"]
 """The names of the input files to read."""
@@ -41,11 +42,11 @@ TARGET_ACCEL = Measurement(10, Units.ACCELERATION_CENTIMETRES_PER_SECOND_SQUARED
 """The target aceleration to use when generating velocities and times."""
 SHOW_PLOTS = True
 """Whether to plot the generated sequences."""
-OUTPUT_DIRECTORY = ""
+OUTPUT_DIRECTORY: Path | None = Path()
 """
 The directory to write the generated CSV files to.
 
-Specify this as None to not write the files, or as an empty string
+Specify this as None to not write the files, or as Path()
 to write to the current directory.
 """
 
@@ -56,7 +57,7 @@ def main() -> None:
     """Generate complete PVT sequences from underdefined input data."""
     for filename in FILENAMES:
         # Generate the sequence
-        sequence_data = pvt.sequence_data_from_csv(os.path.join(DATA_DIRECTORY, filename), TARGET_SPEED, TARGET_ACCEL)
+        sequence_data = pvt.sequence_data_from_csv(str(DATA_DIRECTORY / filename), TARGET_SPEED, TARGET_ACCEL)
         if sequence_data is None:
             return
 
@@ -67,7 +68,7 @@ def main() -> None:
             # Write the file with the same name plus a _generated suffix
             base, extension = filename.rsplit(".", 1)
             output_filename = f"{base}_generated.{extension}"
-            PvtSequence.save_sequence_data(sequence_data, os.path.join(OUTPUT_DIRECTORY, output_filename))
+            PvtSequence.save_sequence_data(sequence_data, str(OUTPUT_DIRECTORY / output_filename))
 
 
 if __name__ == "__main__":

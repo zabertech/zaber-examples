@@ -1,48 +1,55 @@
-"""
-Helper classes and functions related to PVT.
+"""Helper classes and functions related to PVT.
 
 This file contains sever helper classes for creating and
 manipulating PVT points, segments, and sequences.
 """
 
-# pylint: disable=too-many-lines
-
 from __future__ import annotations
+
 import csv
 from dataclasses import dataclass
 from enum import Enum, auto
+from pathlib import Path
 
 from zaber_motion import Measurement
-from zaber_motion.ascii import PvtPartialPoint, PvtPoint, PvtSequence
+from zaber_motion.ascii import (
+    PvtPartialPoint,
+    PvtPartialSequenceItem,
+    PvtPoint,
+    PvtSequence,
+    PvtSequenceItem,
+)
+
+NON_POINT_ITEM_MESSAGE = "Non-point sequence items are not supported by this example."
 
 
-def partial_to_complete_point(point: PvtPartialPoint) -> PvtPoint:
-    """
-    Convert partial point to complete.
+def partial_to_complete_point(item: PvtPartialSequenceItem) -> PvtPoint:
+    """Convert partial point to complete.
 
     Helper function for sequence_data_from_csv.
     """
-    assert len(point.positions) > 0, "Point is missing position data."
-    assert all(pos is not None for pos in point.positions), "Point has null position data entries."
-    assert len(point.velocities) == len(point.positions), "Point has different quantities of positions and velocities."
-    assert all(vel is not None for vel in point.velocities), "Point has null velocity data entries."
-    assert point.time is not None, "Point is missing time data."
+    assert isinstance(item, PvtPartialPoint), NON_POINT_ITEM_MESSAGE
+    positions = [pos for pos in item.positions if pos is not None]
+    velocities = [vel for vel in item.velocities if vel is not None]
+    assert len(positions) > 0, "Point is missing position data."
+    assert len(positions) == len(item.positions), "Point has null position data entries."
+    assert len(velocities) == len(positions), "Point has different quantities of positions and velocities."
+    assert len(velocities) == len(item.velocities), "Point has null velocity data entries."
+    assert item.time is not None, "Point is missing time data."
     return PvtPoint(
-        positions=point.positions,
-        velocities=point.velocities,
-        time=point.time,
-        relative=point.relative or False,
+        positions=positions,
+        velocities=velocities,
+        time=item.time,
+        relative=item.relative or False,
     )
 
 
-@staticmethod
 def sequence_data_from_csv(
     filename: str,
     target_speed: Measurement | None = None,
     target_accel: Measurement | None = None,
-) -> list[PvtPoint] | None:
-    """
-    Return a PVT sequence loaded from CSV.
+) -> list[PvtSequenceItem] | None:
+    """Return a PVT sequence loaded from CSV.
 
     This function will load all the given data and attempt to
     generate any missing parameters. Generation is only possible
@@ -90,6 +97,7 @@ def sequence_data_from_csv(
     # ZML will throw an error if any columns that have headings lack complete data,
     # so we only need to check the first point for those.
     first_point = data.sequence_data[0]
+    assert isinstance(first_point, PvtPartialPoint), NON_POINT_ITEM_MESSAGE
     contains_time_data = first_point.time is not None
     contains_position_data = len(first_point.positions) > 0 and all(pos is not None for pos in first_point.positions)
     contains_velocity_data = len(first_point.velocities) > 0 and all(vel is not None for vel in first_point.velocities)
@@ -97,22 +105,21 @@ def sequence_data_from_csv(
     gen_type = GenerationType.NONE
     if not contains_time_data:
         gen_type = GenerationType.TIME_AND_VELOCITY
-        assert not contains_velocity_data and contains_position_data, (
-            "Invalid csv structure. Time can only be generated if position is specified and " "velocity is unspecified."
-        )
+        assert not contains_velocity_data, "Invalid csv structure. Time can only be generated without velocity data."
+        assert contains_position_data, "Invalid csv structure. Time can only be generated if position is specified."
     elif not contains_velocity_data:
         gen_type = GenerationType.VELOCITY
         assert contains_position_data, "Invalid csv structure. If velocity is unspecified, position must be specified."
     elif not contains_position_data:
         gen_type = GenerationType.POSITION
         assert contains_velocity_data, (
-            "Invalid csv structure. If position is unspecified, " "velocity and time must both be specified"
+            "Invalid csv structure. If position is unspecified, velocity and time must both be specified"
         )
 
     # Note all of the sample data files in this project have relative times.
     # If loading a file with absolute times, you must convert to relative
     # times before calling the generation functions:
-    # data.sequence_data = PvtSequence.convert_times_absolute_to_relative_partial(data.sequence_data)
+    # data.sequence_data = PvtSequence.convert_times_absolute_to_relative_partial(data.sequence_data)  # noqa: ERA001
 
     # Call the appropriate generation function
     match gen_type:
@@ -120,9 +127,8 @@ def sequence_data_from_csv(
             # This assumes there are no non-point actions in the CSV files.
             return [partial_to_complete_point(point) for point in data.sequence_data]
         case GenerationType.TIME_AND_VELOCITY:
-            assert (
-                target_speed is not None and target_accel is not None
-            ), "Target speed and accel must be defined to generate velocities and times"
+            assert target_speed is not None, "Target speed must be defined to generate velocities and times"
+            assert target_accel is not None, "Target accel must be defined to generate velocities and times"
             return PvtSequence.generate_velocities_and_times(
                 data.sequence_data,
                 target_speed,
@@ -133,7 +139,7 @@ def sequence_data_from_csv(
         case GenerationType.VELOCITY:
             return PvtSequence.generate_velocities(data.sequence_data)
         case _:
-            assert False, "BUG: Unhandled generation case."
+            raise AssertionError("BUG: Unhandled generation case.")  # noqa: TRY003
 
 
 @dataclass(frozen=True)
@@ -161,8 +167,7 @@ class Segment:
     """A PVT segment, formed from two PVT points."""
 
     def __init__(self, start_point: Point, end_point: Point) -> None:
-        """
-        Initialize the PVT segment.
+        """Initialize the PVT segment.
 
         :param start_point: The start point of the sequence.
         :param end_point: The end point of the sequence.
@@ -188,8 +193,7 @@ class Segment:
         return self.start_point.dim
 
     def position(self, time: float) -> tuple[float, ...]:
-        """
-        Calculate the position at a given time.
+        """Calculate the position at a given time.
 
         :param time: The time at which to calculate the position.
         """
@@ -198,8 +202,7 @@ class Segment:
         return tuple(c[0] + c[1] * delta_time + c[2] * delta_time**2 + c[3] * delta_time**3 for c in self._coefficients)
 
     def velocity(self, time: float) -> tuple[float, ...]:
-        """
-        Calculate the velocity at a given time.
+        """Calculate the velocity at a given time.
 
         :param time: The time at which to calculate the velocity.
         """
@@ -208,8 +211,7 @@ class Segment:
         return tuple(c[1] + 2 * c[2] * delta_time + 3 * c[3] * delta_time**2 for c in self._coefficients)
 
     def acceleration(self, time: float) -> tuple[float, ...]:
-        """
-        Calculate the acceleration at a given time.
+        """Calculate the acceleration at a given time.
 
         :param time: The time at which to calculate the acceleration.
         """
@@ -252,8 +254,7 @@ class Segment:
         ]
 
     def _validate_time(self, time: float) -> None:
-        """
-        Validate that a given time falls within the bounds defined by the segment.
+        """Validate that a given time falls within the bounds defined by the segment.
 
         :param time: The time to validate.
         """
@@ -281,15 +282,13 @@ class CSVData:
     @property
     def contains_time_data(self) -> bool:
         """Return whether the data contains time values."""
-        return self._time_index is not None and any(t is not None for t in self._time_sequence)
+        return self._time_index is not None and len(self._time_sequence) > 0
 
     @property
     def contains_position_data(self) -> bool:
         """Return whether the data contains position values."""
         if len(self._position_indices) > 0:
-            for sequence in self._position_sequences:
-                if any(p is not None for p in sequence):
-                    return True
+            return any(len(sequence) > 0 for sequence in self._position_sequences)
         return False
 
     @property
@@ -306,10 +305,7 @@ class CSVData:
         """Return whether or not all velocity values are specified."""
         if len(self._velocity_indices) == 0:
             return False
-        for sequence in self._velocity_sequences:
-            if any(v is None for v in sequence):
-                return False
-        return True
+        return all(all(v is not None for v in sequence) for sequence in self._velocity_sequences)
 
     @property
     def time_sequence(self) -> list[float]:
@@ -330,12 +326,11 @@ class CSVData:
         return self._velocity_sequences
 
     def __init__(self, filename: str) -> None:
-        """
-        Initialize the CSVData instance and read in the data.
+        """Initialize the CSVData instance and read in the data.
 
         :param filename: The name of the CSV file.
         """
-        with open(filename, "r", encoding="utf-8") as file:
+        with Path(filename).open(encoding="utf-8") as file:
             reader = csv.reader(file)
             self._read_header(next(reader))
             for row in reader:
@@ -370,15 +365,13 @@ class CSVData:
 
 
 class Sequence:
-    """
-    A PVT sequence, formed from one or more PVT points.
+    """A PVT sequence, formed from one or more PVT points.
 
     Used for plotting paths and trajectories in visualization.py
     """
 
     def __init__(self, points: list[Point] | None = None) -> None:
-        """
-        Initialize the PVT sequence.
+        """Initialize the PVT sequence.
 
         :param points: A list of PVT points from which to create the sequence.
         """
@@ -411,9 +404,8 @@ class Sequence:
         assert len(self._points) > 0, "There are no points in the sequence."
         return self._points[-1].time
 
-    def append_point(self, point: Point = False) -> None:
-        """
-        Append a point to the PVT sequence.
+    def append_point(self, point: Point) -> None:
+        """Append a point to the PVT sequence.
 
         :param point: The PVT point to append.
         """
@@ -423,8 +415,7 @@ class Sequence:
         self._points.append(point)
 
     def position(self, time: float) -> tuple[float, ...]:
-        """
-        Calculate the position at a given time in the sequence.
+        """Calculate the position at a given time in the sequence.
 
         :param time: The time at which to calculate the position.
         """
@@ -432,8 +423,7 @@ class Sequence:
         return segment.position(time)
 
     def velocity(self, time: float) -> tuple[float, ...]:
-        """
-        Calculate the velocity at a given time in the sequence.
+        """Calculate the velocity at a given time in the sequence.
 
         :param time: The time at which to calculate the velocity.
         """
@@ -441,8 +431,7 @@ class Sequence:
         return segment.velocity(time)
 
     def acceleration(self, time: float) -> tuple[float, ...]:
-        """
-        Calculate the acceleration at a given time in the sequence.
+        """Calculate the acceleration at a given time in the sequence.
 
         :param time: The time at which to calculate the acceleration.
         """
@@ -450,15 +439,14 @@ class Sequence:
         return segment.acceleration(time)
 
     def save_to_file(self, filename: str) -> None:
-        """
-        Save the sequence to a file.
+        """Save the sequence to a file.
 
         :param filename: The full name of the file, including the path.
         """
         # Generate names for each axis
         axis_names = [f"Axis {i + 1}" for i in range(self.dim)]
         # Write the data to the file
-        with open(filename, "w", encoding="utf-8", newline="") as file:
+        with Path(filename).open("w", encoding="utf-8", newline="") as file:
             file_writer = csv.writer(file)
             # Construct header, alternating position and velocity values
             header = ["Time"]
@@ -474,21 +462,19 @@ class Sequence:
                 file_writer.writerow(row)
 
     def _validate_time(self, time: float) -> None:
-        """
-        Validate that a given time falls within the bounds defined by the sequence.
+        """Validate that a given time falls within the bounds defined by the sequence.
 
         :param time: The time to validate.
         """
         assert len(self._points) > 0, "There are no points in the sequence"
         time_min = self._points[0].time
         time_max = self._points[-1].time
-        assert (
-            time_min <= time <= time_max + 1e-14
-        ), f"Time {time} is outside of sequence range ({time_min}, {time_max})"
+        assert time_min <= time <= time_max + 1e-14, (
+            f"Time {time} is outside of sequence range ({time_min}, {time_max})"
+        )
 
     def _get_segment_at_time(self, time: float) -> Segment:
-        """
-        Get the segment corresponding to the given time.
+        """Get the segment corresponding to the given time.
 
         :param time: The time at which to get the segment.
         """
@@ -502,9 +488,8 @@ class Sequence:
         return self._segments[index]
 
     @staticmethod
-    def from_sequence_data(data: list[PvtPoint], times_relative: bool):
-        """
-        Return a PVT sequence from sequence data.
+    def from_sequence_data(data: list[PvtSequenceItem], *, times_relative: bool) -> Sequence:
+        """Return a PVT sequence from sequence data.
 
         This function generates a PVT sequence from a ZML PVT sequence data object,
         with times converted to absolute for plotting purposes.
@@ -516,17 +501,18 @@ class Sequence:
         :param data: The sequence data object.
         :return: The PVT sequence with generated parameters.
         """
-        points = []
         if times_relative:
             data = PvtSequence.convert_time_relative_to_absolute(data)
 
-        for [i, _] in enumerate(data):
-            point: Point = Point(
-                position=tuple(ms.value for ms in data[i].positions),
-                velocity=tuple(ms.value for ms in data[i].velocities),
-                time=data[i].time.value,
+        points: list[Point] = []
+        for item in data:
+            assert isinstance(item, PvtPoint), NON_POINT_ITEM_MESSAGE
+            points.append(
+                Point(
+                    position=tuple(ms.value for ms in item.positions),
+                    velocity=tuple(ms.value for ms in item.velocities),
+                    time=item.time.value,
+                )
             )
-
-            points.append(point)
 
         return Sequence(points)

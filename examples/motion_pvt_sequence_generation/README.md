@@ -22,13 +22,10 @@ Notes:
 
 ## Dependencies
 
-The script uses `pipenv` to manage virtual environment and dependencies:
+The script uses [uv](https://docs.astral.sh/uv/) to manage the virtual environment and dependencies.
+See the [uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/) if you don't already have it.
 
-```shell
-python3 -m pip install -U pipenv
-```
-
-The dependencies are listed in Pipfile.
+The dependencies are listed in [pyproject.toml](pyproject.toml).
 
 ## Configuration
 
@@ -42,17 +39,16 @@ how to structure these files can be found in the docstring of [generate_pvt_sequ
 - `TARGET_SPEED`: the target speed to use when generating velocities and times.
 - `TARGET_ACCEL`: the target aceleration to use when generating velocities and times.
 - `SHOW_PLOTS`: whether to plot the generated sequences.
-- `OUTPUT_DIRECTORY`: the directory to write the generated CSV files to. Specify this as an empty string to write to
-  the current directory, or as None to not generate the files.
+- `OUTPUT_DIRECTORY`: the directory to write the generated CSV files to. Specify this as `Path()` to write to
+  the current directory, or as `None` to not generate the files.
 
 ## Running the Script
 
 To run the script:
 
 ```shell
-cd src/motion_pvt_sequence_generation
-pipenv install
-pipenv run python generate_pvt_sequence.py
+cd examples/motion_pvt_sequence_generation
+uv run generate_pvt_sequence.py
 ```
 
 ## Usage
