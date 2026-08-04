@@ -1,5 +1,4 @@
-"""
-Use the Zaber Motion Library equivalents instead of these functions.
+"""Use the Zaber Motion Library equivalents instead of these functions.
 
 The calls to them in this example code have been replaced by
 equivalent calls to equivalent functions on zaber_motion.ascii.PvtSequence
@@ -19,29 +18,28 @@ sequences of 2 and 3 points whereas the python implementation can only
 handle sequences of 4 or more.
 """
 
-from functools import partial
-from itertools import accumulate
 import math
+from functools import partial
+from itertools import accumulate, pairwise
 
 import numpy as np
 from numpy import float64
 from numpy.typing import NDArray
-from scipy.integrate import quad  # type: ignore
-from scipy.interpolate import splev, splprep  # type: ignore
-from scipy.linalg import solve_banded  # type: ignore
-from scipy.optimize import bisect, newton  # type: ignore
+from scipy.integrate import quad
+from scipy.interpolate import splev, splprep
+from scipy.linalg import solve_banded
+from scipy.optimize import bisect, newton
 
 import pvt
 
 
-def generate_times_and_velocities(  # pylint: disable=too-many-locals
+def generate_times_and_velocities(  # noqa: C901, PLR0915
     position_sequences: list[list[float]],
     target_speed: float,
     target_accel: float,
     resample_number: int | None = None,
 ) -> pvt.Sequence:
-    """
-    Return a PVT sequence from a sequence of position keypoints.
+    """Return a PVT sequence from a sequence of position keypoints.
 
     This function generates the velocity and time parameters,
     using a target speed and acceleration
@@ -83,8 +81,7 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
     def generate_calculation_points(
         u_sample: list[float], geo_path: GeometricPath
     ) -> tuple[list[float], dict[int, list[int]]]:
-        """
-        Generate a list of critical points used for calculating the speed profile.
+        """Generate a list of critical points used for calculating the speed profile.
 
         This function generates a list of calculation points by:
         - Adding intermediate points between the sample points, and
@@ -92,7 +89,7 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
         """
         # For each sample point, use N points in calculations
         u_calc = [0.0]
-        for u_prev, u_next in zip(u_sample[:-1], u_sample[1:]):
+        for u_prev, u_next in pairwise(u_sample):
             parameterized_sublength = (u_next - u_prev) / 10
             for i in range(1, 10):
                 u_calc.append(u_prev + parameterized_sublength * i)
@@ -128,7 +125,7 @@ def generate_times_and_velocities(  # pylint: disable=too-many-locals
                     segment_index += 1
                     reversals.setdefault(segment_index, [])
                     reversals[segment_index].append(d)
-                    u_calc = u_calc[:segment_index] + [u_insert] + u_calc[segment_index:]
+                    u_calc = [*u_calc[:segment_index], u_insert, *u_calc[segment_index:]]
             segment_index += 1
         return u_calc, reversals
 
@@ -188,8 +185,7 @@ def generate_velocities(
     position_sequences: list[list[float]],
     velocity_sequences: list[list[float | None]] | None,
 ) -> pvt.Sequence:
-    """
-    Return a PVT sequence from position-time data or position-velocity-time data.
+    """Return a PVT sequence from position-time data or position-velocity-time data.
 
     This function calculates velocities by enforcing acceleration be
     continuous at each segment transition. For more information, see
@@ -211,13 +207,12 @@ def generate_velocities(
     # Generate velocities
     if velocity_sequences is None:
         # Generate all velocities
-        velocity_sequences = []
-        for dim in range(sequence_dim):
-            velocity_sequences.append(
-                generate_velocities_continuous_acceleration(
-                    position_sequences[dim], time_sequence, 0, 0
-                )  # type: ignore
+        velocity_sequences = [
+            list[float | None](
+                generate_velocities_continuous_acceleration(position_sequences[dim], time_sequence, 0, 0)
             )
+            for dim in range(sequence_dim)
+        ]
     else:
         # Generate some velocities
         for dim in range(sequence_dim):
@@ -233,21 +228,29 @@ def generate_velocities(
                     gen_start_index = point_index - 1
                 # Check for the end of a sequence of undefined velocities
                 if gen_start_index is not None and velocity_sequences[dim][point_index + 1] is not None:
+                    vel_start = velocity_sequences[dim][gen_start_index]
+                    vel_end = velocity_sequences[dim][point_index + 1]
+                    assert vel_start is not None, "Generation ranges must be bounded by defined velocities."
+                    assert vel_end is not None, "Generation ranges must be bounded by defined velocities."
                     velocity_sequences[dim][gen_start_index : point_index + 2] = (
                         generate_velocities_continuous_acceleration(
                             position_sequences[dim][gen_start_index : point_index + 2],
                             time_sequence[gen_start_index : point_index + 2],
-                            velocity_sequences[dim][gen_start_index],  # type: ignore
-                            velocity_sequences[dim][point_index + 1],  # type: ignore
+                            vel_start,
+                            vel_end,
                         )
                     )
                     gen_start_index = None
     # Append the points
     for point_index in range(sequence_length):
-        positions = [position_sequences[i][point_index] for i in range(sequence_dim)]
-        velocities = [velocity_sequences[i][point_index] for i in range(sequence_dim)]
+        positions = tuple(position_sequences[i][point_index] for i in range(sequence_dim))
+        velocities: list[float] = []
+        for i in range(sequence_dim):
+            velocity = velocity_sequences[i][point_index]
+            assert velocity is not None, "All velocities must be defined or generated at this point."
+            velocities.append(velocity)
         time = time_sequence[point_index]
-        generated_sequence.append_point(pvt.Point(positions, velocities, time))  # type: ignore
+        generated_sequence.append_point(pvt.Point(positions, tuple(velocities), time))
     return generated_sequence
 
 
@@ -255,8 +258,7 @@ def generate_positions(
     time_sequence: list[float],
     velocity_sequences: list[list[float]],
 ) -> pvt.Sequence:
-    """
-    Return a PVT sequence from position-time data.
+    """Return a PVT sequence from position-time data.
 
     This function calculates positions by enforcing acceleration be
     continuous at each segment transition. For more information, see
@@ -291,9 +293,8 @@ def generate_positions(
 class GeometricPath:
     """An N-directional geometric path constructed from a sequence of position keypoints."""
 
-    def __init__(self, position_sequences: list[list[float]]):
-        """
-        Initialize an N-dimensional geometric path from a list of position sequences.
+    def __init__(self, position_sequences: list[list[float]]) -> None:
+        """Initialize an N-dimensional geometric path from a list of position sequences.
 
         The path is generated as a B-Spline, and is parametrized by
         a normalized length variable u. That is, the path starts at
@@ -303,12 +304,12 @@ class GeometricPath:
         for each dimension.
         """
         self._dim = len(position_sequences)
-        tck, u = splprep(position_sequences, s=0, full_output=0)  # pylint: disable=unbalanced-tuple-unpacking
+        tck, u = splprep(position_sequences, s=0, full_output=0)
         self._tck: tuple[NDArray[float64], list[NDArray[float64]], int] = tck
         self._u: list[float] = list(u)
         self._length_at_u = list(
             accumulate(
-                (self._calculate_segment_length(u0, uf) for u0, uf in zip(self._u[:-1], self._u[1:])),
+                (self._calculate_segment_length(u0, uf) for u0, uf in pairwise(self._u)),
                 initial=0,
             )
         )
@@ -320,8 +321,7 @@ class GeometricPath:
 
     @property
     def parameterized_lengths(self) -> list[float]:
-        """
-        The sequence of parameterized lengths.
+        """The sequence of parameterized lengths.
 
         These lengths correspond to the position keypoints
         used to construct the path.
@@ -329,19 +329,17 @@ class GeometricPath:
         return self._u.copy()
 
     def position(self, u: float) -> tuple[float, ...]:
-        """
-        Return the N-D path position at parameterized length u.
+        """Return the N-D path position at parameterized length u.
 
         :param u: The parameterized length u.
         """
         # By default, splev returns an array for each element. Pick
         # the one and only value by flattening the arrays.
         val = splev(u, self._tck)
-        return tuple(val[i].flat[0] for i in range(self._dim))
+        return tuple(float(np.asarray(val[i]).flat[0]) for i in range(self._dim))
 
     def direction(self, u: float) -> tuple[float, ...]:
-        """
-        Return the N-D path direction, as a unit vector, at parameterized distance u.
+        """Return the N-D path direction, as a unit vector, at parameterized distance u.
 
         :param u: The parameterized length u.
         """
@@ -353,8 +351,7 @@ class GeometricPath:
         return tuple(val / norm for val in dx_du)
 
     def velocity(self, u: float, speed: float) -> tuple[float, ...]:
-        """
-        Return the velocity at the given parameterized length.
+        """Return the velocity at the given parameterized length.
 
         :param u: The parameterized length u.
         :param speed: The tangential speed along the path.
@@ -363,8 +360,7 @@ class GeometricPath:
         return tuple(speed * dx_du / dl_du for dx_du in self.dx_du(u))
 
     def acceleration(self, u: float, speed: float, accel: float) -> tuple[float, ...]:
-        """
-        Return the acceleration at the given parameterized length.
+        """Return the acceleration at the given parameterized length.
 
         :param u: The parameterized length u.
         :param speed: The tangential speed along the path.
@@ -372,11 +368,10 @@ class GeometricPath:
         """
         dx_dl = self.dx_dl(u)
         d2x_dl2 = self.d2x_dl2(u)
-        return tuple(speed**2 * d2x_dl2_i + accel * dx_dl_i for dx_dl_i, d2x_dl2_i in zip(dx_dl, d2x_dl2))
+        return tuple(speed**2 * d2x_dl2_i + accel * dx_dl_i for dx_dl_i, d2x_dl2_i in zip(dx_dl, d2x_dl2, strict=True))
 
     def _calculate_segment_length(self, u0: float, uf: float) -> float:
-        """
-        Calculate the path length between u0 and uf.
+        """Calculate the path length between u0 and uf.
 
         :param u0: The start point of the measurement, in parameterized units.
         :param uf: The end point of the measurement, in parameterized units.
@@ -384,8 +379,7 @@ class GeometricPath:
         return float(quad(self.dl_du, u0, uf)[0])
 
     def segment_length(self, u0: float, uf: float) -> float:
-        """
-        Return the path length between u0 and uf.
+        """Return the path length between u0 and uf.
 
         :param u0: The start point of the measurement, in parameterized units.
         :param uf: The end point of the measurement, in parameterized units.
@@ -402,8 +396,7 @@ class GeometricPath:
         return length
 
     def calc_u_at_length(self, length: float) -> float:
-        """
-        Return the parameterization length for a given real length.
+        """Return the parameterization length for a given real length.
 
         :param length: The length at which we want to calculate u.
         """
@@ -422,9 +415,8 @@ class GeometricPath:
         )
         return u
 
-    def dx_du(self, u: float, derivative_number: float = 1) -> tuple[float, ...]:
-        """
-        Return the derivative of N-D path position with respect to u.
+    def dx_du(self, u: float, derivative_number: int = 1) -> tuple[float, ...]:
+        """Return the derivative of N-D path position with respect to u.
 
         :param u: The parameterized length u.
         :param derivative_number: The derivative (defaults to the first derivative).
@@ -432,11 +424,10 @@ class GeometricPath:
         # By default, splev returns an array for each element. Pick
         # the one and only value by flattening the arrays.
         val = splev(u, self._tck, derivative_number)
-        return tuple(val[i].flat[0] for i in range(self._dim))
+        return tuple(float(np.asarray(val[i]).flat[0]) for i in range(self._dim))
 
     def dl_du(self, u: float) -> float:
-        """
-        Return the derivative of path length with respect to the parameterization variable at u.
+        """Return the derivative of path length with respect to the parameterization variable at u.
 
         :param u: The parameterized length u.
         """
@@ -444,8 +435,7 @@ class GeometricPath:
         return float(sum(val**2 for val in dx_du) ** 0.5)
 
     def d2l_du2(self, u: float) -> float:
-        """
-        Return the second derivative of path length with respect to the parameterization variable.
+        """Return the second derivative of path length with respect to the parameterization variable.
 
         :param u: The parameterized length u.
         """
@@ -458,8 +448,7 @@ class GeometricPath:
         return sum(2 * dx_du[i] * d2p_du2[i] for i in range(self._dim)) / (2 * dl_du)
 
     def dx_dl(self, u: float) -> tuple[float, ...]:
-        """
-        Return the first derivative of x with respect to path length at u.
+        """Return the first derivative of x with respect to path length at u.
 
         :param u: The parameterized length u.
         """
@@ -471,8 +460,7 @@ class GeometricPath:
         return tuple(dx_du_i / dl_du for dx_du_i in dx_du)
 
     def d2x_dl2(self, u: float) -> tuple[float, ...]:
-        """
-        Return the second derivative of x with respect to path length at u.
+        """Return the second derivative of x with respect to path length at u.
 
         :param u: The parameterized length u.
         """
@@ -484,7 +472,9 @@ class GeometricPath:
             assert all(dx_du_i == 0 for dx_du_i in dx_du)
             return tuple(0 for _ in dx_du)
         d2u_dl2 = -d2l_du2 / dl_du**3
-        return tuple(d2x_du2_i / dl_du**2 + dx_du_i * d2u_dl2 for dx_du_i, d2x_du2_i in zip(dx_du, d2x_du2))
+        return tuple(
+            d2x_du2_i / dl_du**2 + dx_du_i * d2u_dl2 for dx_du_i, d2x_du2_i in zip(dx_du, d2x_du2, strict=True)
+        )
 
 
 def generate_velocities_continuous_acceleration(
@@ -493,8 +483,7 @@ def generate_velocities_continuous_acceleration(
     vel_start: float = 0,
     vel_end: float = 0,
 ) -> list[float]:
-    """
-    Generate velocities such that acceleration is continuous at each transition.
+    """Generate velocities such that acceleration is continuous at each transition.
 
     This function solves for the velocities at each point that make the acceleration
     at the end of each segment equal to the acceleration at the start of the next.
@@ -514,7 +503,7 @@ def generate_velocities_continuous_acceleration(
     4. velocity at the start and end of the sequence is as specified by the user
     """
     num_segments = len(time_sequence) - 1
-    A = np.zeros((num_segments * 3, num_segments * 3))  # pylint: disable=invalid-name
+    A = np.zeros((num_segments * 3, num_segments * 3))  # noqa: N806
     b = np.zeros((num_segments * 3, 1))
     # Initial boundary condition
     A[0, 0] = 1
@@ -575,8 +564,7 @@ def generate_positions_continuous_acceleration(
     pos_start: float = 0,
     pos_end: float = 0,
 ) -> list[float]:
-    """
-    Generate positions such that acceleration is continuous at each transition.
+    """Generate positions such that acceleration is continuous at each transition.
 
     This function solves for the positions at each point that make the acceleration
     at the end of each segment equal to the acceleration at the start of the next.
@@ -600,7 +588,7 @@ def generate_positions_continuous_acceleration(
         return float(c1 * delta_time + c2 * delta_time**2 + c3 * delta_time**3)
 
     num_segments = len(time_sequence) - 1
-    A = np.zeros((num_segments * 2, num_segments * 2))  # pylint: disable=invalid-name
+    A = np.zeros((num_segments * 2, num_segments * 2))  # noqa: N806
     b = np.zeros((num_segments * 2, 1))
     # Initial condition acceleration 0 is zero
     A[0, 0] = 1
@@ -646,8 +634,7 @@ def generate_positions_continuous_acceleration(
 
 
 def interpolate_velocity_finite_difference(position_sequence: list[float], time_sequence: list[float]) -> float:
-    """
-    Interpolate the velocity at a point.
+    """Interpolate the velocity at a point.
 
     This functions uses the positions and time at the generation point and the preceding and
     proceeding points to interpolate an appropriate velocity value.

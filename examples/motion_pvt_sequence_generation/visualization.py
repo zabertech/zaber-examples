@@ -1,10 +1,12 @@
 """A collection of functions for plotting PVT sequence trajectories and paths."""
 
-from matplotlib.axes import Axes
-from matplotlib.lines import Line2D
+from collections.abc import Sequence
+
 import matplotlib.pyplot as plt
 import numpy as np
-from zaber_motion.ascii import PvtPoint
+from matplotlib.axes import Axes
+from matplotlib.lines import Line2D
+from zaber_motion.ascii import PvtSequenceItem
 
 import pvt
 
@@ -18,13 +20,12 @@ DEFAULT_COLORS: list[str] = plt.rcParams["axes.prop_cycle"].by_key()["color"]
 
 def _plot_trajectory(
     axis: Axes,
-    x_data: list[float],
-    y_data: list[float],
+    x_data: Sequence[float],
+    y_data: Sequence[float],
     color: str | None = None,
     label: str | None = None,
 ) -> Line2D:
-    """
-    Plot a trajectory such as position or velocity as a continuous line and returns the handle.
+    """Plot a trajectory such as position or velocity as a continuous line and returns the handle.
 
     :param axis: The axis to plot on.
     :param x_data: The x-axis data.
@@ -37,13 +38,12 @@ def _plot_trajectory(
 
 def _plot_points(
     axis: Axes,
-    x_data: list[float],
-    y_data: list[float],
+    x_data: Sequence[float],
+    y_data: Sequence[float],
     color: str | None = None,
     label: str | None = None,
 ) -> Line2D:
-    """
-    Plot a set of discrete points and returns the handle.
+    """Plot a set of discrete points and returns the handle.
 
     :param axis: The axis to plot on.
     :param x_data: The x-axis data.
@@ -56,13 +56,12 @@ def _plot_points(
 
 def _plot_discontinuity(
     axis: Axes,
-    x_data: list[float],
-    y_data: list[float],
+    x_data: Sequence[float],
+    y_data: Sequence[float],
     color: str | None = None,
     label: str | None = None,
 ) -> Line2D:
-    """
-    Plot a discontinuity and returns the handle.
+    """Plot a discontinuity and returns the handle.
 
     :param axis: The axis to plot on.
     :param x_data: The x-axis data.
@@ -86,10 +85,10 @@ def plot_pvt_trajectory(
     sequence: pvt.Sequence,
     num_samples: int | None = None,
     axes: list[Axes] | None = None,
+    *,
     show: bool = True,
 ) -> None:
-    """
-    Plot the position, velocity, and acceleration trajectories of a PVT sequence.
+    """Plot the position, velocity, and acceleration trajectories of a PVT sequence.
 
     :param sequence: The PVT sequence to plot.
     :param num_samples: The number of samples to use, or unspecified to use a default value.
@@ -99,7 +98,7 @@ def plot_pvt_trajectory(
     """
     # Setup plots
     if axes is None:
-        _, axes = plt.subplots(3, 1, sharex=True)
+        axes = list(plt.subplots(3, 1, sharex=True)[1])
     for axis in axes:
         axis.axhline(0, linewidth=0.5, color="black")
     points = sequence.points
@@ -167,10 +166,10 @@ def plot_pvt_path(
     axis_indices: list[int] | None = None,
     num_samples: int | None = None,
     axis: Axes | None = None,
+    *,
     show: bool = True,
 ) -> None:
-    """
-    Plot the 2d or 3d path taken by a PVT sequence in three dimensions.
+    """Plot the 2d or 3d path taken by a PVT sequence in three dimensions.
 
     :param sequence: The PVT sequence to plot.
     :param axis_indices: The zero-based indices of the PVT sequence data to plot for the x, y,
@@ -202,7 +201,7 @@ def plot_pvt_path(
     axis.set_xlabel(f"Axis {axis_indices[0] + 1} Position")
     axis.set_ylabel(f"Axis {axis_indices[1] + 1} Position")
     if sequence.dim > 2:
-        axis.set_zlabel(f"Axis {axis_indices[2] + 1} Position")  # type: ignore
+        axis.set_zlabel(f"Axis {axis_indices[2] + 1} Position")  # pyright: ignore[reportAttributeAccessIssue]
 
     # Create time array
     if num_samples is None:
@@ -242,13 +241,13 @@ def plot_pvt_path(
 
 
 def plot_path_and_trajectory(
-    sequence_data: list[PvtPoint],
+    sequence_data: list[PvtSequenceItem],
+    *,
     times_relative: bool = True,
     axis_indices: list[int] | None = None,
     num_samples: int | None = None,
 ) -> None:
-    """
-    Plot the per-axis trajectories and path view on one figure.
+    """Plot the per-axis trajectories and path view on one figure.
 
     If the sequence only has 1 dimension, this function only plots
     the per-axis trajectories.
@@ -258,7 +257,7 @@ def plot_path_and_trajectory(
         y, and z axes (as applicable).
     :param num_samples: The number of samples to use, or unspecified to use a default value.
     """
-    sequence = pvt.Sequence.from_sequence_data(sequence_data, times_relative)
+    sequence = pvt.Sequence.from_sequence_data(sequence_data, times_relative=times_relative)
     # Defer to plot_trajectory if sequence has only one dimension
     if sequence.dim == 1:
         plot_pvt_trajectory(sequence, num_samples, show=True)
@@ -289,13 +288,13 @@ def plot_path_and_trajectory(
     plot_pvt_trajectory(
         sequence,
         num_samples=num_samples,
-        axes=[subplots[key].axes for key in ("TopLeft", "MiddleLeft", "BottomLeft")],  # type: ignore
+        axes=[subplots[key] for key in ("TopLeft", "MiddleLeft", "BottomLeft")],
         show=False,
     )
     plot_pvt_path(
         sequence,
         num_samples=num_samples,
-        axis=subplots["Right"].axes,  # type: ignore
+        axis=subplots["Right"],
         axis_indices=axis_indices,
         show=False,
     )

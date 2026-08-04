@@ -1,0 +1,54 @@
+[project]
+name = "motion-pvt-sequence-generation"
+version = "0.1.0"
+description = "Generate fully-defined PVT sequences from underdefined position, position-time, or velocity-time data"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib>=3.10.0",
+    "numpy>=2.2.0",
+    "scipy>=1.15.0",
+    "zaber-motion~=9.3.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff~=0.14.0",
+    "pyright>=1.1.0",
+]
+
+[tool.ruff]
+extend = "../../tools/tooling_config/zaber-ruff.toml"
+
+[tool.ruff.lint]
+extend-ignore = [
+    "S101", # This example uses asserts for input validation and type narrowing
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"visualization.py" = [
+    "PLR2004", # Comparisons with 2 and 3 refer to 2-D and 3-D plotting
+]
+"sample_data/generate_sample_data.py" = [
+    "INP001", # Standalone script, not part of a package
+]
+
+[tool.pyright]
+extends = "../../tools/tooling_config/zaber-pyright.toml"
+
+# Scipy's API is largely untyped.
+[[tool.pyright.executionEnvironments]]
+root = "sequence_generators.py"
+extraPaths = ["."]
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportUnknownLambdaType = false
+
+# Matplotlib is only partially typed.
+[[tool.pyright.executionEnvironments]]
+root = "visualization.py"
+extraPaths = ["."]
+reportUnknownMemberType = false
+reportUnknownArgumentType = false

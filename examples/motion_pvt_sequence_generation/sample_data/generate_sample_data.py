@@ -1,9 +1,10 @@
 """Generate the PVT sample data used in the project."""
 
-from abc import ABC, abstractmethod
 import csv
-from enum import Enum
 import math
+from abc import ABC, abstractmethod
+from enum import Enum
+from pathlib import Path
 
 
 class ParameterSet(Enum):
@@ -36,8 +37,7 @@ class Trajectory(ABC):
 
 
 class Wave(Trajectory):
-    """
-    A constant-velocity wave trajectory.
+    """A constant-velocity wave trajectory.
 
     The governing equations of motion are:
     p(t) = A∙sin(2πt/T)
@@ -50,7 +50,7 @@ class Wave(Trajectory):
     T is the period
     """
 
-    def __init__(self, amplitude: float, period: float):
+    def __init__(self, amplitude: float, period: float) -> None:
         """Initialize the wave."""
         self._amplitude = amplitude
         self._period = period
@@ -74,8 +74,7 @@ class Wave(Trajectory):
 
 
 class Spiral(Trajectory):
-    """
-    Generate the trajectory for a 2-dimensional spiral.
+    """Generate the trajectory for a 2-dimensional spiral.
 
     The governing equations of motion are:
     px(t) = A∙(t/T)∙sin(2πt/T)
@@ -90,7 +89,7 @@ class Spiral(Trajectory):
     T is the period
     """
 
-    def __init__(self, amplitude: float, period: float):
+    def __init__(self, amplitude: float, period: float) -> None:
         """Initialize the spiral."""
         self._amplitude = amplitude
         self._period = period
@@ -122,8 +121,7 @@ class Spiral(Trajectory):
 
 
 class TranslatingSpiral(Spiral):
-    """
-    Generate the trajectory for a spiral that translates on the z axis.
+    """Generate the trajectory for a spiral that translates on the z axis.
 
     The governing equations of motion for x and y are
     the same as the Spiral, and for z are:
@@ -139,12 +137,13 @@ class TranslatingSpiral(Spiral):
 
     def position(self, time: float) -> list[float]:
         """Return the position at a given time."""
-        return super().position(time) + [0.5 * self._amplitude * (1 - math.cos(self.angle(time) / 4))]
+        return [*super().position(time), 0.5 * self._amplitude * (1 - math.cos(self.angle(time) / 4))]
 
     def velocity(self, time: float) -> list[float]:
         """Return the velocity at a given time."""
-        return super().velocity(time) + [
-            0.25 * self._amplitude * math.pi / self._period * math.sin(self.angle(time) / 4)
+        return [
+            *super().velocity(time),
+            0.25 * self._amplitude * math.pi / self._period * math.sin(self.angle(time) / 4),
         ]
 
     @property
@@ -153,9 +152,10 @@ class TranslatingSpiral(Spiral):
         return 3
 
 
-def generate_and_write(filename: str, parameter_set: ParameterSet, trajectory: Trajectory, times: list[float]) -> None:
-    """
-    Generate a trajectory from the given model and write the values to a file.
+def generate_and_write(  # noqa: C901
+    filename: str, parameter_set: ParameterSet, trajectory: Trajectory, times: list[float]
+) -> None:
+    """Generate a trajectory from the given model and write the values to a file.
 
     :param filename: The file name to write to.
     :param parameter_set: An enum describing which parameters to write.
@@ -163,7 +163,7 @@ def generate_and_write(filename: str, parameter_set: ParameterSet, trajectory: T
     :param times: The times at which to generate the positions and velocities.
     """
     # Open file and write header
-    with open(filename, "w", encoding="utf-8") as file:
+    with Path(filename).open("w", encoding="utf-8") as file:
         file_writer = csv.writer(file)
         # Write header
         match parameter_set:
