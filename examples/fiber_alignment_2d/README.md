@@ -2,7 +2,7 @@
 
 *By Jay Leong*
 
-This repository contains code to perform 2-axis optical fiber alignment with Zaber stages and an optical power meter that is capable to outputing an analog signal as a power feedback. Algorithms described in the article are implemented in Python, along with classes allowing them to be easily used with Zaber stages via the [Zaber Motion Library](https://software.zaber.com/motion-library/api/py) API.
+This repository contains code to perform 2-axis optical fiber alignment with Zaber stages and an optical power meter that is capable of outputting an analog signal as a power feedback. Algorithms described in the article are implemented in Python, along with classes allowing them to be easily used with Zaber stages via the [Zaber Motion Library](https://software.zaber.com/motion-library/api/py) API.
 
 <img src="img/fiber_alignment.jpg" style="max-width:30rem;" alt="Fiber Alignment">
 
@@ -12,7 +12,7 @@ This code is designed to run on devices with [Zaber](https://www.zaber.com/) con
 
 Notes:
 
-- [fiber_alignment_demo.py](fiber_alignment_demo.py) is written for two zaber axes controlled by a single Zaber controller with the power meter signal connected to an analog input on the same controller. The code can be adapted for setups with multiple controllers but some methods may not be compatible.
+- [fiber_alignment_demo.py](fiber_alignment_demo.py) is written for two Zaber axes controlled by a single Zaber controller with the power meter signal connected to an analog input on the same controller. The code can be adapted for setups with multiple controllers but some methods may not be compatible.
 - The `streamed_spiral_scan` method in the `FiberAlignment2D` class is only compatible when the motion devices and power meter analog input are all connected to the same controller since it requires synchronized motion and inputs.
 
 ## Dependencies / Software Requirements / Prerequisites
@@ -91,7 +91,7 @@ This method is similar to `raster_scan()` but performs a square spiral starting 
 
 #### streamed_spiral_scan()
 
-This methods performs a constant velocity circular spiral motion starting at the current position using [streams](https://software.zaber.com/motion-library/api/py/ascii/device#streams) and uses [triggers](https://software.zaber.com/motion-library/api/py/ascii/device#triggers) to stop when a signal is detected. This method is faster than `spiral_scan()` since it is continously moving and monitoring the signal at high freqeuncy but can be less reliable if the power meter response is not fast enough or there is signal noise.
+This methods performs a constant velocity circular spiral motion starting at the current position using [streams](https://software.zaber.com/motion-library/api/py/ascii/device#streams) and uses [triggers](https://software.zaber.com/motion-library/api/py/ascii/device#triggers) to stop when a signal is detected. This method is faster than `spiral_scan()` since it is continuously moving and monitoring the signal at high frequency but can be less reliable if the power meter response is not fast enough or there is signal noise.
 
 When `trigger_threshold` is exceeded, the current position is recorded and motion is stopped. After coming to a stop, the stages move back to the position recorded by the trigger, retakes the measurement, and compares it to `first_light_threshold` to ensure that the final signal is above the required threshold. The triggers can take up to a few milliseconds to record the position resulting in some error. `trigger_threshold` must be higher than `first_light_threshold` to account for this as well as other sources of error and noise.
 
