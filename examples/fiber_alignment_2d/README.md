@@ -2,7 +2,7 @@
 
 *By Jay Leong*
 
-This repository contains code to perform 2-axis optical fiber alignment with Zaber stages and an optical power meter that is capable of outputting an analog signal as a power feedback. Algorithms described in the article are implemented in Python, along with classes allowing them to be easily used with Zaber stages via the [Zaber Motion Library](https://software.zaber.com/motion-library/api/py) API.
+This repository contains a Python implementation of the routines described in our [article on how to build an automated fiber alignment system](https://www.zaber.com/articles/automated-fiber-alignment). This code performs automated 2-axis optical fiber alignment using Zaber stages and an optical power meter with an analog signal output as feedback.
 
 <img src="img/fiber_alignment.jpg" style="max-width:30rem;" alt="Fiber Alignment">
 
