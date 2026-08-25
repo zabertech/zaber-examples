@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Final
@@ -8,6 +9,8 @@ from ome_types import from_xml
 from ome_types.model import PixelType
 from PIL import Image
 from tifffile import TiffWriter
+
+logger = logging.getLogger(__name__)
 
 
 class OMETiffWriter:
@@ -22,7 +25,7 @@ class OMETiffWriter:
         output_directory (Optional): Output directory.
     """
 
-    IMAGE_FORMAT_PATTERNS: Final = ["*.jpg", "*.bmp", "*.png", "*.tif"]
+    IMAGE_FORMAT_PATTERNS: Final = ["*.jpg", "*.bmp", "*.png", "*.tif", "*.tiff"]
 
     DTYPE_TO_OME: Final[dict[np.dtype, PixelType]] = {
         np.dtype("uint8"): PixelType.UINT8,
@@ -45,14 +48,24 @@ class OMETiffWriter:
     def write_ome_tiff(self) -> None:
         """Write a OME-TIFF file."""
         ome_tiff_dir = self.output_directory or self.metadata.parent
+        ome_tiff_file = ome_tiff_dir / self.metadata.with_suffix(".tiff").name
 
-        with TiffWriter(ome_tiff_dir / self.metadata.with_suffix(".tiff").name, kind="generic") as tif:
-            for index, frame in enumerate(self.get_acquisition_images()):
+        with TiffWriter(ome_tiff_file, kind="generic") as tif:
+            sample_frame: None | np.ndarray = None
+
+            for index, frame in enumerate(self.get_acquisition_images(ignore_filename=ome_tiff_file.name)):
                 if index == 0:
-                    metadata_str = self.modify_metadata(frame)
+                    sample_frame = frame
+                    metadata_str = self.modify_metadata(sample_frame)
                     tif.write(frame, contiguous=True, description=metadata_str.encode())
                 else:
+                    if sample_frame is not None and sample_frame.shape != frame.shape:
+                        logger.warning(
+                            "Example assumes that each image in the dataset has identical dimensions."
+                            "Metadata may be inaccurate"
+                        )
                     tif.write(frame, contiguous=True)
+        logger.info(f"Output written to {ome_tiff_file}")
 
     def get_acquisition_order(self, acquisition_filenames: list[Path]) -> list[Path]:
         """Sorts acquisition image file names by acquisition order.
@@ -61,7 +74,7 @@ class OMETiffWriter:
         """
         return sorted(acquisition_filenames)
 
-    def get_acquisition_images(self) -> Iterator[np.ndarray]:
+    def get_acquisition_images(self, ignore_filename: str = "") -> Iterator[np.ndarray]:
         """Yield acquisition images from the image directory as numpy arrays in acquisition order.
 
         Assumes alphabetically sorted image file names correspond to order of acquisition.
@@ -71,18 +84,34 @@ class OMETiffWriter:
         """
         filenames: list[Path] = []
         for pattern in self.IMAGE_FORMAT_PATTERNS:
-            pattern_filenames = self.image_dir.glob(pattern)
-            filenames += list(pattern_filenames)
+            matched_filenames = self.image_dir.glob(pattern)
+
+            for matched_filename in matched_filenames:
+                if matched_filename.name == ignore_filename:
+                    logger.debug(f"Ignoring file {matched_filename.name}")
+                    continue
+                filenames.append(matched_filename)
+
+        num_files = len(filenames)
+        if num_files == 0:
+            logger.warning(
+                "Found 0 files in acquistion data directory"
+                "Verify that the directory is correct and file types are"
+                "specified in IMAGE_FORMAT_PATTERNS"
+            )
+        else:
+            logger.info(f"Found {num_files} files")
 
         sorted_filenames = self.get_acquisition_order(filenames)
 
         for filename in sorted_filenames:
+            logger.debug(f"Fetching {filename}")
             yield np.asarray(Image.open(filename))
 
     def modify_metadata(self, sample: np.ndarray) -> str:
         """Update OME-XML pixel properties to match the acquired image data.
 
-        Derives pixel type and interleaving from ``sample``.
+        Derives pixel dimensions, pixel type and interleaving from ``sample``.
 
         Args:
             sample: Representative image used to derive pixel properties.
@@ -92,6 +121,7 @@ class OMETiffWriter:
         """
         ome = from_xml(self.metadata)
         pixel_type = self.DTYPE_TO_OME.get(sample.dtype)
+        height, width = sample.shape[:2]
 
         if sample.ndim == self.NUM_CHANNELS_GREYSCALE:  # greyscale (H, W)
             samples_per_pixel = 1
@@ -104,8 +134,16 @@ class OMETiffWriter:
             if pixel_type is not None:
                 image.pixels.type = pixel_type
             image.pixels.interleaved = interleaved
+            image.pixels.size_x = width
+            image.pixels.size_y = height
+
             for channel in image.pixels.channels:
                 channel.samples_per_pixel = samples_per_pixel
+            if image.pixels.channels:
+                # Seperate from number of channels
+                # for Tiff files: Size C = number_channels * samples_per_pixels
+                # https://forum.image.sc/t/tifffile-multiplies-channels-with-rgb-in-ome-tiff-generation/95138
+                image.pixels.size_c = samples_per_pixel * len(image.pixels.channels)
         return ome.to_xml()
 
 
@@ -152,7 +190,18 @@ class OMETiffWriter:
         path_type=Path,
     ),
 )
-def generate(ome_metadata: Path, acquisition_dir: Path, output_directory: Path | None) -> None:
+@click.option(
+    "-v",
+    "--verbose",
+    help="Log debug messages in addition to informational ones.",
+    is_flag=True,
+)
+def generate(ome_metadata: Path, acquisition_dir: Path, output_directory: Path | None, *, verbose: bool) -> None:
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.INFO,
+        format="%(levelname)s %(name)s: %(message)s",
+    )
+
     if not (ome_metadata.name.endswith(".ome.xml")):
         raise click.BadParameter("must have extension .ome.xml", param_hint="--ome-metadata")
 

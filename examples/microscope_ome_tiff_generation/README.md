@@ -26,6 +26,7 @@ This example requires an image acquisition to be completed prior to running, pre
 - `-m, --ome-metadata`: Path to the `.ome.xml` metadata file.
 - `-d, --acquisition-dir`: Directory containing acquisition images.
 - `-o, --output-directory` (Optional): Output directory for generated `.ome.tiff` file.
+- `-v, --verbose` (Optional): Log debug messages.
 
 To run the example:
 
@@ -38,9 +39,11 @@ uv run ome_tiff.py -m ./sample_data/xy.ome.xml -d ./sample_data -o ./output
 
 The `OMETiffWriter` class provided in the example can be modified to suit your specific use case. The example can be easily modified to extend supported image formats or add/customise metadata for the generated `.ome.tiff` file.
 
-### Acquisition image Format / File Structure
+### File Structure
 
 `OMETiffWriter` assumes that images in the acquisition directory are named corresponding to the acquisition order for e.g `image001.png`, `image002.png` etc. If your files are sorted in a different way, you can override or modify the `get_acquisition_order` function to match your setup.
+
+### Acquisition image Format
 
 The example only looks for image file names matching the patterns in the `IMAGE_FORMAT_PATTERNS`. Modify this constant to filter or extend image files discovered.
 
