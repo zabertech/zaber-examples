@@ -1,5 +1,7 @@
 # MATLAB GUI for Controlling a Zaber Device
 
+*By Colby Sparks*
+
 This example implements a simple MATLAB desktop app for controlling a single axis of a Zaber device.
 The UI is built with MATLAB's [uifigure](https://www.mathworks.com/help/matlab/ref/uifigure.html) API.
 

@@ -1,10 +1,11 @@
 authors:
   - Colby Sparks
 date: 2026-08-05
-updated_date: 2026-08-05
+updated_date: 2026-08-06
 category: Graphical User Interface
 tags:
   - MATLAB
   - MATLAB uifigure
+  - Deployment
   - Desktop Application
 picture: img/screenshot.png
